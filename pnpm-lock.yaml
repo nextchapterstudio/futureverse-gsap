@@ -11,6 +11,9 @@ importers:
       '@finsweet/ts-utils':
         specifier: ^0.40.0
         version: 0.40.0
+      gsap:
+        specifier: npm:@gsap/shockingly@^3.12.7
+        version: '@gsap/shockingly@3.12.7'
     devDependencies:
       '@changesets/changelog-git':
         specifier: ^0.2.0
@@ -322,6 +325,9 @@ packages:
     resolution: {integrity: sha512-GpF7MTflA1UQOigJwbz6zQKlir08PYI7XDi0VLz/J/k/CoKXEWutSZ8HNgX0iCDS+kHu63xYph5y6FpCByAMUw==}
     peerDependencies:
       typescript: ^5.0.0
+
+  '@gsap/shockingly@3.12.7':
+    resolution: {integrity: sha512-uvbaCkQCdjy7bNvzBWE21dVFa32uqBzCZfYgNRikcFn2SqyQ0/fDUJkfAtme9tdkv3n+niBpdGraLjVA26tTWQ==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1331,6 +1337,8 @@ snapshots:
   '@finsweet/tsconfig@1.4.2(typescript@5.7.3)':
     dependencies:
       typescript: 5.7.3
+
+  '@gsap/shockingly@3.12.7': {}
 
   '@humanfs/core@0.19.1': {}
 

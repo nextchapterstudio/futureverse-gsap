@@ -26,3 +26,5 @@ typings/
 
 # Production files
 dist
+
+.npmrc
