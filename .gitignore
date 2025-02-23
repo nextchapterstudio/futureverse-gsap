@@ -27,4 +27,4 @@ typings/
 # Production files
 dist
 
-.npmrc
+./history.sqlite

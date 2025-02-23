@@ -138,74 +138,6 @@ const landingTimeline = () => {
   return landing;
 };
 
-const draggableSlider = () => {
-  const track = document.querySelector('.slider-v2');
-  const slides = document.querySelectorAll<HTMLElement>('.slide');
-  const numSlides = slides.length;
-
-  if (!track || !slides.length) {
-    console.error('Required elements not found');
-    return;
-  }
-
-  // Set initial positions - spread slides horizontally
-  gsap.set(slides, {
-    xPercent: (i) => i * 100,
-  });
-
-  // Create proxy for dragging
-  const proxy = document.createElement('div');
-  let slideWidth = 0;
-  let wrapWidth = 0;
-
-  function resize() {
-    slideWidth = slides[0].offsetWidth;
-    wrapWidth = slideWidth * (numSlides - 1); // Total draggable distance
-
-    // Update draggable bounds after resize
-    if (draggable) {
-      draggable.applyBounds({ minX: 0, maxX: wrapWidth });
-    }
-  }
-
-  function updateSlides() {
-    const x = gsap.getProperty(proxy, 'x');
-    const normalizedProgress = x / wrapWidth;
-    const currentIndex = Math.round(normalizedProgress * (numSlides - 1));
-
-    slides.forEach((slide, i) => {
-      // Calculate distance from center for scaling
-      const distance = Math.abs(i - currentIndex);
-      const scale = gsap.utils.clamp(0.6, 1, 1 - distance * 0.2);
-      const opacity = gsap.utils.clamp(0.4, 1, 1 - distance * 0.3);
-
-      gsap.to(slide, {
-        scale: scale,
-        opacity: opacity,
-        duration: 0.2,
-      });
-    });
-  }
-
-  const draggable = Draggable.create(proxy, {
-    type: 'x',
-    trigger: '.slide-container',
-    inertia: true,
-    bounds: { minX: 0, maxX: wrapWidth },
-    snap: {
-      x: (value) => gsap.utils.snap(slideWidth, value),
-    },
-    onDrag: updateSlides,
-    onThrowUpdate: updateSlides,
-  })[0];
-
-  // Initial setup
-  resize();
-  updateSlides();
-
-  // Handle window resize
-};
-
 const createAnythingV2 = () => {
   const secondImage = document.querySelector('.second-img') as HTMLElement;
   const firstImage = document.querySelector('.first-img') as HTMLElement;
@@ -415,6 +347,8 @@ function meetAnybody() {
     },
   });
 
+  gsap.set(elements.anyBodyText, { yPercent: -20 });
+
   ScrollTrigger.create({
     trigger: elements.section,
     start: 'top top',
@@ -430,6 +364,7 @@ function meetAnybody() {
         ease: 'power2.out',
         onComplete: () => {
           gsap.set([elements.text, elements.anyBodyText], { yPercent: 0 });
+          gsap.set(elements.meetImg, { zIndex: 10 });
         },
       });
     },
@@ -439,62 +374,63 @@ function meetAnybody() {
   masterTimeline
     .to(elements.windowContainer, { opacity: 1, duration: 0.5 })
     .to(elements.windowContainer, { width: '100%', height: '100%', duration: 1.5 })
-    .to(elements.meetImg, { opacity: 1, duration: 1 }, '-=1')
+    .to(elements.meetImg, { opacity: 1, duration: 1 }, '-=1.8')
     .to(elements.meetContent, { opacity: 1, duration: 1 }, '-=1');
 
   return masterTimeline;
 }
-
 function readyPlayerTl() {
   const readyPlayerSection = document.querySelector('.ready-player-section') as HTMLElement;
   const readyText = document.querySelector('.ready-text') as HTMLElement;
   const playerText = document.querySelector('.player-text') as HTMLElement;
   const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
   const cartridgeVideo = document.querySelector('.cartridge-vid') as HTMLElement;
-  const textWrapper = document.querySelector('.text-wrapper') as HTMLElement;
 
-  const readyPlayerTl = gsap.timeline({
+  // Single timeline with scroll trigger but no pinning
+  const tl = gsap.timeline({
     scrollTrigger: {
       trigger: readyPlayerSection,
       start: 'top top',
-      end: '+=300%',
-      pin: true,
+      end: '+=200%', // This now represents actual scroll distance
       scrub: 1,
+      markers: true, // Helpful for debugging, remove in production
+      onUpdate: (self) => {
+        // Optional: could use this to trigger the video expansion
+        // when reaching a certain scroll progress
+        if (self.progress > 0.8) {
+          // Could trigger final state here
+        }
+      },
     },
   });
 
   // Initial states
-  gsap.set(cartridgeVideo, { scale: 0 });
+  gsap.set(cartridgeVideo, {
+    scale: 0,
+    opacity: 0,
+  });
   gsap.set(cartridgeWrapper, {
     transformOrigin: '50% 50% -150',
     perspective: 1200,
     backfaceVisibility: 'visible',
     transformStyle: 'preserve-3d',
-    yPercent: -100,
+    yPercent: -350,
   });
   gsap.set([readyText, playerText], { opacity: 0 });
-  gsap.set(textWrapper, { yPercent: 0 }); // Initial position for text wrapper
 
-  readyPlayerTl
-    // Initial cartridge movement
-    .to(cartridgeWrapper, {
-      yPercent: 60,
-      duration: 8,
-      ease: 'power1.inOut',
-    })
-    // Rotation during movement
+  tl
+    // Cartridge movement
     .to(
       cartridgeWrapper,
       {
-        rotateY: '+=45',
-        ease: 'power2.inOut',
-        duration: 3,
-        yoyo: true,
-        repeat: 1,
+        yPercent: 60,
+        duration: 10,
+        ease: 'none',
       },
-      '<+=1'
+      0
     )
-    // READY text
+
+    // Text animations
     .to(
       readyText,
       {
@@ -502,9 +438,8 @@ function readyPlayerTl() {
         duration: 2,
         ease: 'power2.out',
       },
-      '-=5'
+      3
     )
-    // PLAYER text with longer visibility
     .to(
       playerText,
       {
@@ -512,220 +447,276 @@ function readyPlayerTl() {
         duration: 2,
         ease: 'power2.out',
       },
-      '>'
+      5
     )
-    // Start moving text up while keeping it visible
-    .to(
-      [readyText, playerText],
-      {
-        yPercent: -100,
-        duration: 4,
-        ease: 'power1.inOut',
-      },
-      '>'
-    )
-    // Begin video scale later
+
+    // Video growth can now scale beyond viewport
     .to(
       cartridgeVideo,
       {
-        scale: 1,
-        duration: 6,
-        ease: 'power3.out',
-      },
-      '>-=1'
-    )
-    // Fade out texts more gradually
-    .to(
-      [readyText, playerText],
-      {
-        opacity: 0,
-        duration: 3,
+        scale: 0.3,
+        opacity: 1,
+        duration: 2,
         ease: 'power2.in',
       },
-      '<+=1'
-    );
-
-  return readyPlayerTl;
-}
-
-function beAnyoneTl() {
-  gsap.registerPlugin(ScrollTrigger);
-
-  // Configuration
-  let allowScroll = true;
-  let isAnimating = false;
-  const scrollTimeout = gsap
-    .delayedCall(1, () => {
-      allowScroll = true;
-      isAnimating = false;
-    })
-    .pause();
-
-  let currentIndex = 0;
-  const images = gsap.utils.toArray<HTMLImageElement>('.avatar-img');
-
-  // Kill any existing animations on the images
-  gsap.killTweensOf(images);
-
-  // Initial setup
-  gsap.set(images, {
-    opacity: 0,
-    scale: 0.95,
-  });
-  gsap.set(images[0], {
-    opacity: 1,
-    scale: 1,
-  });
-
-  // Animation function with better state management
-  function animateImages(index: number, isScrollingDown: boolean) {
-    // Prevent animation if already animating or invalid index
-    if (
-      isAnimating ||
-      (index === images.length && isScrollingDown) ||
-      (index === -1 && !isScrollingDown) ||
-      index === currentIndex
-    ) {
-      intentObserver.disable();
-      return;
-    }
-
-    isAnimating = true;
-    allowScroll = false;
-
-    const fadeOut = images[currentIndex];
-    const fadeIn = images[index];
-
-    // Kill any existing tweens
-    gsap.killTweensOf([fadeOut, fadeIn]);
-
-    const animationTl = gsap.timeline({
-      onComplete: () => {
-        currentIndex = index;
-        isAnimating = false;
-        scrollTimeout.restart(true);
-
-        // If we've reached the end of the images, disable the observer
-        if (index === images.length - 1 || index === 0) {
-          intentObserver.disable();
-        }
+      6
+    )
+    .to(
+      cartridgeVideo,
+      {
+        scale: 1.5, // Can go bigger than viewport
+        duration: 4,
+        ease: 'power2.inOut',
       },
-      onInterrupt: () => {
-        isAnimating = false;
-        allowScroll = true;
-      },
-    });
+      8
+    )
 
-    // Fade out current image
-    animationTl
-      .to(fadeOut, {
+    // Fade out other elements
+    .to(
+      [readyText, playerText, cartridgeWrapper],
+      {
         opacity: 0,
-        scale: 0.95,
-        duration: 0.4,
-        ease: 'power2.out',
-      })
-      .to(
-        fadeIn,
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.4,
-          ease: 'power2.out',
-        },
-        '-=0.2'
-      );
-
-    return animationTl;
-  }
-
-  const intentObserver = ScrollTrigger.observe({
-    type: 'wheel,touch,pointer',
-    onUp: () => !isAnimating && allowScroll && animateImages(currentIndex - 1, false),
-    onDown: () => !isAnimating && allowScroll && animateImages(currentIndex + 1, true),
-    tolerance: 10,
-    preventDefault: true,
-    lockAxis: true,
-    onEnable(self) {
-      allowScroll = false;
-      const savedY = window.scrollY;
-
-      // Only maintain scroll position briefly
-      let frameCount = 0;
-      const maintainScroll = () => {
-        if (self.isEnabled && frameCount < 10) {
-          window.scrollTo(0, savedY);
-          frameCount++;
-          requestAnimationFrame(maintainScroll);
-        }
-      };
-      maintainScroll();
-
-      // Reset state after a short delay
-      gsap.delayedCall(0.1, () => {
-        allowScroll = true;
-      });
-    },
-    onDisable() {
-      // Cleanup any ongoing animations
-      isAnimating = false;
-      allowScroll = true;
-    },
-  });
-
-  intentObserver.disable();
-
-  // Create main timeline with ScrollTrigger
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.be-anyone-section',
-      pin: true,
-      pinSpacing: true,
-      start: 'top top',
-      end: '+=300',
-      scrub: false, // Ensure this is false to prevent scroll locking
-      preventOverlaps: true,
-      fastScrollEnd: true,
-      onEnter: (self) => {
-        if (!intentObserver.isEnabled) {
-          self.scroll(self.start + 1);
-          intentObserver.enable();
-        }
+        duration: 2,
+        ease: 'power2.in',
       },
-      onEnterBack: (self) => {
-        if (!intentObserver.isEnabled) {
-          self.scroll(self.end - 1);
-          intentObserver.enable();
-        }
-      },
-      onLeave: () => {
-        intentObserver.disable();
-        // Reset states and ensure scroll is released
-        isAnimating = false;
-        allowScroll = true;
-        ScrollTrigger.clearMatchMedia();
-      },
-      onLeaveBack: () => {
-        intentObserver.disable();
-        // Reset states and ensure scroll is released
-        isAnimating = false;
-        allowScroll = true;
-        ScrollTrigger.clearMatchMedia();
-      },
-      onUpdate: (self) => {
-        // If we're at the end of the section, ensure observer is disabled
-        if (self.progress === 1 || self.progress === 0) {
-          intentObserver.disable();
-        }
-      },
-    },
-  });
-
-  // Add a minimal duration
-  tl.to({}, { duration: 0.01 });
+      9
+    );
 
   return tl;
 }
 
+function beAnyoneTl() {
+  const wrapper = document.querySelector('.video-wrapper') as HTMLElement;
+  const vidCard = document.querySelector('.vid-card') as HTMLElement;
+  const images = gsap.utils.toArray<HTMLElement>('.avatar-img');
+  let currentIndex = 0;
+  let isScrolling = false;
+  let scrollTimeout: NodeJS.Timeout;
+
+  // Setup initial states
+  images.forEach((img, i) => {
+    gsap.set(img, {
+      opacity: i === 0 ? 1 : 0.5,
+      scale: i === 0 ? 1 : 0.95,
+    });
+  });
+
+  // Smooth scroll function with synchronized card animation
+  function smoothScrollTo(element: HTMLElement) {
+    isScrolling = true;
+
+    // Timeline for synchronized animations
+    const tl = gsap.timeline({
+      onComplete: () => {
+        isScrolling = false;
+      },
+    });
+
+    // Scale down card slightly
+    tl.to(
+      vidCard,
+      {
+        scale: 0.98,
+        duration: 0.3,
+        ease: 'power2.out',
+      },
+      0
+    );
+
+    // Scroll to new position
+    tl.to(
+      wrapper,
+      {
+        scrollLeft: element.offsetLeft,
+        duration: 0.5,
+        ease: 'power2.out',
+      },
+      0
+    );
+
+    // Scale card back up
+    tl.to(
+      vidCard,
+      {
+        scale: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+      },
+      0.3
+    );
+  }
+
+  // Handle scroll events with debounce and synchronized animations
+  wrapper.addEventListener('scroll', () => {
+    if (isScrolling) return;
+
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const { scrollLeft } = wrapper;
+      const imageWidth = wrapper.clientWidth;
+      const newIndex = Math.round(scrollLeft / imageWidth);
+
+      if (newIndex !== currentIndex && newIndex >= 0 && newIndex < images.length) {
+        // Create timeline for synchronized animations
+        const tl = gsap.timeline();
+
+        // Scale down card
+        tl.to(
+          vidCard,
+          {
+            scale: 0.98,
+            duration: 0.3,
+            ease: 'power2.out',
+          },
+          0
+        );
+
+        // Animate out current image
+        tl.to(
+          images[currentIndex],
+          {
+            opacity: 0.5,
+            scale: 0.95,
+            duration: 0.3,
+            ease: 'power2.out',
+          },
+          0
+        );
+
+        // Animate in new image
+        tl.to(
+          images[newIndex],
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.3,
+            ease: 'power2.out',
+          },
+          0
+        );
+
+        // Scale card back up
+        tl.to(
+          vidCard,
+          {
+            scale: 1,
+            duration: 0.3,
+            ease: 'power2.out',
+          },
+          0.15
+        );
+
+        currentIndex = newIndex;
+      }
+    }, 50);
+  });
+
+  // Add touch event handling
+  let touchStart: number;
+  let touchStartTime: number;
+
+  wrapper.addEventListener(
+    'touchstart',
+    (e) => {
+      touchStart = e.touches[0].clientX;
+      touchStartTime = Date.now();
+
+      // Scale down card slightly on touch start
+      gsap.to(vidCard, {
+        scale: 0.98,
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+    },
+    { passive: true }
+  );
+
+  wrapper.addEventListener(
+    'touchend',
+    (e) => {
+      const touchEnd = e.changedTouches[0].clientX;
+      const touchEndTime = Date.now();
+      const touchDuration = touchEndTime - touchStartTime;
+      const diff = touchStart - touchEnd;
+
+      // Calculate velocity of swipe
+      const velocity = Math.abs(diff / touchDuration);
+
+      // Scale card back up
+      gsap.to(vidCard, {
+        scale: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+
+      // Adjust sensitivity based on velocity and distance
+      if (Math.abs(diff) > 30 || velocity > 0.5) {
+        const nextIndex =
+          diff > 0 ? Math.min(currentIndex + 1, images.length - 1) : Math.max(currentIndex - 1, 0);
+
+        smoothScrollTo(images[nextIndex]);
+      }
+    },
+    { passive: true }
+  );
+
+  // Optional: Add mouse drag scrolling
+  let isMouseDown = false;
+  let startX: number;
+  let scrollLeft: number;
+
+  wrapper.addEventListener('mousedown', (e) => {
+    isMouseDown = true;
+    startX = e.pageX - wrapper.offsetLeft;
+    scrollLeft = wrapper.scrollLeft;
+    wrapper.style.cursor = 'grabbing';
+
+    // Scale down card on mouse down
+    gsap.to(vidCard, {
+      scale: 0.98,
+      duration: 0.3,
+      ease: 'power2.out',
+    });
+  });
+
+  wrapper.addEventListener('mouseleave', () => {
+    if (isMouseDown) {
+      // Scale card back up
+      gsap.to(vidCard, {
+        scale: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+      });
+    }
+    isMouseDown = false;
+    wrapper.style.cursor = 'grab';
+  });
+
+  wrapper.addEventListener('mouseup', () => {
+    isMouseDown = false;
+    wrapper.style.cursor = 'grab';
+
+    // Scale card back up
+    gsap.to(vidCard, {
+      scale: 1,
+      duration: 0.3,
+      ease: 'power2.out',
+    });
+  });
+
+  wrapper.addEventListener('mousemove', (e) => {
+    if (!isMouseDown) return;
+    e.preventDefault();
+    const x = e.pageX - wrapper.offsetLeft;
+    const walk = (x - startX) * 2;
+    wrapper.scrollLeft = scrollLeft - walk;
+  });
+
+  // Set initial cursor style
+  wrapper.style.cursor = 'grab';
+
+  return gsap.timeline();
+}
 window.Webflow ||= [];
 window.Webflow.push(() => {
   console.log('GSAP Scroll Animation Loaded!');
@@ -734,10 +725,9 @@ window.Webflow.push(() => {
 
   pageTl
     .add(landingTimeline()) // Add landing timeline
-    .add(beAnyoneTl()); // Add beAnyone timeline
+    .add(beAnyoneTl()) // Add beAnyone timeline
+    .add(meetAnybody())
+    .add(readyPlayerTl());
   // .add(createAnythingV2()); // Overlap createAnything timeline by 0.5 seconds
-  // .add(readyPlayerTl())
   // .add(horizontalScroll());
-
-  // .add(meetAnybody());
 });
