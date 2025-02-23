@@ -206,95 +206,179 @@ const draggableSlider = () => {
   // Handle window resize
 };
 
-// function createAnything() {
-//   const centerSlideImg = document.querySelector('.center-img') as HTMLElement;
+const createAnythingV2 = () => {
+  const secondImage = document.querySelector('.second-img') as HTMLElement;
+  const firstImage = document.querySelector('.first-img') as HTMLElement;
+  const centerImage = document.querySelector('.center-img') as HTMLElement;
+  const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
+  const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
+  const content = document.querySelector('.content') as HTMLElement;
+  const scramble1 = document.querySelector('.scramble-1') as HTMLElement;
+  const scramble2 = document.querySelector('.scamble-2') as HTMLElement;
+  gsap.timeline({ defaults: { duration: 1 } });
 
-//   gsap.set(centerSlideImg, {
-//     position: 'absolute',
-//     width: '100vw',
-//     height: '100vh',
+  gsap.set(
+    [
+      secondImage,
+      centerImage,
+      firstImage,
+      clippedBox,
+      scramble1,
+      scramble2,
+      content,
+      swappableWrapper,
+    ],
+    { autoAlpha: 0 }
+  );
 
-//     top: '0',
-//     left: '50%',
-//     x: '-50%',
-//     zIndex: 5,
-//   });
+  const firstTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.home-scroll-section',
+      start: 'top top',
+      end: '+=300%',
+      pin: true,
+      scrub: 1,
+      anticipatePin: 1,
+      markers: true,
+    },
+  });
 
-//   gsap.set('.content', { opacity: 0 });
+  firstTl
+    .to(firstImage, { autoAlpha: 1 })
+    .to(clippedBox, { autoAlpha: 1 }, '>')
+    .to(swappableWrapper, { autoAlpha: 1 }, '>')
+    .to(content, { autoAlpha: 1 })
+    .to(scramble1, { autoAlpha: 1 }, '>')
+    .to(scramble2, { autoAlpha: 1 }, '>')
+    .to(clippedBox, { width: '100%', height: '100%', ease: 'power2.out', duration: 1.5 })
+    .to(firstImage, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
+    .to(swappableWrapper, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
+    .to(secondImage, { autoAlpha: 1, duration: 3, ease: 'power3.out' }, '-=1')
+    .to(content, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
+    .to(centerImage, { autoAlpha: 1, duration: 2, ease: 'power3.out' }, '-=1')
+    .set(secondImage, { visibility: 'hidden' })
+    .to(
+      centerImage,
+      {
+        scale: 0.7,
+        duration: 2,
+        ease: 'power2.inOut',
+      },
+      '+=0.5'
+    )
+    .call(() => {
+      gsap.set('.fade-in-content', { overflow: 'visible' });
+    }, []);
+  // .to('.new-content', { opacity: 1, y: 0, duration: 2, ease: 'power3.out' }, '-=0.8');
 
-//   /**
-//    * ScrollTrigger Timeline (boxTl)
-//    */
-//   const boxTl = gsap.timeline({
-//     scrollTrigger: {
-//       trigger: '.home-scroll-section',
-//       start: 'top top',
-//       end: '+=300%',
-//       pin: true,
-//       scrub: 1,
-//       anticipatePin: 1,
-//       markers: true,
-//     },
-//   });
+  return firstTl;
+};
 
-//   boxTl
-//     .to('.content', { opacity: 1, duration: 1 }, '>') // Fade in content
-//     .to('.scramble-1', { opacity: 1, duration: 1 }, '>')
-//     .to('.scamble-2', { opacity: 1, duration: 1 }, '>')
-//     .to('.content', { opacity: 0, duration: 1 })
-//     .to('.swappable-wrapper', { opacity: 0, duration: 1 }, '-=1')
-//     .to('.clipped-box', { width: '100%', height: '100%', ease: 'power2.out', duration: 1.5 })
-//     .to('.first-img', { opacity: 0, duration: 1, ease: 'power3.out' }, '-=1')
-//     .to('.second-img', { opacity: 1, duration: 3, ease: 'power3.out' }, '-=1')
-//     .to('.new-content', { opacity: 1, y: 0, duration: 2, ease: 'power3.out' }, '-=0.8')
-//     .to('.scramble-3', {
-//       scrambleText: {
-//         text: 'CREATE',
-//         chars: 'BCDEFW',
-//         speed: 0.5,
-//         revealDelay: 0.5,
-//       },
-//     })
-//     .to('.scramble-4', {
-//       scrambleText: {
-//         text: 'ANYTHING',
-//         chars: 'BCDEFGHI',
-//         revealDelay: 0.5,
-//         speed: 1,
-//       },
-//     })
-//     .to(centerSlideImg, {
-//       opacity: 1,
-//       duration: 2,
-//       ease: 'power2.out',
-//     })
-//     .to('.content-bottom', { opacity: 0, duration: 1, ease: 'power2.out' }, '-=0.5')
-//     .to('.second-img', { opacity: 0, visibility: 'hidden' }, '>')
-//     .to(
-//       centerSlideImg,
-//       {
-//         scale: 0.6, // Scale to 50% of original size
-//         duration: 2,
-//         ease: 'power2.inOut',
-//       },
-//       '+=0.5'
-//     )
-//     .to('.create-anything-wrapper', { y: '-70vh', duration: 1, ease: 'power2.out' }, '>')
-//     .to('.slide-img', { opacity: 1, duration: 1, ease: 'power2.out' }, '+=0.5');
-//   // .call(() => {
-//   //   gsap.set(centerSlideImg, {
-//   //     position: 'relative', // Reintegrate into slider
-//   //     width: '70vw', // Match other slides
-//   //     height: 'auto',
-//   //     top: 'auto',
-//   //     left: 'auto',
-//   //     x: '0',
-//   //     scale: 1,
-//   //   });
-//   // });
+function createAnything() {
+  const centerSlideImg = document.querySelector('.center-img') as HTMLElement;
+  const homeScrollSection = document.querySelector('.home-scroll-section') as HTMLElement;
+  const horizontalSection = document.querySelector('.horizontal-section') as HTMLElement;
+  const sections = gsap.utils.toArray('.slide');
 
-//   return boxTl;
-// }
+  // Master timeline
+
+  // First Animation Timeline (boxTl)
+  const boxTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: homeScrollSection,
+      start: 'top top',
+      end: '+=300%',
+      pin: true,
+      scrub: 1,
+      anticipatePin: 1,
+      markers: true,
+    },
+  });
+
+  // gsap.set('.slide-v2', { yPercent: -200, zIndex: 100, position: 'absolute' });
+  gsap.set(centerSlideImg, {
+    opacity: 0,
+  });
+  gsap.set('.content', { opacity: 0 });
+
+  // Build boxTl animations
+  boxTl
+
+    .to('.content', { opacity: 0, duration: 1 })
+
+    .to('.clipped-box')
+
+    .to('.scramble-3', {
+      scrambleText: {
+        text: 'CREATE',
+        chars: 'BCDEFW',
+        speed: 0.5,
+        revealDelay: 0.5,
+      },
+    })
+    .to('.scramble-4', {
+      scrambleText: {
+        text: 'ANYTHING',
+        chars: 'BCDEFGHI',
+        revealDelay: 0.5,
+        speed: 1,
+      },
+    })
+    // .to(centerSlideImg, {
+    //   opacity: 1,
+    //   duration: 2,
+    //   ease: 'power2.out',
+    // })
+    .to('.content-bottom', { opacity: 0, duration: 1, ease: 'power2.out' }, '-=0.5')
+    .to('.second-img', { opacity: 0, visibility: 'hidden' }, '>')
+
+    .to('.create-anything-wrapper', { y: '-70vh', duration: 1, ease: 'power2.out' }, '>')
+    .to('.slide-img', { opacity: 1, duration: 1, ease: 'power2.out' }, '+=0.5');
+
+  // Horizontal Scroll Timeline
+  // const horizontalTl = gsap.timeline({
+  //   scrollTrigger: {
+  //     trigger: '.horizontal-section',
+  //     start: 'top top',
+  //     end: '+=5000',
+  //     pin: true,
+  //     scrub: 1,
+  //     snap: 1 / (sections.length - 1),
+  //   },
+  // });
+
+  // // Build horizontalTl animations
+  // horizontalTl.to(sections, {
+  //   xPercent: -100 * (sections.length - 1),
+  //   duration: 10,
+  //   ease: 'none',
+  // });
+
+  // Initial states
+
+  // Transition Timeline
+  // const transitionTl = gsap.timeline({
+  //   onComplete: () => {
+  //     gsap.set(horizontalSection, {
+  //       width: '600%',
+  //       position: 'static',
+  //     });
+  //     horizontalTl.play(0);
+  //   },
+  // });
+
+  // transitionTl.to(centerSlideImg, {
+  //   width: '70vw',
+  //   height: 'auto',
+  //   scale: 1,
+  //   duration: 1,
+  // });
+
+  // // Build master timeline
+  // masterTl.add(boxTl).add(transitionTl).add(horizontalTl);
+
+  return boxTl;
+}
 
 function meetAnybody() {
   const elements = {
@@ -464,6 +548,184 @@ function readyPlayerTl() {
   return readyPlayerTl;
 }
 
+function beAnyoneTl() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Configuration
+  let allowScroll = true;
+  let isAnimating = false;
+  const scrollTimeout = gsap
+    .delayedCall(1, () => {
+      allowScroll = true;
+      isAnimating = false;
+    })
+    .pause();
+
+  let currentIndex = 0;
+  const images = gsap.utils.toArray<HTMLImageElement>('.avatar-img');
+
+  // Kill any existing animations on the images
+  gsap.killTweensOf(images);
+
+  // Initial setup
+  gsap.set(images, {
+    opacity: 0,
+    scale: 0.95,
+  });
+  gsap.set(images[0], {
+    opacity: 1,
+    scale: 1,
+  });
+
+  // Animation function with better state management
+  function animateImages(index: number, isScrollingDown: boolean) {
+    // Prevent animation if already animating or invalid index
+    if (
+      isAnimating ||
+      (index === images.length && isScrollingDown) ||
+      (index === -1 && !isScrollingDown) ||
+      index === currentIndex
+    ) {
+      intentObserver.disable();
+      return;
+    }
+
+    isAnimating = true;
+    allowScroll = false;
+
+    const fadeOut = images[currentIndex];
+    const fadeIn = images[index];
+
+    // Kill any existing tweens
+    gsap.killTweensOf([fadeOut, fadeIn]);
+
+    const animationTl = gsap.timeline({
+      onComplete: () => {
+        currentIndex = index;
+        isAnimating = false;
+        scrollTimeout.restart(true);
+
+        // If we've reached the end of the images, disable the observer
+        if (index === images.length - 1 || index === 0) {
+          intentObserver.disable();
+        }
+      },
+      onInterrupt: () => {
+        isAnimating = false;
+        allowScroll = true;
+      },
+    });
+
+    // Fade out current image
+    animationTl
+      .to(fadeOut, {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.4,
+        ease: 'power2.out',
+      })
+      .to(
+        fadeIn,
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          ease: 'power2.out',
+        },
+        '-=0.2'
+      );
+
+    return animationTl;
+  }
+
+  const intentObserver = ScrollTrigger.observe({
+    type: 'wheel,touch,pointer',
+    onUp: () => !isAnimating && allowScroll && animateImages(currentIndex - 1, false),
+    onDown: () => !isAnimating && allowScroll && animateImages(currentIndex + 1, true),
+    tolerance: 10,
+    preventDefault: true,
+    lockAxis: true,
+    onEnable(self) {
+      allowScroll = false;
+      const savedY = window.scrollY;
+
+      // Only maintain scroll position briefly
+      let frameCount = 0;
+      const maintainScroll = () => {
+        if (self.isEnabled && frameCount < 10) {
+          window.scrollTo(0, savedY);
+          frameCount++;
+          requestAnimationFrame(maintainScroll);
+        }
+      };
+      maintainScroll();
+
+      // Reset state after a short delay
+      gsap.delayedCall(0.1, () => {
+        allowScroll = true;
+      });
+    },
+    onDisable() {
+      // Cleanup any ongoing animations
+      isAnimating = false;
+      allowScroll = true;
+    },
+  });
+
+  intentObserver.disable();
+
+  // Create main timeline with ScrollTrigger
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.be-anyone-section',
+      pin: true,
+      pinSpacing: true,
+      start: 'top top',
+      end: '+=300',
+      scrub: false, // Ensure this is false to prevent scroll locking
+      preventOverlaps: true,
+      fastScrollEnd: true,
+      onEnter: (self) => {
+        if (!intentObserver.isEnabled) {
+          self.scroll(self.start + 1);
+          intentObserver.enable();
+        }
+      },
+      onEnterBack: (self) => {
+        if (!intentObserver.isEnabled) {
+          self.scroll(self.end - 1);
+          intentObserver.enable();
+        }
+      },
+      onLeave: () => {
+        intentObserver.disable();
+        // Reset states and ensure scroll is released
+        isAnimating = false;
+        allowScroll = true;
+        ScrollTrigger.clearMatchMedia();
+      },
+      onLeaveBack: () => {
+        intentObserver.disable();
+        // Reset states and ensure scroll is released
+        isAnimating = false;
+        allowScroll = true;
+        ScrollTrigger.clearMatchMedia();
+      },
+      onUpdate: (self) => {
+        // If we're at the end of the section, ensure observer is disabled
+        if (self.progress === 1 || self.progress === 0) {
+          intentObserver.disable();
+        }
+      },
+    },
+  });
+
+  // Add a minimal duration
+  tl.to({}, { duration: 0.01 });
+
+  return tl;
+}
+
 window.Webflow ||= [];
 window.Webflow.push(() => {
   console.log('GSAP Scroll Animation Loaded!');
@@ -472,8 +734,10 @@ window.Webflow.push(() => {
 
   pageTl
     .add(landingTimeline()) // Add landing timeline
-    .add(readyPlayerTl());
+    .add(beAnyoneTl()); // Add beAnyone timeline
+  // .add(createAnythingV2()); // Overlap createAnything timeline by 0.5 seconds
+  // .add(readyPlayerTl())
+  // .add(horizontalScroll());
 
-  // .add(createAnything()) // Overlap createAnything timeline by 0.5 seconds
   // .add(meetAnybody());
 });
