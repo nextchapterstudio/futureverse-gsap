@@ -69,7 +69,7 @@ gsap.registerEffect({
   extendTimeline: true,
 });
 
-const landingTimeline = () => {
+export const landingTimeline = () => {
   const landing = gsap.timeline({
     scrollTrigger: {
       trigger: '.home-landing-section',
@@ -141,7 +141,7 @@ const landingTimeline = () => {
 const createAnythingV2 = () => {
   const secondImage = document.querySelector('.second-img') as HTMLElement;
   const firstImage = document.querySelector('.first-img') as HTMLElement;
-  const centerImage = document.querySelector('.center-img') as HTMLElement;
+  const centerImage = document.querySelector('.third-img') as HTMLElement;
   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
   const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
   const content = document.querySelector('.content') as HTMLElement;
@@ -163,6 +163,15 @@ const createAnythingV2 = () => {
     { autoAlpha: 0 }
   );
 
+  gsap.set(centerImage, {
+    position: 'absolute',
+    width: '100vw',
+    height: '100vh',
+    objectFit: 'cover',
+    top: 0,
+    left: 0,
+    zIndex: 5,
+  });
   const firstTl = gsap.timeline({
     scrollTrigger: {
       trigger: '.home-scroll-section',
@@ -188,20 +197,7 @@ const createAnythingV2 = () => {
     .to(secondImage, { autoAlpha: 1, duration: 3, ease: 'power3.out' }, '-=1')
     .to(content, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
     .to(centerImage, { autoAlpha: 1, duration: 2, ease: 'power3.out' }, '-=1')
-    .set(secondImage, { visibility: 'hidden' })
-    .to(
-      centerImage,
-      {
-        scale: 0.7,
-        duration: 2,
-        ease: 'power2.inOut',
-      },
-      '+=0.5'
-    )
-    .call(() => {
-      gsap.set('.fade-in-content', { overflow: 'visible' });
-    }, []);
-  // .to('.new-content', { opacity: 1, y: 0, duration: 2, ease: 'power3.out' }, '-=0.8');
+    .set(secondImage, { visibility: 'hidden' });
 
   return firstTl;
 };
@@ -312,7 +308,7 @@ function createAnything() {
   return boxTl;
 }
 
-function meetAnybody() {
+export function meetAnybody() {
   const elements = {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
     text: document.querySelector('.meet-text') as HTMLElement,
@@ -485,7 +481,7 @@ function readyPlayerTl() {
   return tl;
 }
 
-function beAnyoneTl() {
+export function beAnyoneTl() {
   const wrapper = document.querySelector('.video-wrapper') as HTMLElement;
   const vidCard = document.querySelector('.vid-card') as HTMLElement;
   const images = gsap.utils.toArray<HTMLElement>('.avatar-img');
@@ -717,6 +713,7 @@ function beAnyoneTl() {
 
   return gsap.timeline();
 }
+
 window.Webflow ||= [];
 window.Webflow.push(() => {
   console.log('GSAP Scroll Animation Loaded!');
@@ -726,8 +723,9 @@ window.Webflow.push(() => {
   pageTl
     .add(landingTimeline()) // Add landing timeline
     .add(beAnyoneTl()) // Add beAnyone timeline
+    .add(createAnythingV2()) // Overlap createAnything timeline by 0.5 seconds
     .add(meetAnybody())
     .add(readyPlayerTl());
-  // .add(createAnythingV2()); // Overlap createAnything timeline by 0.5 seconds
+
   // .add(horizontalScroll());
 });
