@@ -40,14 +40,7 @@ window.Webflow.push(() => {
       duration: 1.5,
       ease: 'power2.out', // Smooth easing
     })
-    .to(
-      '.growing-image',
-      {
-        opacity: 0,
-        duration: 1.5,
-      },
-      '>'
-    )
+
     // .to('.growing-image', {
     //   width: '100vw',
     //   height: '100vh',
