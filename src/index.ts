@@ -10,7 +10,7 @@ import SplitText from 'gsap/SplitText';
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
 
 export const landingTimeline = () => {
-  const intoText = document.querySelector('.into-text') as HTMLElement;
+  const intoText = document.querySelector('.intro-text') as HTMLElement;
 
   const splitLandingCopy = new SplitText(intoText, {
     type: 'chars',
