@@ -5,6 +5,8 @@ import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import SplitText from 'gsap/SplitText';
 
+//streamable.com/4dp3gr
+
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
 
 export const landingTimeline = () => {
@@ -91,6 +93,7 @@ const createAnythingV2 = () => {
   const createText = document.querySelector('.scramble-3') as HTMLElement;
   const anythingText = document.querySelector('.scramble-4') as HTMLElement;
 
+  // Slow down the scramble text animation for a smoother effect
   const splitGoAnywhereCopy = new SplitText(goAnywhereCopy, {
     type: 'chars',
     charsClass: 'char',
@@ -103,17 +106,17 @@ const createAnythingV2 = () => {
       opacity: 0,
     },
     {
-      duration: 1.5,
+      duration: 2.5, // Increased from 1.5 for smoother text appearance
       scrambleText: {
         text: '{original}',
         chars: 'upperCase',
-        revealDelay: 0.2,
-        speed: 0.6,
+        revealDelay: 0.3, // Increased from 0.2
+        speed: 0.4, // Decreased from 0.6 for a slower scramble effect
         tweenLength: false,
       },
       opacity: 1,
-      stagger: 0.05,
-      ease: 'none',
+      stagger: 0.08, // Increased from 0.05 for more noticeable character sequence
+      ease: 'power1.inOut', // Changed from 'none' for smoother transitions
     }
   );
 
@@ -140,34 +143,144 @@ const createAnythingV2 = () => {
     scrollTrigger: {
       trigger: '.home-scroll-section',
       start: 'top top',
-      end: '+=500%', // Increased distance for smoother transitions
+      end: '+=650%', // Increased from 500% to allow for more scroll distance and slower animations
       pin: true,
-      scrub: 1.5,
+      scrub: 2.5, // Increased from 1.5 to make scrolling more gradual
       anticipatePin: 0.5,
       // markers: true,
     },
   });
 
   firstTl
-    .to(firstImage, { autoAlpha: 1 })
-    .to(clippedBox, { autoAlpha: 1 }, '>')
-    .to(swappableWrapper, { autoAlpha: 1 }, '>')
-    .to(content, { autoAlpha: 1 })
-    .to(scramble1, { autoAlpha: 1 }, '>')
-    .to(scramble2, { autoAlpha: 1 }, '>')
+    // Slow and smooth entry of first elements
+    .to(firstImage, { autoAlpha: 1, duration: 2, ease: 'power1.inOut' })
+    .to(clippedBox, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
+    .to(swappableWrapper, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
+    .to(content, { autoAlpha: 1, duration: 2, ease: 'power1.inOut' })
+    .to(scramble1, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
+    .to(scramble2, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .add(scrambleTl, '<')
-    .to(clippedBox, { width: '100%', height: '100%', ease: 'power2.out', duration: 1.8 })
-    .to(firstImage, { autoAlpha: 0, ease: 'power2.out' }, '-=1')
-    .to(swappableWrapper, { autoAlpha: 0, ease: 'power2.out' }, '-=1')
-    .to(secondImage, { autoAlpha: 1, duration: 3.5, ease: 'power2.out' }, '-=1')
-    .to(content, { autoAlpha: 0, ease: 'power2.out' }, '-=1')
-    .to('.new-content', { opacity: 1, y: 0, duration: 2.5, ease: 'power2.out' }, '-=0.8')
-    .to(createText, { autoAlpha: 1, duration: 2.5, ease: 'power2.out' }, '-=1')
-    .to(anythingText, { autoAlpha: 1, duration: 2.5, ease: 'power2.out' }, '-=1')
-    .to(centerImage, { autoAlpha: 1, duration: 2.5, ease: 'power2.out' }, '-=1')
-    .to(secondImage, { autoAlpha: 0 }, '<')
-    .to('.content-bottom', { opacity: 0, duration: 1.2, ease: 'power2.out' }, '-=0.5')
-    .to(centerImage, { scale: 0.7, ease: 'power2.out' }, '-=1');
+
+    // Much slower expansion of clipped box
+    .to(clippedBox, {
+      width: '100%',
+      height: '100%',
+      duration: 7, // Increased from 4
+      ease: 'power2.inOut', // Changed to inOut for smoother acceleration/deceleration
+    })
+
+    // More gradual fade transitions with better timing overlaps
+    .to(
+      swappableWrapper,
+      {
+        autoAlpha: 0,
+        duration: 3, // Added explicit duration
+        ease: 'power1.inOut',
+      },
+      '-=4'
+    ) // Start earlier in the clipped box animation
+
+    .to(
+      firstImage,
+      {
+        autoAlpha: 0,
+        duration: 3, // Added explicit duration
+        ease: 'power1.inOut',
+      },
+      '>-0.5'
+    ) // Slight overlap for smoother transition
+
+    .to(
+      secondImage,
+      {
+        autoAlpha: 1,
+        duration: 5, // Increased from 3.5
+        ease: 'power1.inOut',
+      },
+      '-=2'
+    )
+
+    .to(
+      content,
+      {
+        autoAlpha: 0,
+        duration: 3, // Added explicit duration
+        ease: 'power1.inOut',
+      },
+      '-=3'
+    ) // Better overlap timing
+
+    .to(
+      createText,
+      {
+        autoAlpha: 1,
+        duration: 4, // Increased from 2.5
+        ease: 'power1.inOut',
+      },
+      '-=2.5'
+    )
+
+    .to(
+      anythingText,
+      {
+        autoAlpha: 1,
+        duration: 4, // Increased from 2.5
+        ease: 'power1.inOut',
+      },
+      '-=3.5'
+    ) // More overlap for smoother appearance
+
+    .to(
+      '.new-content',
+      {
+        opacity: 1,
+        y: 0,
+        duration: 4, // Increased from 2.5
+        ease: 'power1.inOut',
+      },
+      '-=2'
+    )
+
+    // Final image transitions - much smoother
+    .to(
+      centerImage,
+      {
+        autoAlpha: 1,
+        duration: 4, // Increased from 2.5
+        ease: 'power1.inOut',
+      },
+      '-=2'
+    )
+
+    .to(
+      secondImage,
+      {
+        autoAlpha: 0,
+        duration: 3, // Added explicit duration
+        ease: 'power1.inOut',
+      },
+      '<'
+    )
+
+    .to(
+      '.content-bottom',
+      {
+        opacity: 0,
+        duration: 2.5, // Increased from 1.2
+        ease: 'power1.inOut',
+      },
+      '-=1.5'
+    )
+
+    .to(
+      centerImage,
+      {
+        scale: 0.7,
+        ease: 'power1.inOut',
+        duration: 4, // Doubled from 2 for a much slower scale effect
+      },
+      '-=2'
+    ); // Better overlap
 
   return firstTl;
 };
