@@ -141,12 +141,45 @@ export const landingTimeline = () => {
 const createAnythingV2 = () => {
   const secondImage = document.querySelector('.second-img') as HTMLElement;
   const firstImage = document.querySelector('.first-img') as HTMLElement;
-  const centerImage = document.querySelector('.third-img') as HTMLElement;
+  const centerImage = document.querySelector('.slide-1') as HTMLElement;
   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
   const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
   const content = document.querySelector('.content') as HTMLElement;
   const scramble1 = document.querySelector('.scramble-1') as HTMLElement;
   const scramble2 = document.querySelector('.scamble-2') as HTMLElement;
+  const goAnywhereCopy = document.querySelector('.go-anywhere-copy') as HTMLElement;
+  const createText = document.querySelector('.scramble-3') as HTMLElement;
+  const anythingText = document.querySelector('.scramble-4') as HTMLElement;
+
+  const splitGoAnywhereCopy = new SplitText(goAnywhereCopy, {
+    type: 'chars',
+    charsClass: 'char',
+  });
+
+  // Create the scramble animation timeline
+  const scrambleTl = gsap.timeline();
+
+  scrambleTl.fromTo(
+    splitGoAnywhereCopy.chars,
+    {
+      opacity: 0, // Start fully transparent
+    },
+    {
+      duration: 1.2, // Adjust duration
+      scrambleText: {
+        text: '{original}', // Keeps the original text but scrambles first
+        chars: 'upperCase', // Can be 'lowerCase', 'upperCase', 'symbols', 'numbers'
+        revealDelay: 0.2, // Delay before revealing the actual text
+        speed: 0.6, // Scramble speed
+        // delimiter: '', // No delimiter
+        tweenLength: false, // Keep the length constant
+      },
+      opacity: 1, // Fade in while scrambling
+      stagger: 0.05, // Each letter animates sequentially
+      ease: 'none',
+    }
+  );
+
   gsap.timeline({ defaults: { duration: 1 } });
 
   gsap.set(
@@ -159,19 +192,16 @@ const createAnythingV2 = () => {
       scramble2,
       content,
       swappableWrapper,
+      createText,
+      anythingText,
     ],
     { autoAlpha: 0 }
   );
 
   gsap.set(centerImage, {
-    position: 'absolute',
-    width: '100vw',
-    height: '100vh',
-    objectFit: 'cover',
-    top: 0,
-    left: 0,
     zIndex: 5,
   });
+
   const firstTl = gsap.timeline({
     scrollTrigger: {
       trigger: '.home-scroll-section',
@@ -191,122 +221,22 @@ const createAnythingV2 = () => {
     .to(content, { autoAlpha: 1 })
     .to(scramble1, { autoAlpha: 1 }, '>')
     .to(scramble2, { autoAlpha: 1 }, '>')
+    .add(scrambleTl, '<')
     .to(clippedBox, { width: '100%', height: '100%', ease: 'power2.out', duration: 1.5 })
     .to(firstImage, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
     .to(swappableWrapper, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
     .to(secondImage, { autoAlpha: 1, duration: 3, ease: 'power3.out' }, '-=1')
     .to(content, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
+    .to('.new-content', { opacity: 1, y: 0, duration: 2, ease: 'power3.out' }, '-=0.8')
+    .to(createText, { autoAlpha: 1, duration: 2, ease: 'power3.out' }, '-=1')
+    .to(anythingText, { autoAlpha: 1, duration: 2, ease: 'power3.out' }, '-=1')
     .to(centerImage, { autoAlpha: 1, duration: 2, ease: 'power3.out' }, '-=1')
-    .set(secondImage, { visibility: 'hidden' });
+    .to(secondImage, { autoAlpha: 0 }, '<')
+    .to('.content-bottom', { opacity: 0, duration: 1, ease: 'power2.out' }, '-=0.5')
+    .to(centerImage, { scale: 0.7 }, '-=1');
 
   return firstTl;
 };
-
-function createAnything() {
-  const centerSlideImg = document.querySelector('.center-img') as HTMLElement;
-  const homeScrollSection = document.querySelector('.home-scroll-section') as HTMLElement;
-  const horizontalSection = document.querySelector('.horizontal-section') as HTMLElement;
-  const sections = gsap.utils.toArray('.slide');
-
-  // Master timeline
-
-  // First Animation Timeline (boxTl)
-  const boxTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: homeScrollSection,
-      start: 'top top',
-      end: '+=300%',
-      pin: true,
-      scrub: 1,
-      anticipatePin: 1,
-      markers: true,
-    },
-  });
-
-  // gsap.set('.slide-v2', { yPercent: -200, zIndex: 100, position: 'absolute' });
-  gsap.set(centerSlideImg, {
-    opacity: 0,
-  });
-  gsap.set('.content', { opacity: 0 });
-
-  // Build boxTl animations
-  boxTl
-
-    .to('.content', { opacity: 0, duration: 1 })
-
-    .to('.clipped-box')
-
-    .to('.scramble-3', {
-      scrambleText: {
-        text: 'CREATE',
-        chars: 'BCDEFW',
-        speed: 0.5,
-        revealDelay: 0.5,
-      },
-    })
-    .to('.scramble-4', {
-      scrambleText: {
-        text: 'ANYTHING',
-        chars: 'BCDEFGHI',
-        revealDelay: 0.5,
-        speed: 1,
-      },
-    })
-    // .to(centerSlideImg, {
-    //   opacity: 1,
-    //   duration: 2,
-    //   ease: 'power2.out',
-    // })
-    .to('.content-bottom', { opacity: 0, duration: 1, ease: 'power2.out' }, '-=0.5')
-    .to('.second-img', { opacity: 0, visibility: 'hidden' }, '>')
-
-    .to('.create-anything-wrapper', { y: '-70vh', duration: 1, ease: 'power2.out' }, '>')
-    .to('.slide-img', { opacity: 1, duration: 1, ease: 'power2.out' }, '+=0.5');
-
-  // Horizontal Scroll Timeline
-  // const horizontalTl = gsap.timeline({
-  //   scrollTrigger: {
-  //     trigger: '.horizontal-section',
-  //     start: 'top top',
-  //     end: '+=5000',
-  //     pin: true,
-  //     scrub: 1,
-  //     snap: 1 / (sections.length - 1),
-  //   },
-  // });
-
-  // // Build horizontalTl animations
-  // horizontalTl.to(sections, {
-  //   xPercent: -100 * (sections.length - 1),
-  //   duration: 10,
-  //   ease: 'none',
-  // });
-
-  // Initial states
-
-  // Transition Timeline
-  // const transitionTl = gsap.timeline({
-  //   onComplete: () => {
-  //     gsap.set(horizontalSection, {
-  //       width: '600%',
-  //       position: 'static',
-  //     });
-  //     horizontalTl.play(0);
-  //   },
-  // });
-
-  // transitionTl.to(centerSlideImg, {
-  //   width: '70vw',
-  //   height: 'auto',
-  //   scale: 1,
-  //   duration: 1,
-  // });
-
-  // // Build master timeline
-  // masterTl.add(boxTl).add(transitionTl).add(horizontalTl);
-
-  return boxTl;
-}
 
 export function meetAnybody() {
   const elements = {
@@ -369,116 +299,11 @@ export function meetAnybody() {
   // BLINK (no scrub)
   masterTimeline
     .to(elements.windowContainer, { opacity: 1, duration: 0.5 })
-    .to(elements.windowContainer, { width: '100%', height: '100%', duration: 1.5 })
+    .to(elements.windowContainer, { width: '100vw', height: '100vh', duration: 1 })
     .to(elements.meetImg, { opacity: 1, duration: 1 }, '-=1.8')
     .to(elements.meetContent, { opacity: 1, duration: 1 }, '-=1');
 
   return masterTimeline;
-}
-function readyPlayerTl() {
-  const readyPlayerSection = document.querySelector('.ready-player-section') as HTMLElement;
-  const readyText = document.querySelector('.ready-text') as HTMLElement;
-  const playerText = document.querySelector('.player-text') as HTMLElement;
-  const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
-  const cartridgeVideo = document.querySelector('.cartridge-vid') as HTMLElement;
-
-  // Single timeline with scroll trigger but no pinning
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: readyPlayerSection,
-      start: 'top top',
-      end: '+=200%', // This now represents actual scroll distance
-      scrub: 1,
-      markers: true, // Helpful for debugging, remove in production
-      onUpdate: (self) => {
-        // Optional: could use this to trigger the video expansion
-        // when reaching a certain scroll progress
-        if (self.progress > 0.8) {
-          // Could trigger final state here
-        }
-      },
-    },
-  });
-
-  // Initial states
-  gsap.set(cartridgeVideo, {
-    scale: 0,
-    opacity: 0,
-  });
-  gsap.set(cartridgeWrapper, {
-    transformOrigin: '50% 50% -150',
-    perspective: 1200,
-    backfaceVisibility: 'visible',
-    transformStyle: 'preserve-3d',
-    yPercent: -350,
-  });
-  gsap.set([readyText, playerText], { opacity: 0 });
-
-  tl
-    // Cartridge movement
-    .to(
-      cartridgeWrapper,
-      {
-        yPercent: 60,
-        duration: 10,
-        ease: 'none',
-      },
-      0
-    )
-
-    // Text animations
-    .to(
-      readyText,
-      {
-        opacity: 1,
-        duration: 2,
-        ease: 'power2.out',
-      },
-      3
-    )
-    .to(
-      playerText,
-      {
-        opacity: 1,
-        duration: 2,
-        ease: 'power2.out',
-      },
-      5
-    )
-
-    // Video growth can now scale beyond viewport
-    .to(
-      cartridgeVideo,
-      {
-        scale: 0.3,
-        opacity: 1,
-        duration: 2,
-        ease: 'power2.in',
-      },
-      6
-    )
-    .to(
-      cartridgeVideo,
-      {
-        scale: 1.5, // Can go bigger than viewport
-        duration: 4,
-        ease: 'power2.inOut',
-      },
-      8
-    )
-
-    // Fade out other elements
-    .to(
-      [readyText, playerText, cartridgeWrapper],
-      {
-        opacity: 0,
-        duration: 2,
-        ease: 'power2.in',
-      },
-      9
-    );
-
-  return tl;
 }
 
 export function beAnyoneTl() {
