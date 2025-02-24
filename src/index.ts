@@ -12,7 +12,7 @@ export const landingTimeline = () => {
     scrollTrigger: {
       trigger: '.home-landing-section',
       start: 'top top',
-      end: '+=400%', // Increased scroll distance for a more gradual animation
+      end: '+=200%', // Increased scroll distance for a more gradual animation
       pin: true,
       scrub: 1.5, // Increased scrub delay for smoother syncing
       // Consider removing or tweaking anticipatePin if it doesn't feel right
@@ -140,7 +140,7 @@ const createAnythingV2 = () => {
     scrollTrigger: {
       trigger: '.home-scroll-section',
       start: 'top top',
-      end: '+=350%', // Increased distance for smoother transitions
+      end: '+=500%', // Increased distance for smoother transitions
       pin: true,
       scrub: 1.5,
       anticipatePin: 0.5,
