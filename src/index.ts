@@ -125,7 +125,6 @@ const createAnythingV2 = () => {
     [
       secondImage,
       centerImage,
-      firstImage,
       clippedBox,
       scramble1,
       scramble2,
@@ -153,7 +152,6 @@ const createAnythingV2 = () => {
 
   firstTl
     // Slow and smooth entry of first elements
-    .to(firstImage, { autoAlpha: 1, duration: 2, ease: 'power1.inOut' })
     .to(clippedBox, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(swappableWrapper, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(content, { autoAlpha: 1, duration: 2, ease: 'power1.inOut' })
