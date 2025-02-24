@@ -39,9 +39,9 @@ export const landingTimeline = () => {
       trigger: '.home-landing-section',
       start: 'top top',
       end: '+=200%', // Increased scroll distance for a more gradual animation
-      pin: true,
-      scrub: 1.5, // Increased scrub delay for smoother syncing
-      // Consider removing or tweaking anticipatePin if it doesn't feel right
+      // pin: true,
+      // scrub: 1.5, // Increased scrub delay for smoother syncing
+      // // Consider removing or tweaking anticipatePin if it doesn't feel right
       anticipatePin: 0.5,
       // markers: true, // Disable in production
     },
