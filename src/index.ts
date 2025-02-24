@@ -18,25 +18,19 @@ export const landingTimeline = () => {
   });
 
   const scrambleTl = gsap.timeline();
-  scrambleTl.fromTo(
-    splitLandingCopy.chars,
-    {
-      opacity: 0,
+  scrambleTl.to(splitLandingCopy.chars, {
+    duration: 2.5, // Increased from 1.5 for smoother text appearance
+    scrambleText: {
+      text: '{original}',
+      chars: 'upperCase',
+      revealDelay: 0.3, // Increased from 0.2
+      speed: 0.4, // Decreased from 0.6 for a slower scramble effect
+      tweenLength: false,
     },
-    {
-      duration: 2.5, // Increased from 1.5 for smoother text appearance
-      scrambleText: {
-        text: '{original}',
-        chars: 'upperCase',
-        revealDelay: 0.3, // Increased from 0.2
-        speed: 0.4, // Decreased from 0.6 for a slower scramble effect
-        tweenLength: false,
-      },
-      opacity: 1,
-      stagger: 0.08, // Increased from 0.05 for more noticeable character sequence
-      ease: 'power1.inOut', // Changed from 'none' for smoother transitions
-    }
-  );
+    opacity: 1,
+    stagger: 0.08, // Increased from 0.05 for more noticeable character sequence
+    ease: 'power1.inOut', // Changed from 'none' for smoother transitions
+  });
 
   const landing = gsap.timeline({
     scrollTrigger: {
