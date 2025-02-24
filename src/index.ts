@@ -7,74 +7,12 @@ import SplitText from 'gsap/SplitText';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
 
-interface BlinkInConfig {
-  duration?: number; // Duration for each half-cycle (e.g., 0.1s)
-  blinkCount?: number; // Total full blinks desired
-  ease?: string;
-}
-
-// Register the custom "blink" effect.
-gsap.registerEffect({
-  name: 'blinkIn',
-  effect: (targets: gsap.TweenTarget, config: BlinkInConfig) => {
-    // For a "blink in", we want to start at 0 and toggle to 1 repeatedly,
-    // ending at 1 (visible). Each half-cycle is one toggle.
-    // For example, for 5 full blinks, we need:
-    //   totalHalfCycles = (blinkCount * 2 - 1)
-    // and then:
-    //   repeat = totalHalfCycles - 1  (since the first half-cycle is not a repeat)
-    const blinkCount = config.blinkCount ?? 5;
-    const totalHalfCycles = blinkCount * 2 - 1;
-    const repeatCount = totalHalfCycles - 1;
-
-    return gsap.to(targets, {
-      opacity: 1, // Toggle to fully visible
-      duration: config.duration, // Duration for each half-cycle
-      yoyo: true, // Reverse back to 0 on each cycle
-      repeat: repeatCount, // Repeat to achieve the desired blink count
-      ease: config.ease,
-    });
-  },
-  defaults: {
-    duration: 0.1,
-    blinkCount: 5,
-    ease: 'power1.inOut',
-  },
-  extendTimeline: true, // Allow using this effect in timelines
-});
-
-gsap.registerEffect({
-  name: 'fadeIn',
-  effect: (targets: gsap.TweenTarget, config: gsap.TweenVars) => {
-    return gsap.to(targets, {
-      opacity: 1,
-      duration: config.duration || 0.5,
-      ease: config.ease || 'power2.out',
-      ...config,
-    });
-  },
-  extendTimeline: true,
-});
-
-gsap.registerEffect({
-  name: 'fadeOut',
-  effect: (targets: gsap.TweenTarget, config: gsap.TweenVars) => {
-    return gsap.to(targets, {
-      opacity: 0,
-      duration: config.duration || 0.5,
-      ease: config.ease || 'power2.out',
-      ...config,
-    });
-  },
-  extendTimeline: true,
-});
-
 export const landingTimeline = () => {
   const landing = gsap.timeline({
     scrollTrigger: {
       trigger: '.home-landing-section',
       start: 'top top',
-      end: '+=200%', // Increased scroll distance for a more gradual animation
+      end: '+=400%', // Increased scroll distance for a more gradual animation
       pin: true,
       scrub: 1.5, // Increased scrub delay for smoother syncing
       // Consider removing or tweaking anticipatePin if it doesn't feel right
