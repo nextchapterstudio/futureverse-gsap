@@ -17,6 +17,8 @@ export const landingTimeline = () => {
     charsClass: 'char',
   });
 
+  gsap.set(splitLandingCopy.chars, { opacity: 0 });
+
   const scrambleTl = gsap.timeline();
   scrambleTl.to(splitLandingCopy.chars, {
     duration: 2.5, // Increased from 1.5 for smoother text appearance
@@ -27,7 +29,7 @@ export const landingTimeline = () => {
       speed: 0.4, // Decreased from 0.6 for a slower scramble effect
       tweenLength: false,
     },
-    opacity: 1,
+    autoAlpha: 1,
     stagger: 0.08, // Increased from 0.05 for more noticeable character sequence
     ease: 'power1.inOut', // Changed from 'none' for smoother transitions
   });
