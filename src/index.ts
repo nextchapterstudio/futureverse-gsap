@@ -10,6 +10,34 @@ import SplitText from 'gsap/SplitText';
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
 
 export const landingTimeline = () => {
+  const intoText = document.querySelector('.into-text') as HTMLElement;
+
+  const splitLandingCopy = new SplitText(intoText, {
+    type: 'chars',
+    charsClass: 'char',
+  });
+
+  const scrambleTl = gsap.timeline();
+  scrambleTl.fromTo(
+    splitLandingCopy.chars,
+    {
+      opacity: 0,
+    },
+    {
+      duration: 2.5, // Increased from 1.5 for smoother text appearance
+      scrambleText: {
+        text: '{original}',
+        chars: 'upperCase',
+        revealDelay: 0.3, // Increased from 0.2
+        speed: 0.4, // Decreased from 0.6 for a slower scramble effect
+        tweenLength: false,
+      },
+      opacity: 1,
+      stagger: 0.08, // Increased from 0.05 for more noticeable character sequence
+      ease: 'power1.inOut', // Changed from 'none' for smoother transitions
+    }
+  );
+
   const landing = gsap.timeline({
     scrollTrigger: {
       trigger: '.home-landing-section',
@@ -34,48 +62,7 @@ export const landingTimeline = () => {
       duration: 1.5, // Slightly longer duration for smoother exit
       ease: 'power2.out',
     })
-    .set('.intro-text', { visibility: 'visible' })
-    .to('.line-1', {
-      scrambleText: {
-        text: 'THE IMMERSIVE SOCIAL PLATFORM',
-        chars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-        speed: 0.6,
-        delimiter: ' ',
-        tweenLength: false,
-      },
-      duration: 2.5, // Extended duration for a more gradual effect
-      ease: 'power2.out',
-    })
-    .to(
-      '.line-2',
-      {
-        scrambleText: {
-          text: 'POWERING AN INTERCONNECTED UNIVERSE',
-          chars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-          speed: 0.6,
-          delimiter: ' ',
-          tweenLength: false,
-        },
-        duration: 2.5,
-        ease: 'power2.out',
-      },
-      '-=1.8'
-    )
-    .to(
-      '.line-3',
-      {
-        scrambleText: {
-          text: 'OF GAMES AND EXPERIENCES',
-          chars: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
-          speed: 0.6,
-          delimiter: ' ',
-          tweenLength: false,
-        },
-        duration: 2.5,
-        ease: 'power2.out',
-      },
-      '-=1.8'
-    );
+    .add(scrambleTl, '+=0.5'); // Slightly delayed scramble text animation;
 
   return landing;
 };
