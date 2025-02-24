@@ -42,23 +42,32 @@ function readyPlayerTl() {
     perspective: 1200,
     backfaceVisibility: 'visible',
     transformStyle: 'preserve-3d',
-    yPercent: -350,
+    yPercent: -700,
   });
-  gsap.set([readyText, playerText], { opacity: 0 });
+  gsap.set([readyText, playerText], { yPercent: 200 });
 
   tl
     // Cartridge movement
     .to(
       cartridgeWrapper,
       {
-        yPercent: 60,
+        yPercent: 0,
         duration: 10,
         ease: 'none',
       },
       0
     )
-
-    // Text animations
+    .to(
+      cartridgeWrapper,
+      {
+        rotateY: '+=30',
+        ease: 'power2.inOut',
+        duration: 3,
+        yoyo: true,
+        repeat: 1,
+      },
+      '<+=1'
+    )
     .to(
       readyText,
       {
@@ -66,49 +75,49 @@ function readyPlayerTl() {
         duration: 2,
         ease: 'power2.out',
       },
-      3
-    )
-    .to(
-      playerText,
-      {
-        opacity: 1,
-        duration: 2,
-        ease: 'power2.out',
-      },
-      5
-    )
-
-    // Video growth can now scale beyond viewport
-    .to(
-      cartridgeVideo,
-      {
-        scale: 0.3,
-        opacity: 1,
-        duration: 2,
-        ease: 'power2.in',
-      },
-      6
-    )
-    .to(
-      cartridgeVideo,
-      {
-        scale: 1.5, // Can go bigger than viewport
-        duration: 4,
-        ease: 'power2.inOut',
-      },
-      8
-    )
-
-    // Fade out other elements
-    .to(
-      [readyText, playerText, cartridgeWrapper],
-      {
-        opacity: 0,
-        duration: 2,
-        ease: 'power2.in',
-      },
-      9
+      '>'
     );
+  // .to(
+  //   playerText,
+  //   {
+  //     opacity: 1,
+  //     duration: 2,
+  //     ease: 'power2.out',
+  //   },
+  //   5
+  // )
+
+  // // Video growth can now scale beyond viewport
+  // .to(
+  //   cartridgeVideo,
+  //   {
+  //     scale: 0.3,
+  //     opacity: 1,
+  //     duration: 2,
+  //     ease: 'power2.in',
+  //   },
+  //   6
+  // )
+  // .to(
+  //   cartridgeVideo,
+  //   {
+  //     scale: 1.5, // Can go bigger than viewport
+  //     duration: 4,
+  //     ease: 'power2.inOut',
+  //   },
+  //   8
+  // )
+
+  // // Fade out other elements
+  // .to(
+  //   [readyText, playerText, cartridgeWrapper],
+  //   {
+  //     opacity: 0,
+  //     duration: 2,
+  //     ease: 'power2.in',
+  //   },
+  //   9
+  // );
 
   return tl;
 }

@@ -73,11 +73,13 @@ export const landingTimeline = () => {
   const landing = gsap.timeline({
     scrollTrigger: {
       trigger: '.home-landing-section',
-      start: 'top top', // Start animation when reaching the section
-      end: '+=150%', // Keep it pinned for longer
-      pin: true, // Keep the section fixed
-      scrub: 1, // Play the animation naturally
-      anticipatePin: 1, // Start the animation before reaching the section
+      start: 'top top',
+      end: '+=200%', // Increased scroll distance for a more gradual animation
+      pin: true,
+      scrub: 1.5, // Increased scrub delay for smoother syncing
+      // Consider removing or tweaking anticipatePin if it doesn't feel right
+      anticipatePin: 0.5,
+      // markers: true, // Disable in production
     },
   });
 
@@ -89,10 +91,10 @@ export const landingTimeline = () => {
     .to('.readyverse-logo', {
       opacity: 0,
       y: -50,
-      duration: 1,
-      ease: 'power3.out',
+      duration: 1.5, // Slightly longer duration for smoother exit
+      ease: 'power2.out',
     })
-    .set('.intro-text', { visibility: 'visible' }) // Ensure text is visible
+    .set('.intro-text', { visibility: 'visible' })
     .to('.line-1', {
       scrambleText: {
         text: 'THE IMMERSIVE SOCIAL PLATFORM',
@@ -101,8 +103,8 @@ export const landingTimeline = () => {
         delimiter: ' ',
         tweenLength: false,
       },
-      duration: 2,
-      ease: 'power3.out',
+      duration: 2.5, // Extended duration for a more gradual effect
+      ease: 'power2.out',
     })
     .to(
       '.line-2',
@@ -114,11 +116,11 @@ export const landingTimeline = () => {
           delimiter: ' ',
           tweenLength: false,
         },
-        duration: 2,
-        ease: 'power3.out',
+        duration: 2.5,
+        ease: 'power2.out',
       },
-      '-=1.5'
-    ) // Overlap animation slightly
+      '-=1.8'
+    )
     .to(
       '.line-3',
       {
@@ -129,11 +131,11 @@ export const landingTimeline = () => {
           delimiter: ' ',
           tweenLength: false,
         },
-        duration: 2,
-        ease: 'power3.out',
+        duration: 2.5,
+        ease: 'power2.out',
       },
-      '-=1.5'
-    ); // Overlap animation slightly
+      '-=1.8'
+    );
 
   return landing;
 };
@@ -156,32 +158,28 @@ const createAnythingV2 = () => {
     charsClass: 'char',
   });
 
-  // Create the scramble animation timeline
   const scrambleTl = gsap.timeline();
-
   scrambleTl.fromTo(
     splitGoAnywhereCopy.chars,
     {
-      opacity: 0, // Start fully transparent
+      opacity: 0,
     },
     {
-      duration: 1.2, // Adjust duration
+      duration: 1.5,
       scrambleText: {
-        text: '{original}', // Keeps the original text but scrambles first
-        chars: 'upperCase', // Can be 'lowerCase', 'upperCase', 'symbols', 'numbers'
-        revealDelay: 0.2, // Delay before revealing the actual text
-        speed: 0.6, // Scramble speed
-        // delimiter: '', // No delimiter
-        tweenLength: false, // Keep the length constant
+        text: '{original}',
+        chars: 'upperCase',
+        revealDelay: 0.2,
+        speed: 0.6,
+        tweenLength: false,
       },
-      opacity: 1, // Fade in while scrambling
-      stagger: 0.05, // Each letter animates sequentially
+      opacity: 1,
+      stagger: 0.05,
       ease: 'none',
     }
   );
 
-  gsap.timeline({ defaults: { duration: 1 } });
-
+  // Pre-set elements to hidden for performance
   gsap.set(
     [
       secondImage,
@@ -198,19 +196,17 @@ const createAnythingV2 = () => {
     { autoAlpha: 0 }
   );
 
-  gsap.set(centerImage, {
-    zIndex: 5,
-  });
+  gsap.set(centerImage, { zIndex: 5 });
 
   const firstTl = gsap.timeline({
     scrollTrigger: {
       trigger: '.home-scroll-section',
       start: 'top top',
-      end: '+=300%',
+      end: '+=350%', // Increased distance for smoother transitions
       pin: true,
-      scrub: 1,
-      anticipatePin: 1,
-      markers: true,
+      scrub: 1.5,
+      anticipatePin: 0.5,
+      // markers: true,
     },
   });
 
@@ -222,18 +218,18 @@ const createAnythingV2 = () => {
     .to(scramble1, { autoAlpha: 1 }, '>')
     .to(scramble2, { autoAlpha: 1 }, '>')
     .add(scrambleTl, '<')
-    .to(clippedBox, { width: '100%', height: '100%', ease: 'power2.out', duration: 1.5 })
-    .to(firstImage, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
-    .to(swappableWrapper, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
-    .to(secondImage, { autoAlpha: 1, duration: 3, ease: 'power3.out' }, '-=1')
-    .to(content, { autoAlpha: 0, ease: 'power3.out' }, '-=1')
-    .to('.new-content', { opacity: 1, y: 0, duration: 2, ease: 'power3.out' }, '-=0.8')
-    .to(createText, { autoAlpha: 1, duration: 2, ease: 'power3.out' }, '-=1')
-    .to(anythingText, { autoAlpha: 1, duration: 2, ease: 'power3.out' }, '-=1')
-    .to(centerImage, { autoAlpha: 1, duration: 2, ease: 'power3.out' }, '-=1')
+    .to(clippedBox, { width: '100%', height: '100%', ease: 'power2.out', duration: 1.8 })
+    .to(firstImage, { autoAlpha: 0, ease: 'power2.out' }, '-=1')
+    .to(swappableWrapper, { autoAlpha: 0, ease: 'power2.out' }, '-=1')
+    .to(secondImage, { autoAlpha: 1, duration: 3.5, ease: 'power2.out' }, '-=1')
+    .to(content, { autoAlpha: 0, ease: 'power2.out' }, '-=1')
+    .to('.new-content', { opacity: 1, y: 0, duration: 2.5, ease: 'power2.out' }, '-=0.8')
+    .to(createText, { autoAlpha: 1, duration: 2.5, ease: 'power2.out' }, '-=1')
+    .to(anythingText, { autoAlpha: 1, duration: 2.5, ease: 'power2.out' }, '-=1')
+    .to(centerImage, { autoAlpha: 1, duration: 2.5, ease: 'power2.out' }, '-=1')
     .to(secondImage, { autoAlpha: 0 }, '<')
-    .to('.content-bottom', { opacity: 0, duration: 1, ease: 'power2.out' }, '-=0.5')
-    .to(centerImage, { scale: 0.7 }, '-=1');
+    .to('.content-bottom', { opacity: 0, duration: 1.2, ease: 'power2.out' }, '-=0.5')
+    .to(centerImage, { scale: 0.7, ease: 'power2.out' }, '-=1');
 
   return firstTl;
 };
@@ -241,8 +237,8 @@ const createAnythingV2 = () => {
 export function meetAnybody() {
   const elements = {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
-    text: document.querySelector('.meet-text') as HTMLElement,
-    anyBodyText: document.querySelector('.anybody-text') as HTMLElement,
+    meetHeading: document.querySelector('.meet-text') as HTMLElement,
+    anyBodyHeading: document.querySelector('.anybody-text') as HTMLElement,
     windowContainer: document.querySelector('.meet-window-container') as HTMLElement,
     meetContent: document.querySelector('.meet-content') as HTMLElement,
     meetImg: document.querySelector('.meet-img') as HTMLElement,
@@ -251,14 +247,14 @@ export function meetAnybody() {
   // Initial states
   gsap.set(
     [
-      elements.text,
-      elements.anyBodyText,
+      elements.meetHeading,
+      elements.anyBodyHeading,
       elements.windowContainer,
       elements.meetContent,
       elements.meetImg,
     ],
     {
-      opacity: 0,
+      autoAlpha: 0,
     }
   );
 
@@ -273,35 +269,14 @@ export function meetAnybody() {
     },
   });
 
-  gsap.set(elements.anyBodyText, { yPercent: -20 });
-
-  ScrollTrigger.create({
-    trigger: elements.section,
-    start: 'top top',
-    onEnter: () => {
-      gsap.timeline().blinkIn(elements.text).blinkIn(elements.anyBodyText);
-    },
-    onLeaveBack: () => {
-      // Smooth tween back to hidden state
-      gsap.to([elements.text, elements.anyBodyText], {
-        opacity: 0,
-        yPercent: -10,
-        duration: 0.5,
-        ease: 'power2.out',
-        onComplete: () => {
-          gsap.set([elements.text, elements.anyBodyText], { yPercent: 0 });
-          gsap.set(elements.meetImg, { zIndex: 10 });
-        },
-      });
-    },
-  });
-
   // BLINK (no scrub)
   masterTimeline
-    .to(elements.windowContainer, { opacity: 1, duration: 0.5 })
-    .to(elements.windowContainer, { width: '100vw', height: '100vh', duration: 1 })
-    .to(elements.meetImg, { opacity: 1, duration: 1 }, '-=1.8')
-    .to(elements.meetContent, { opacity: 1, duration: 1 }, '-=1');
+    .to(elements.meetHeading, { autoAlpha: 1, duration: 0.5 })
+    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 0.5 }, '>')
+    .to(elements.windowContainer, { autoAlpha: 1, duration: 0.5 })
+    .to(elements.windowContainer, { width: '100vw', height: '100vh', duration: 5 })
+    .to(elements.meetImg, { autoAlpha: 1, duration: 1 }, '-=1.8') // start just after the start of the window expansion
+    .to(elements.meetContent, { autoAlpha: 1, duration: 1 }, '-=1'); // start half thrid way through window expansion
 
   return masterTimeline;
 }
@@ -549,8 +524,7 @@ window.Webflow.push(() => {
     .add(landingTimeline()) // Add landing timeline
     .add(beAnyoneTl()) // Add beAnyone timeline
     .add(createAnythingV2()) // Overlap createAnything timeline by 0.5 seconds
-    .add(meetAnybody())
-    .add(readyPlayerTl());
+    .add(meetAnybody());
 
   // .add(horizontalScroll());
 });
