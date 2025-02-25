@@ -331,7 +331,7 @@ export function meetAnybody() {
     .to(elements.windowContainer, { autoAlpha: 1 })
     .to(elements.windowContainer, { width: '100vw', height: '100vh', duration: 5 })
     // .to(elements.meetImg, { autoAlpha: 1, duration: 1 }, '-=1.8') // start just after the start of the window expansion
-    .addLabel(scrambleTl, '-=1'); // start half thrid way through window expansion
+    .add(scrambleTl, '-=1'); // start half thrid way through window expansion
 
   return masterTimeline;
 }
@@ -583,6 +583,7 @@ function readyPlayerTl() {
       start: 'top top',
       end: '+=200%', // This now represents actual scroll distance
       pin: true,
+      scrub: 1.5, // Increased from 1.5 for smoother animations
       markers: true, // Helpful for debugging, remove in production
       onUpdate: (self) => {
         // Optional: could use this to trigger the video expansion
@@ -605,25 +606,6 @@ function readyPlayerTl() {
   });
   gsap.set([readyText, playerText], { autoAlpha: 0 });
 
-  // tl.to(
-  //   cartridgeWrapper,
-  //   {
-  //     yPercent: 0,
-  //     duration: 7,
-  //     ease: 'none',
-  //   },
-  //   0
-  // )
-  //   .to(
-  //     cartridgeWrapper,
-  //     {
-  //       rotateY: '+=30',
-  //       ease: 'power2.inOut',
-  //       duration: 4,
-  //       yoyo: true,
-  //     },
-  //     '0'
-  //   )
   tl.to(readyText, {
     autoAlpha: 1,
     ease: 'power2.out',
@@ -633,48 +615,6 @@ function readyPlayerTl() {
       ease: 'power2.out',
     })
     .from(cartridgeWrapper, { yPercent: 0, duration: 3, ease: 'none' }, 0);
-
-  // .to(
-  //   playerText,
-  //   {
-  //     opacity: 1,
-  //     duration: 2,
-  //     ease: 'power2.out',
-  //   },
-  //   5
-  // )
-
-  // // Video growth can now scale beyond viewport
-  // .to(
-  //   cartridgeVideo,
-  //   {
-  //     scale: 0.3,
-  //     opacity: 1,
-  //     duration: 2,
-  //     ease: 'power2.in',
-  //   },
-  //   6
-  // )
-  // .to(
-  //   cartridgeVideo,
-  //   {
-  //     scale: 1.5, // Can go bigger than viewport
-  //     duration: 4,
-  //     ease: 'power2.inOut',
-  //   },
-  //   8
-  // )
-
-  // // Fade out other elements
-  // .to(
-  //   [readyText, playerText, cartridgeWrapper],
-  //   {
-  //     opacity: 0,
-  //     duration: 2,
-  //     ease: 'power2.in',
-  //   },
-  //   9
-  // );
 
   return tl;
 }
