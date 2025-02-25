@@ -611,7 +611,7 @@ function readyPlayerTl() {
       },
       '-=1' // Overlap fade-in slightly for a smoother transition
     )
-    .to(cartridgeWrapper, { yPercent: 0, duration: 3, ease: 'none' }, 0);
+    .from(cartridgeWrapper, { yPercent: 0, duration: 3, ease: 'none' }, 0);
 
   return tl;
 }
