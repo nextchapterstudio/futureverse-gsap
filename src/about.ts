@@ -34,6 +34,7 @@ window.Webflow.push(() => {
       end: 'bottom 20%',
       // markers: true, // Uncomment for debugging
       toggleActions: 'play none none reset',
+      scrub: 1, // Smooth scrubbing
     },
   });
 
@@ -82,7 +83,6 @@ window.Webflow.push(() => {
           trigger: element,
           start: 'top center', // Start halfway through the viewport
           end: 'center center',
-          scrub: true, // Smooth color transition during scroll
           // markers: true, // Uncomment for debugging
         },
       })
