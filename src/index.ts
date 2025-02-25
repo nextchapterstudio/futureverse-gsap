@@ -59,7 +59,7 @@ export const landingTimeline = () => {
 
   const landing = gsap.timeline({
     scrollTrigger: {
-      trigger: '.readyverse-logo-home',
+      trigger: '.home-landing-section',
       start: 'top top',
       end: '+=200%',
       pin: true,
@@ -69,11 +69,11 @@ export const landingTimeline = () => {
   });
 
   landing
-    .to('.readyverse-logo', {
+    .to('.readyverse-logo-home', {
       opacity: 1,
       duration: 2,
     })
-    .to('.readyverse-logo', {
+    .to('.readyverse-logo-home', {
       opacity: 0,
       y: -50,
       duration: 1.5,
