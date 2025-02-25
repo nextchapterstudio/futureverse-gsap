@@ -77,6 +77,7 @@ const createAnythingV2 = () => {
   const goAnywhereCopy = document.querySelector('.go-anywhere-copy') as HTMLElement;
   const createText = document.querySelector('.scramble-3') as HTMLElement;
   const anythingText = document.querySelector('.scramble-4') as HTMLElement;
+  const createAnythingCopy = document.querySelector('.create-anything-copy') as HTMLElement;
 
   // Slow down the scramble text animation for a smoother effect
   const splitGoAnywhereCopy = new SplitText(goAnywhereCopy, {
@@ -84,7 +85,12 @@ const createAnythingV2 = () => {
     charsClass: 'char',
   });
 
-  const scrambleTl = gsap.timeline();
+  const createAnythingSplit = new SplitText(createAnythingCopy, {
+    type: 'chars',
+    charsClass: 'char',
+  });
+
+  const scrambleTl = gsap.timeline({ paused: true });
   scrambleTl.fromTo(
     splitGoAnywhereCopy.chars,
     {
@@ -102,6 +108,25 @@ const createAnythingV2 = () => {
       opacity: 1,
       stagger: 0.05, // Increased from 0.05 for more noticeable character sequence
       ease: 'power1.inOut', // Changed from 'none' for smoother transitions
+    }
+  );
+
+  const scrambleTlTwo = gsap.timeline({ paused: true });
+  scrambleTlTwo.fromTo(
+    createAnythingSplit.chars,
+    { opacity: 0 },
+    {
+      duration: 5,
+      scrambleText: {
+        text: '{original}',
+        chars: 'upperCase',
+        revealDelay: 0.3,
+        speed: 0.4,
+        tweenLength: false,
+      },
+      opacity: 1,
+      stagger: 0.05,
+      ease: 'power1.inOut',
     }
   );
 
@@ -142,7 +167,7 @@ const createAnythingV2 = () => {
     .to(content, { autoAlpha: 1, duration: 2, ease: 'power1.inOut' })
     .to(scramble1, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(scramble2, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
-    .add(scrambleTl, '<')
+    .add(scrambleTl.play(), '<')
 
     // Much slower expansion of clipped box
     .to(clippedBox, {
@@ -194,7 +219,7 @@ const createAnythingV2 = () => {
     ) // Better overlap timing
 
     .to(
-      createText,
+      [createText, anythingText],
       {
         autoAlpha: 1,
         duration: 4, // Increased from 2.5
@@ -202,27 +227,7 @@ const createAnythingV2 = () => {
       },
       '-=2.5'
     )
-
-    .to(
-      anythingText,
-      {
-        autoAlpha: 1,
-        duration: 4, // Increased from 2.5
-        ease: 'power1.inOut',
-      },
-      '-=3.5'
-    ) // More overlap for smoother appearance
-
-    .to(
-      '.new-content',
-      {
-        opacity: 1,
-        y: 0,
-        duration: 4, // Increased from 2.5
-        ease: 'power1.inOut',
-      },
-      '-=2'
-    )
+    .add(scrambleTlTwo.play(), '+=2')
 
     // Final image transitions - much smoother
     .to(
@@ -278,17 +283,34 @@ export function meetAnybody() {
     meetImg: document.querySelector('.meet-img') as HTMLElement,
   };
 
+  const meetAnybodySplit = new SplitText(elements.meetContent, {
+    type: 'chars',
+    charsClass: 'char',
+  });
   // Initial states
   gsap.set(
-    [
-      elements.meetHeading,
-      elements.anyBodyHeading,
-      elements.windowContainer,
-      elements.meetContent,
-      elements.meetImg,
-    ],
+    [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
     {
       autoAlpha: 0,
+    }
+  );
+
+  const scrambleTl = gsap.timeline();
+  scrambleTl.fromTo(
+    meetAnybodySplit.chars,
+    { opacity: 0 },
+    {
+      duration: 5, // Increased from 1.5 for smoother text appearance
+      scrambleText: {
+        text: '{original}',
+        chars: 'upperCase',
+        revealDelay: 0.3, // Increased from 0.2
+        speed: 0.4, // Decreased from 0.6 for a slower scramble effect
+        tweenLength: false,
+      },
+      opacity: 1,
+      stagger: 0.05, // Increased from 0.05 for more noticeable character sequence
+      ease: 'power1.inOut', // Changed from 'none' for smoother transitions
     }
   );
 
