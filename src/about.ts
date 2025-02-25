@@ -15,6 +15,7 @@ window.Webflow.push(() => {
       trigger: splitTextArray[0], // Use the first paragraph as trigger
       start: 'top 70%',
       end: 'bottom 20%',
+      scrub: 1,
       // markers: true, // Uncomment for debugging
       toggleActions: 'play none none reset',
     },
