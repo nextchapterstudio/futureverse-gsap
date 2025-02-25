@@ -386,7 +386,8 @@ export function meetAnybody() {
       [elements.meetHeading, elements.anyBodyHeading, elements.meetContent],
       { autoAlpha: 0, duration: 2, ease: 'power2.inOut' },
       '-=3' // start fading out just before the window expansion tween ends
-    );
+    )
+    .set(elements.meetImg, { zIndex: 100 });
 
   return masterTimeline;
 }
