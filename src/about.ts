@@ -29,7 +29,7 @@ window.Webflow.push(() => {
   // Now create the master timeline for sequential animations
   const masterTimeline = gsap.timeline({
     scrollTrigger: {
-      trigger: splitTextArray[0], // Use the first paragraph as trigger
+      trigger: '.partners-section', // Use the first paragraph as trigger
       start: 'top 70%',
       end: 'bottom 20%',
       // markers: true, // Uncomment for debugging
@@ -54,11 +54,11 @@ window.Webflow.push(() => {
     // Create timeline for this specific paragraph
     const paragraphTl = gsap.timeline();
 
-    // Add character animation for opacity
+    // Add character animation for opacity (sped up)
     paragraphTl.to(splitChars.chars, {
       opacity: 1,
-      duration: 0.4,
-      stagger: 0.02,
+      duration: 0.2, // Reduced from 0.4
+      stagger: 0.01, // Reduced from 0.02
       ease: 'back.out(1.7)',
     });
 
@@ -88,7 +88,7 @@ window.Webflow.push(() => {
       })
       .to(splitChars.chars, {
         color: 'white', // Transition to white
-        duration: 1,
+        duration: 0.5, // Reduced from 1
         ease: 'none',
         stagger: 0, // All change at once based on scroll position
       });
