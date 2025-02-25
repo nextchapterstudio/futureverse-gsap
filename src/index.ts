@@ -574,29 +574,20 @@ function readyPlayerTl() {
   const readyText = document.querySelector('.ready-text') as HTMLElement;
   const playerText = document.querySelector('.player-text') as HTMLElement;
   const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
-  const cartridgeVideo = document.querySelector('.cartridge-vid') as HTMLElement;
 
-  // Single timeline with scroll trigger but no pinning
+  // Increase scroll distance and adjust scrub for a slower, smoother effect
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: readyPlayerSection,
       start: 'top top',
-      end: '+=200%', // This now represents actual scroll distance
+      end: '+=400%', // Increased scroll distance
       pin: true,
-      scrub: 1.5, // Increased from 1.5 for smoother animations
-      markers: true, // Helpful for debugging, remove in production
-      onUpdate: (self) => {
-        // Optional: could use this to trigger the video expansion
-        // when reaching a certain scroll progress
-        if (self.progress > 0.8) {
-          // Could trigger final state here
-        }
-      },
+      scrub: 2, // Increased scrub value for smoother animation
+      markers: true, // Remove markers in production
     },
   });
 
   // Initial states
-
   gsap.set(cartridgeWrapper, {
     transformOrigin: '50% 50% -150',
     perspective: 1200,
@@ -608,12 +599,18 @@ function readyPlayerTl() {
 
   tl.to(readyText, {
     autoAlpha: 1,
+    duration: 2, // Longer fade-in duration
     ease: 'power2.out',
   })
-    .to(playerText, {
-      autoAlpha: 1,
-      ease: 'power2.out',
-    })
+    .to(
+      playerText,
+      {
+        autoAlpha: 1,
+        duration: 2, // Longer fade-in duration
+        ease: 'power2.out',
+      },
+      '-=1' // Overlap fade-in slightly for a smoother transition
+    )
     .from(cartridgeWrapper, { yPercent: 0, duration: 3, ease: 'none' }, 0);
 
   return tl;
