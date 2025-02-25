@@ -87,7 +87,7 @@ export const landingTimeline = () => {
 const createAnythingV2 = () => {
   const secondImage = document.querySelector('.second-img') as HTMLElement;
   const firstImage = document.querySelector('.first-img') as HTMLElement;
-  const centerImage = document.querySelector('.slide-1') as HTMLElement;
+  const centerImage = document.querySelector('.third-img') as HTMLElement;
   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
   const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
   const content = document.querySelector('.content') as HTMLElement;
