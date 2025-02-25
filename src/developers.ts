@@ -44,6 +44,7 @@ window.Webflow.push(() => {
       '.text-container',
       {
         yPercent: -75,
+        opacity: 0,
         duration: 2,
         ease: 'power2.out',
       },
