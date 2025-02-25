@@ -10,12 +10,11 @@ window.Webflow.push(() => {
   const splitTextArray = gsap.utils.toArray<HTMLParagraphElement>('.split-text');
 
   // First, apply word wrapping to prevent splitting across lines
-  // This creates a nested structure: words containing chars
   splitTextArray.forEach((element) => {
     // First split into words
     const splitWords = new SplitText(element, {
       type: 'words',
-      wordsClass: 'split-word', // Add a class to words for styling
+      wordsClass: 'split-word',
     });
 
     // Add word-wrap: nowrap to each word to prevent breaking
@@ -26,15 +25,15 @@ window.Webflow.push(() => {
     });
   });
 
-  // Now create the master timeline for sequential animations
+  // Create the master timeline for sequential animations
   const masterTimeline = gsap.timeline({
     scrollTrigger: {
-      trigger: '.partners-section', // Use the first paragraph as trigger
-      start: '-10% bottom',
-      end: '+=100%', // Extend the end point
-      markers: true, // Uncomment for debugging
+      trigger: splitTextArray[0], // Use the first paragraph as trigger
+      start: 'top bottom', // Start when the first paragraph enters viewport
+      end: 'bottom top+=60%', // End when the last paragraph is about to leave viewport (before reaching partners)
+      markers: true,
       toggleActions: 'play none none reset',
-      scrub: 1, // Smooth scrubbing
+      scrub: 0.5, // Smoother scrubbing
     },
   });
 
@@ -49,17 +48,16 @@ window.Webflow.push(() => {
     // Set initial states for characters
     gsap.set(splitChars.chars, {
       opacity: 0.3,
-      color: 'inherit', // Start with the inherited color
     });
 
     // Create timeline for this specific paragraph
     const paragraphTl = gsap.timeline();
 
-    // Add character animation for opacity (sped up)
+    // Add character animation for opacity
     paragraphTl.to(splitChars.chars, {
       opacity: 1,
-      duration: 0.2, // Reduced from 0.4
-      stagger: 0.01, // Reduced from 0.02
+      duration: 0.2,
+      stagger: 0.01,
       ease: 'back.out(1.7)',
     });
 
@@ -68,29 +66,33 @@ window.Webflow.push(() => {
     masterTimeline.add(paragraphTl);
   });
 
-  // Add a separate ScrollTrigger for the color change of all characters
+  // Create a single color transition for all text elements
+  const colorTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: splitTextArray[0], // Use the first paragraph as the trigger
+      start: 'top center', // Start color change when first paragraph is at center
+      end: '.partners-section top', // End when reaching the partners section
+      scrub: true,
+      // markers: true,
+    },
+  });
+
+  // Add all character elements to the color timeline
   splitTextArray.forEach((element) => {
-    // Get all characters in this element
-    const splitChars = new SplitText(element, {
+    const colorSplit = new SplitText(element, {
       type: 'chars',
-      charsClass: 'color-chars', // Different class to avoid conflicts
+      charsClass: 'color-chars',
     });
 
-    // Create a color transition timeline
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: element,
-          start: 'top bottom', // Start when top of element hits bottom of viewport
-          end: 'top center',
-          // markers: true, // Uncomment for debugging
-        },
-      })
-      .to(splitChars.chars, {
-        color: 'white', // Transition to white
-        duration: 0.5, // Reduced from 1
+    // Add to the color timeline (all paragraphs change together)
+    colorTimeline.to(
+      colorSplit.chars,
+      {
+        color: 'white',
+        duration: 0.5,
         ease: 'none',
-        stagger: 0, // All change at once based on scroll position
-      });
+      },
+      0
+    ); // The "0" makes all paragraphs start the color change at the same time
   });
 });
