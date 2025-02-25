@@ -1,4 +1,3 @@
-import { Cloudinary } from 'cloudinary-core';
 import gsap from 'gsap';
 import Draggable from 'gsap/Draggable';
 import InertiaPlugin from 'gsap/InertiaPlugin';
