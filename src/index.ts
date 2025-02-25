@@ -21,7 +21,7 @@ function prepareTextForAnimation(element) {
   gsap.set(splitWords.words, {
     display: 'inline-block',
     whiteSpace: 'nowrap',
-    margin: '0 0.2em 0 0', // Add a small gap between words
+    margin: '0 0.1em 0 0', // Add a small gap between words
   });
 
   return splitWords;
