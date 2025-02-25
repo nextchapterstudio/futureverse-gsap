@@ -188,6 +188,16 @@ const createAnythingV2 = () => {
     ) // Start earlier in the clipped box animation
 
     .to(
+      content,
+      {
+        autoAlpha: 0,
+        duration: 3, // Added explicit duration
+        ease: 'power1.inOut',
+      },
+      '-=3'
+    ) // Better overlap timing
+
+    .to(
       firstImage,
       {
         autoAlpha: 0,
@@ -206,16 +216,6 @@ const createAnythingV2 = () => {
       },
       '-=2'
     )
-
-    .to(
-      content,
-      {
-        autoAlpha: 0,
-        duration: 3, // Added explicit duration
-        ease: 'power1.inOut',
-      },
-      '-=3'
-    ) // Better overlap timing
 
     .to(
       [createText, anythingText],
@@ -331,7 +331,7 @@ export function meetAnybody() {
     .to(elements.windowContainer, { autoAlpha: 1 })
     .to(elements.windowContainer, { width: '100vw', height: '100vh', duration: 5 })
     // .to(elements.meetImg, { autoAlpha: 1, duration: 1 }, '-=1.8') // start just after the start of the window expansion
-    .add(scrambleTl, '-=1'); // start half thrid way through window expansion
+    .addLabel(scrambleTl, '-=1'); // start half thrid way through window expansion
 
   return masterTimeline;
 }
