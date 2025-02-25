@@ -6,52 +6,46 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
-  const splitTextOne = document.querySelector('.split-text-1');
-  const splitTextTwo = document.querySelector('.split-text-2');
+  // Get all elements with the class .split-text
+  const splitTextArray = gsap.utils.toArray<HTMLParagraphElement>('.split-text');
 
-  const split = new SplitText(splitTextOne, {
-    type: 'lines',
-    linesClass: 'lines',
-  });
+  // Process each split-text element
+  splitTextArray.forEach((element) => {
+    // Create only character splits
+    const splitChars = new SplitText(element, {
+      type: 'chars',
+      charsClass: 'chars',
+    });
 
-  const splitChars = new SplitText(splitTextTwo, {
-    type: 'chars',
-    charsClass: 'chars',
-  });
+    // Set initial states for characters
+    gsap.set(splitChars.chars, {
+      opacity: 0.3,
+      y: 20, // Added initial y position for animation
+    });
 
-  // Set initial states
-  gsap.set(split.lines, { opacity: 0.3 });
-  gsap.set(splitChars.chars, {
-    opacity: 0.3,
-  });
+    // Create timeline for character animation only
+    const charsTl = gsap.timeline();
+    charsTl.to(splitChars.chars, {
+      opacity: 1,
+      y: 0,
+      duration: 0.4,
+      stagger: 0.02,
+      ease: 'back.out(1.7)',
+    });
 
-  const linesTl = gsap.timeline();
-  linesTl.to(split.lines, {
-    opacity: 1,
-    duration: 0.8,
-    stagger: 0.08,
-    ease: 'power2.out',
-  });
+    // Master timeline (now just consists of chars animation)
+    const masterTl = gsap.timeline();
+    masterTl.add(charsTl);
 
-  const charsTl = gsap.timeline();
-  charsTl.to(splitChars.chars, {
-    opacity: 1,
-    y: 0,
-    duration: 0.4, // Faster duration
-    stagger: 0.02, // Tighter stagger
-    ease: 'back.out(1.7)', // More energetic ease
-  });
-
-  const masterTl = gsap.timeline();
-  masterTl.add(linesTl).add(charsTl, '<0.3'); // Start chars sooner
-
-  ScrollTrigger.create({
-    trigger: splitTextOne,
-    start: 'top 70%', // Trigger earlier
-    end: 'bottom 20%', // End before reaching partners
-    animation: masterTl,
-    // markers: true,
-    scrub: 1, // Slow down animation
-    toggleActions: 'play none none reset',
+    // Create ScrollTrigger for this element
+    ScrollTrigger.create({
+      trigger: element,
+      start: 'top 70%', // Trigger earlier
+      end: 'bottom 20%', // End before reaching partners
+      animation: masterTl,
+      // markers: true,
+      scrub: 1, // Slow down animation
+      toggleActions: 'play none none reset',
+    });
   });
 });
