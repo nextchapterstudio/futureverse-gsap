@@ -32,7 +32,7 @@ window.Webflow.push(() => {
       trigger: '.partners-section', // Use the first paragraph as trigger
       start: 'top 70%',
       end: '+=100%', // Extend the end point
-      // markers: true, // Uncomment for debugging
+      markers: true, // Uncomment for debugging
       toggleActions: 'play none none reset',
       scrub: 1, // Smooth scrubbing
     },
