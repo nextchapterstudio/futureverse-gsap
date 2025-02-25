@@ -241,8 +241,8 @@ const createAnythingV2 = () => {
       '-=2'
     )
 
-    // Bring in "Create" text first, then "Anything" text with a delay
-    // This addresses the designer's feedback to sequence these text elements
+    // Start bringing in "Create" text MUCH earlier - during the second image fade-in
+    // This addresses the designer's feedback about having text appear sooner
     .to(
       createText,
       {
@@ -250,7 +250,7 @@ const createAnythingV2 = () => {
         duration: 3.5,
         ease: 'power1.inOut',
       },
-      '>-0.5'
+      '-=3.5' // Start significantly earlier, during the secondImage fade-in
     )
     .to(
       anythingText,
@@ -259,19 +259,19 @@ const createAnythingV2 = () => {
         duration: 3.5,
         ease: 'power1.inOut',
       },
-      '>-2' // Start with an overlap, but after createText has begun to appear
+      '-=2.5' // Follow shortly after createText begins appearing
     )
-    .add(scrambleTlTwo.play(), '+=1')
+    .add(scrambleTlTwo.play(), '-=2') // Start scramble effect earlier to match the text appearance
 
-    // Final image transitions - much smoother
+    // Final image transitions - start centerImage fade-in earlier for better overlap
     .to(
       centerImage,
       {
         autoAlpha: 1,
-        duration: 4, // Increased from 2.5
+        duration: 4.5, // Slightly increased duration
         ease: 'power1.inOut',
       },
-      '-=2'
+      '-=3.5' // Begin earlier for improved image cross-fade
     )
 
     .to(
