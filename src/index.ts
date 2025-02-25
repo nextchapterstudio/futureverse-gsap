@@ -318,7 +318,7 @@ export function meetAnybody() {
     scrollTrigger: {
       trigger: elements.section,
       start: 'top top',
-      end: '+=200%',
+      end: '+=350%',
       pin: true,
       scrub: true, // or only enable scrub once blinking is done
     },
@@ -580,7 +580,7 @@ function readyPlayerTl() {
     scrollTrigger: {
       trigger: readyPlayerSection,
       start: 'top top',
-      end: '+=400%', // Increased scroll distance
+      end: '+=300%', // Increased scroll distance
       pin: true,
       scrub: 2, // Increased scrub value for smoother animation
       markers: true, // Remove markers in production
@@ -611,7 +611,7 @@ function readyPlayerTl() {
       },
       '-=1' // Overlap fade-in slightly for a smoother transition
     )
-    .from(cartridgeWrapper, { yPercent: 0, duration: 3, ease: 'none' }, 0);
+    .to(cartridgeWrapper, { yPercent: 0, duration: 3, ease: 'none' }, 0);
 
   return tl;
 }
