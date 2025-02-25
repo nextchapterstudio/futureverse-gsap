@@ -1,3 +1,4 @@
+import { Cloudinary } from 'cloudinary-core';
 import gsap from 'gsap';
 import Draggable from 'gsap/Draggable';
 import InertiaPlugin from 'gsap/InertiaPlugin';
@@ -19,9 +20,10 @@ export const landingTimeline = () => {
 
   gsap.set(splitLandingCopy.chars, { opacity: 0 });
 
+  // Create the scramble timeline in a paused state
   const scrambleTl = gsap.timeline();
   scrambleTl.to(splitLandingCopy.chars, {
-    duration: 2.5, // Increased from 1.5 for smoother text appearance
+    duration: 5, // Increased from 1.5 for smoother text appearance
     scrambleText: {
       text: '{original}',
       chars: 'upperCase',
@@ -29,8 +31,8 @@ export const landingTimeline = () => {
       speed: 0.4, // Decreased from 0.6 for a slower scramble effect
       tweenLength: false,
     },
-    autoAlpha: 1,
-    stagger: 0.08, // Increased from 0.05 for more noticeable character sequence
+    opacity: 1,
+    stagger: 0.05, // Increased from 0.05 for more noticeable character sequence
     ease: 'power1.inOut', // Changed from 'none' for smoother transitions
   });
 
@@ -38,12 +40,11 @@ export const landingTimeline = () => {
     scrollTrigger: {
       trigger: '.home-landing-section',
       start: 'top top',
-      end: '+=200%', // Increased scroll distance for a more gradual animation
+      end: '+=200%',
       pin: true,
-      // scrub: 1.5, // Increased scrub delay for smoother syncing
-      // // Consider removing or tweaking anticipatePin if it doesn't feel right
+      scrub: 1.5,
       anticipatePin: 0.5,
-      // markers: true, // Disable in production
+      // markers: true,
     },
   });
 
@@ -55,10 +56,11 @@ export const landingTimeline = () => {
     .to('.readyverse-logo', {
       opacity: 0,
       y: -50,
-      duration: 1.5, // Slightly longer duration for smoother exit
+      duration: 1.5,
       ease: 'power2.out',
     })
-    .add(scrambleTl, '+=0.5'); // Slightly delayed scramble text animation;
+    // Instead of adding scrambleTl to the timeline, trigger!SECTIONit separately:
+    .add(scrambleTl, '<');
 
   return landing;
 };
@@ -98,7 +100,7 @@ const createAnythingV2 = () => {
         tweenLength: false,
       },
       opacity: 1,
-      stagger: 0.08, // Increased from 0.05 for more noticeable character sequence
+      stagger: 0.05, // Increased from 0.05 for more noticeable character sequence
       ease: 'power1.inOut', // Changed from 'none' for smoother transitions
     }
   );
@@ -271,7 +273,7 @@ export function meetAnybody() {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
     meetHeading: document.querySelector('.meet-text') as HTMLElement,
     anyBodyHeading: document.querySelector('.anybody-text') as HTMLElement,
-    windowContainer: document.querySelector('.meet-window-container') as HTMLElement,
+    windowContainer: document.querySelector('.image-box-home') as HTMLElement,
     meetContent: document.querySelector('.meet-content') as HTMLElement,
     meetImg: document.querySelector('.meet-img') as HTMLElement,
   };
@@ -545,6 +547,8 @@ export function beAnyoneTl() {
 
   return gsap.timeline();
 }
+
+// Export the function to use within your Finsweet setup
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
