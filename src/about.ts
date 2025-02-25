@@ -20,14 +20,13 @@ window.Webflow.push(() => {
     // Set initial states for characters
     gsap.set(splitChars.chars, {
       opacity: 0.3,
-      y: 20, // Added initial y position for animation
+      // y: 20, // Added initial y position for animation
     });
 
     // Create timeline for character animation only
     const charsTl = gsap.timeline();
     charsTl.to(splitChars.chars, {
       opacity: 1,
-      y: 0,
       duration: 0.4,
       stagger: 0.02,
       ease: 'back.out(1.7)',
