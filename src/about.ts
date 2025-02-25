@@ -31,7 +31,7 @@ window.Webflow.push(() => {
     scrollTrigger: {
       trigger: '.partners-section', // Use the first paragraph as trigger
       start: 'top 70%',
-      end: 'bottom 20%',
+      end: '+=100%', // Extend the end point
       // markers: true, // Uncomment for debugging
       toggleActions: 'play none none reset',
       scrub: 1, // Smooth scrubbing
