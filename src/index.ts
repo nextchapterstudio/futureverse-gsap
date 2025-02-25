@@ -168,7 +168,19 @@ const createAnythingV2 = () => {
     .to(scramble2, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .add(scrambleTl.play(), '<')
 
-    // Much slower expansion of clipped box
+    // Begin gradual fade-in of secondImage during the Go Anywhere section
+    // This addresses the designer's feedback to bring in the first background of Create Anything sooner
+    .to(
+      secondImage,
+      {
+        autoAlpha: 0.15, // Start with very low opacity
+        duration: 3,
+        ease: 'power1.inOut',
+      },
+      '-=1' // Start slightly before the scramble text completes
+    )
+
+    // Slower expansion of clipped box
     .to(clippedBox, {
       width: '100%',
       height: '100%',
@@ -176,7 +188,18 @@ const createAnythingV2 = () => {
       ease: 'power2.inOut', // Changed to inOut for smoother acceleration/deceleration
     })
 
-    // More gradual fade transitions with better timing overlaps
+    // Continue increasing secondImage opacity during the transition
+    .to(
+      secondImage,
+      {
+        autoAlpha: 0.4, // Increase opacity gradually
+        duration: 3,
+        ease: 'power1.inOut',
+      },
+      '-=6' // Start early in the clipped box expansion
+    )
+
+    // Gradual fade transitions with better timing overlaps
     .to(
       swappableWrapper,
       {
@@ -207,26 +230,38 @@ const createAnythingV2 = () => {
       '>-0.5'
     ) // Slight overlap for smoother transition
 
+    // Complete fade-in of secondImage
     .to(
       secondImage,
       {
         autoAlpha: 1,
-        duration: 5, // Increased from 3.5
+        duration: 4, // Increased from 3.5
         ease: 'power1.inOut',
       },
       '-=2'
     )
 
+    // Bring in "Create" text first, then "Anything" text with a delay
+    // This addresses the designer's feedback to sequence these text elements
     .to(
-      [createText, anythingText],
+      createText,
       {
         autoAlpha: 1,
-        duration: 4, // Increased from 2.5
+        duration: 3.5,
         ease: 'power1.inOut',
       },
       '>-0.5'
     )
-    .add(scrambleTlTwo.play(), '+=2')
+    .to(
+      anythingText,
+      {
+        autoAlpha: 1,
+        duration: 3.5,
+        ease: 'power1.inOut',
+      },
+      '>-2' // Start with an overlap, but after createText has begun to appear
+    )
+    .add(scrambleTlTwo.play(), '+=1')
 
     // Final image transitions - much smoother
     .to(
@@ -339,12 +374,12 @@ export function meetAnybody() {
       ease: 'power2.inOut',
     })
     // Start the scrambled text effect shortly after the window expansion begins
-    .add(scrambleTl, '-=1')
+    .add(scrambleTl, '-=2')
     // Fade out all text elements (both headings and scrambled content)
     .to(
       [elements.meetHeading, elements.anyBodyHeading, elements.meetContent],
       { autoAlpha: 0, duration: 2, ease: 'power2.inOut' },
-      '-=1' // start fading out just before the window expansion tween ends
+      '-=3' // start fading out just before the window expansion tween ends
     );
 
   return masterTimeline;
