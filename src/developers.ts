@@ -16,7 +16,7 @@ window.Webflow.push(() => {
         start: 'top 80%',
         end: 'bottom 20%',
         scrub: true,
-        markers: true,
+        // markers: true,
       },
       opacity: 1,
     });

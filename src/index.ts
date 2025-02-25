@@ -597,7 +597,7 @@ function readyPlayerTl() {
       end: '+=300%', // Increased scroll distance
       pin: true,
       scrub: 2, // Increased scrub value for smoother animation
-      markers: true, // Remove markers in production
+      // markers: true, // Remove markers in production
     },
   });
 
