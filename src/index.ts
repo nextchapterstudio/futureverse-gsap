@@ -21,7 +21,7 @@ function prepareTextForAnimation(element) {
   gsap.set(splitWords.words, {
     display: 'inline-block',
     whiteSpace: 'nowrap',
-    margin: '0 0.1em 0 0', // Add a small gap between words
+    margin: '0 0.2em 0 0', // Add a small gap between words
   });
 
   return splitWords;
@@ -670,11 +670,20 @@ function addWordWrappingStyles() {
     .split-word {
       display: inline-block;
       white-space: nowrap;
-      margin: 0 0.2em 0 0;
+      margin: 0 0.05em 0 0; /* Minimal horizontal margin */
+      vertical-align: top; /* Ensures consistent vertical alignment */
+      line-height: 1.1; /* Tighter line height */
     }
     
     .char {
       display: inline-block;
+      line-height: 1; /* Even tighter line height for characters */
+      position: relative; /* Needed for proper GSAP animations */
+    }
+
+    /* Fix for parent containers to maintain proper layout */
+    .intro-text, .go-anywhere-copy, .create-anything-copy, .meet-content {
+      line-height: 1.2; /* Control overall line height */
     }
   `;
   document.head.appendChild(style);
