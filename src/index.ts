@@ -583,7 +583,6 @@ function readyPlayerTl() {
       start: 'top top',
       end: '+=200%', // This now represents actual scroll distance
       pin: true,
-      scrub: 1.5,
       markers: true, // Helpful for debugging, remove in production
       onUpdate: (self) => {
         // Optional: could use this to trigger the video expansion
@@ -596,10 +595,7 @@ function readyPlayerTl() {
   });
 
   // Initial states
-  gsap.set(cartridgeVideo, {
-    scale: 0,
-    opacity: 0,
-  });
+
   gsap.set(cartridgeWrapper, {
     transformOrigin: '50% 50% -150',
     perspective: 1200,
@@ -608,41 +604,35 @@ function readyPlayerTl() {
     yPercent: -100,
   });
   gsap.set([readyText, playerText], { autoAlpha: 0 });
-  gsap.set('grid-center-stack', { yPercent: 20 });
 
-  tl.to(
-    cartridgeWrapper,
-    {
-      yPercent: 0,
-      duration: 7,
-      ease: 'none',
-    },
-    0
-  )
-    .to(
-      cartridgeWrapper,
-      {
-        rotateY: '+=30',
-        ease: 'power2.inOut',
-        duration: 4,
-        yoyo: true,
-      },
-      '0'
-    )
-    .to(
-      readyText,
-      {
-        autoAlpha: 1,
-        duration: 2,
-        ease: 'power2.out',
-      },
-      '>'
-    )
+  // tl.to(
+  //   cartridgeWrapper,
+  //   {
+  //     yPercent: 0,
+  //     duration: 7,
+  //     ease: 'none',
+  //   },
+  //   0
+  // )
+  //   .to(
+  //     cartridgeWrapper,
+  //     {
+  //       rotateY: '+=30',
+  //       ease: 'power2.inOut',
+  //       duration: 4,
+  //       yoyo: true,
+  //     },
+  //     '0'
+  //   )
+  tl.to(readyText, {
+    autoAlpha: 1,
+    ease: 'power2.out',
+  })
     .to(playerText, {
       autoAlpha: 1,
-      duration: 2,
       ease: 'power2.out',
-    });
+    })
+    .from(cartridgeWrapper, { yPercent: 0, duration: 3, ease: 'none' }, 0);
 
   // .to(
   //   playerText,
@@ -699,10 +689,11 @@ window.Webflow.push(() => {
 
   pageTl
     .add(landingTimeline()) // Add landing timeline
+
+    .add(beAnyoneTl()) // Add beAnyone timeline
+    .add(createAnythingV2()) // Overlap createAnything timeline by 0.5 seconds
+    .add(meetAnybody())
     .add(readyPlayerTl()); // Add ready player timeline
-  // .add(beAnyoneTl()) // Add beAnyone timeline
-  // .add(createAnythingV2()) // Overlap createAnything timeline by 0.5 seconds
-  // .add(meetAnybody());
 
   // .add(horizontalScroll());
 });
