@@ -30,7 +30,7 @@ window.Webflow.push(() => {
   const masterTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: '.partners-section', // Use the first paragraph as trigger
-      start: 'top bottom',
+      start: '-10% bottom',
       end: '+=100%', // Extend the end point
       markers: true, // Uncomment for debugging
       toggleActions: 'play none none reset',
