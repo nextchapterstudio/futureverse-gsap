@@ -17,7 +17,7 @@ export const landingTimeline = () => {
     charsClass: 'char',
   });
 
-  gsap.set(splitLandingCopy.chars, { opacity: 0 });
+  gsap.set(splitLandingCopy.chars, { opacity: 0, visibility: 'visible' });
 
   // Create the scramble timeline in a paused state
   const scrambleTl = gsap.timeline();
@@ -224,7 +224,7 @@ const createAnythingV2 = () => {
         duration: 4, // Increased from 2.5
         ease: 'power1.inOut',
       },
-      '-=2.5'
+      '>-0.5'
     )
     .add(scrambleTlTwo.play(), '+=2')
 
@@ -569,6 +569,126 @@ export function beAnyoneTl() {
   return gsap.timeline();
 }
 
+function readyPlayerTl() {
+  const readyPlayerSection = document.querySelector('.ready-player-section') as HTMLElement;
+  const readyText = document.querySelector('.ready-text') as HTMLElement;
+  const playerText = document.querySelector('.player-text') as HTMLElement;
+  const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
+  const cartridgeVideo = document.querySelector('.cartridge-vid') as HTMLElement;
+
+  // Single timeline with scroll trigger but no pinning
+  const tl = gsap.timeline({
+    scrollTrigger: {
+      trigger: readyPlayerSection,
+      start: 'top top',
+      end: '+=200%', // This now represents actual scroll distance
+      pin: true,
+      scrub: 1.5,
+      markers: true, // Helpful for debugging, remove in production
+      onUpdate: (self) => {
+        // Optional: could use this to trigger the video expansion
+        // when reaching a certain scroll progress
+        if (self.progress > 0.8) {
+          // Could trigger final state here
+        }
+      },
+    },
+  });
+
+  // Initial states
+  gsap.set(cartridgeVideo, {
+    scale: 0,
+    opacity: 0,
+  });
+  gsap.set(cartridgeWrapper, {
+    transformOrigin: '50% 50% -150',
+    perspective: 1200,
+    backfaceVisibility: 'visible',
+    transformStyle: 'preserve-3d',
+    yPercent: -100,
+  });
+  gsap.set([readyText, playerText], { autoAlpha: 0 });
+  gsap.set('grid-center-stack', { yPercent: 20 });
+
+  tl.to(
+    cartridgeWrapper,
+    {
+      yPercent: 0,
+      duration: 7,
+      ease: 'none',
+    },
+    0
+  )
+    .to(
+      cartridgeWrapper,
+      {
+        rotateY: '+=30',
+        ease: 'power2.inOut',
+        duration: 4,
+        yoyo: true,
+      },
+      '0'
+    )
+    .to(
+      readyText,
+      {
+        autoAlpha: 1,
+        duration: 2,
+        ease: 'power2.out',
+      },
+      '>'
+    )
+    .to(playerText, {
+      autoAlpha: 1,
+      duration: 2,
+      ease: 'power2.out',
+    });
+
+  // .to(
+  //   playerText,
+  //   {
+  //     opacity: 1,
+  //     duration: 2,
+  //     ease: 'power2.out',
+  //   },
+  //   5
+  // )
+
+  // // Video growth can now scale beyond viewport
+  // .to(
+  //   cartridgeVideo,
+  //   {
+  //     scale: 0.3,
+  //     opacity: 1,
+  //     duration: 2,
+  //     ease: 'power2.in',
+  //   },
+  //   6
+  // )
+  // .to(
+  //   cartridgeVideo,
+  //   {
+  //     scale: 1.5, // Can go bigger than viewport
+  //     duration: 4,
+  //     ease: 'power2.inOut',
+  //   },
+  //   8
+  // )
+
+  // // Fade out other elements
+  // .to(
+  //   [readyText, playerText, cartridgeWrapper],
+  //   {
+  //     opacity: 0,
+  //     duration: 2,
+  //     ease: 'power2.in',
+  //   },
+  //   9
+  // );
+
+  return tl;
+}
+
 // Export the function to use within your Finsweet setup
 
 window.Webflow ||= [];
@@ -579,9 +699,10 @@ window.Webflow.push(() => {
 
   pageTl
     .add(landingTimeline()) // Add landing timeline
-    .add(beAnyoneTl()) // Add beAnyone timeline
-    .add(createAnythingV2()) // Overlap createAnything timeline by 0.5 seconds
-    .add(meetAnybody());
+    .add(readyPlayerTl()); // Add ready player timeline
+  // .add(beAnyoneTl()) // Add beAnyone timeline
+  // .add(createAnythingV2()) // Overlap createAnything timeline by 0.5 seconds
+  // .add(meetAnybody());
 
   // .add(horizontalScroll());
 });
