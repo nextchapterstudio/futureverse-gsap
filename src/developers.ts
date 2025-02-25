@@ -37,19 +37,16 @@ window.Webflow.push(() => {
     .to('.image-box', {
       width: '100vw',
       height: '100vh',
-      duration: 1.5,
+      duration: 4,
       ease: 'power2.out', // Smooth easing
     })
-
-    // .to('.growing-image', {
-    //   width: '100vw',
-    //   height: '100vh',
-    //   duration: 1.5,
-    //   ease: 'power2.out',
-    // })
-    .to('.text-container', {
-      yPercent: -50,
-      duration: 1.2,
-      ease: 'power2.out',
-    });
+    .to(
+      '.text-container',
+      {
+        yPercent: -75,
+        duration: 2,
+        ease: 'power2.out',
+      },
+      '-=1.5'
+    ); // Start text animation sooner
 });
