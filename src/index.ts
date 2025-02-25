@@ -642,7 +642,7 @@ function readyPlayerTl() {
   });
 
   // Initial states
-  gsap.set([readyText, playerText], { autoAlpha: 0 });
+  gsap.set([readyText, playerText, cartridgeWrapper], { autoAlpha: 0 });
 
   tl.to(readyText, {
     autoAlpha: 1,
@@ -658,7 +658,7 @@ function readyPlayerTl() {
       },
       '-=1' // Overlap fade-in slightly for a smoother transition
     )
-    .from(cartridgeWrapper, { yPercent: -100, duration: 3, ease: 'none' }, 0);
+    .from(cartridgeWrapper, { yPercent: -100, autoAlpha: 1, duration: 3, ease: 'none' }, 0);
 
   return tl;
 }
