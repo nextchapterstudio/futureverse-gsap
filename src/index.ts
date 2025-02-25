@@ -5,13 +5,35 @@ import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import SplitText from 'gsap/SplitText';
 
-//streamable.com/4dp3gr
-
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
+
+// Helper function to apply word wrapping to prevent splitting across lines
+function prepareTextForAnimation(element) {
+  if (!element) return null;
+
+  // First split into words
+  const splitWords = new SplitText(element, {
+    type: 'words',
+    wordsClass: 'split-word',
+  });
+
+  // Add word-wrap: nowrap to each word to prevent breaking
+  gsap.set(splitWords.words, {
+    display: 'inline-block',
+    whiteSpace: 'nowrap',
+    margin: '0 0.2em 0 0', // Add a small gap between words
+  });
+
+  return splitWords;
+}
 
 export const landingTimeline = () => {
   const intoText = document.querySelector('.intro-text') as HTMLElement;
 
+  // First prepare words to prevent line breaking
+  prepareTextForAnimation(intoText);
+
+  // Then split for character animation
   const splitLandingCopy = new SplitText(intoText, {
     type: 'chars',
     charsClass: 'char',
@@ -22,17 +44,17 @@ export const landingTimeline = () => {
   // Create the scramble timeline in a paused state
   const scrambleTl = gsap.timeline();
   scrambleTl.to(splitLandingCopy.chars, {
-    duration: 5, // Increased from 1.5 for smoother text appearance
+    duration: 5,
     scrambleText: {
       text: '{original}',
       chars: 'upperCase',
-      revealDelay: 0.3, // Increased from 0.2
-      speed: 0.4, // Decreased from 0.6 for a slower scramble effect
+      revealDelay: 0.3,
+      speed: 0.4,
       tweenLength: false,
     },
     opacity: 1,
-    stagger: 0.05, // Increased from 0.05 for more noticeable character sequence
-    ease: 'power1.inOut', // Changed from 'none' for smoother transitions
+    stagger: 0.05,
+    ease: 'power1.inOut',
   });
 
   const landing = gsap.timeline({
@@ -43,7 +65,6 @@ export const landingTimeline = () => {
       pin: true,
       scrub: 1.5,
       anticipatePin: 0.5,
-      // markers: true,
     },
   });
 
@@ -58,7 +79,6 @@ export const landingTimeline = () => {
       duration: 1.5,
       ease: 'power2.out',
     })
-    // Instead of adding scrambleTl to the timeline, trigger!SECTIONit separately:
     .add(scrambleTl, '<');
 
   return landing;
@@ -78,7 +98,11 @@ const createAnythingV2 = () => {
   const anythingText = document.querySelector('.scramble-4') as HTMLElement;
   const createAnythingCopy = document.querySelector('.create-anything-copy') as HTMLElement;
 
-  // Slow down the scramble text animation for a smoother effect
+  // Prepare text elements to prevent word breaking
+  prepareTextForAnimation(goAnywhereCopy);
+  prepareTextForAnimation(createAnythingCopy);
+
+  // Then split for character animation
   const splitGoAnywhereCopy = new SplitText(goAnywhereCopy, {
     type: 'chars',
     charsClass: 'char',
@@ -89,24 +113,25 @@ const createAnythingV2 = () => {
     charsClass: 'char',
   });
 
+  gsap.set(splitGoAnywhereCopy.chars, { opacity: 0 });
+  gsap.set(createAnythingSplit.chars, { opacity: 0 });
+
   const scrambleTl = gsap.timeline({ paused: true });
   scrambleTl.fromTo(
     splitGoAnywhereCopy.chars,
+    { opacity: 0 },
     {
-      opacity: 0,
-    },
-    {
-      duration: 2.5, // Increased from 1.5 for smoother text appearance
+      duration: 2.5,
       scrambleText: {
         text: '{original}',
         chars: 'upperCase',
-        revealDelay: 0.3, // Increased from 0.2
-        speed: 0.4, // Decreased from 0.6 for a slower scramble effect
+        revealDelay: 0.3,
+        speed: 0.4,
         tweenLength: false,
       },
       opacity: 1,
-      stagger: 0.05, // Increased from 0.05 for more noticeable character sequence
-      ease: 'power1.inOut', // Changed from 'none' for smoother transitions
+      stagger: 0.05,
+      ease: 'power1.inOut',
     }
   );
 
@@ -151,98 +176,80 @@ const createAnythingV2 = () => {
     scrollTrigger: {
       trigger: '.home-scroll-section',
       start: 'top top',
-      end: '+=650%', // Increased from 500% to allow for more scroll distance and slower animations
+      end: '+=650%',
       pin: true,
-      scrub: 2.5, // Increased from 1.5 to make scrolling more gradual
+      scrub: 2.5,
       anticipatePin: 0.5,
-      // markers: true,
     },
   });
 
   firstTl
-    // Slow and smooth entry of first elements
     .to(clippedBox, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(swappableWrapper, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(content, { autoAlpha: 1, duration: 2, ease: 'power1.inOut' })
     .to(scramble1, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(scramble2, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .add(scrambleTl.play(), '<')
-
-    // Begin gradual fade-in of secondImage during the Go Anywhere section
-    // This addresses the designer's feedback to bring in the first background of Create Anything sooner
     .to(
       secondImage,
       {
-        autoAlpha: 0.15, // Start with very low opacity
+        autoAlpha: 0.15,
         duration: 3,
         ease: 'power1.inOut',
       },
-      '-=1' // Start slightly before the scramble text completes
+      '-=1'
     )
-
-    // Slower expansion of clipped box
     .to(clippedBox, {
       width: '100%',
       height: '100%',
-      duration: 7, // Increased from 4
-      ease: 'power2.inOut', // Changed to inOut for smoother acceleration/deceleration
+      duration: 7,
+      ease: 'power2.inOut',
     })
-
-    // Continue increasing secondImage opacity during the transition
     .to(
       secondImage,
       {
-        autoAlpha: 0.4, // Increase opacity gradually
+        autoAlpha: 0.4,
         duration: 3,
         ease: 'power1.inOut',
       },
-      '-=6' // Start early in the clipped box expansion
+      '-=6'
     )
-
-    // Gradual fade transitions with better timing overlaps
     .to(
       swappableWrapper,
       {
         autoAlpha: 0,
-        duration: 3, // Added explicit duration
+        duration: 3,
         ease: 'power1.inOut',
       },
       '-=4'
-    ) // Start earlier in the clipped box animation
-
+    )
     .to(
       content,
       {
         autoAlpha: 0,
-        duration: 3, // Added explicit duration
+        duration: 3,
         ease: 'power1.inOut',
       },
       '-=3'
-    ) // Better overlap timing
-
+    )
     .to(
       firstImage,
       {
         autoAlpha: 0,
-        duration: 3, // Added explicit duration
+        duration: 3,
         ease: 'power1.inOut',
       },
       '>-0.5'
-    ) // Slight overlap for smoother transition
-
-    // Complete fade-in of secondImage
+    )
     .to(
       secondImage,
       {
         autoAlpha: 1,
-        duration: 4, // Increased from 3.5
+        duration: 4,
         ease: 'power1.inOut',
       },
       '-=2'
     )
-
-    // Start bringing in "Create" text MUCH earlier - during the second image fade-in
-    // This addresses the designer's feedback about having text appear sooner
     .to(
       createText,
       {
@@ -250,7 +257,7 @@ const createAnythingV2 = () => {
         duration: 3.5,
         ease: 'power1.inOut',
       },
-      '-=3.5' // Start significantly earlier, during the secondImage fade-in
+      '-=3.5'
     )
     .to(
       anythingText,
@@ -259,50 +266,45 @@ const createAnythingV2 = () => {
         duration: 3.5,
         ease: 'power1.inOut',
       },
-      '-=2.5' // Follow shortly after createText begins appearing
+      '-=2.5'
     )
-    .add(scrambleTlTwo.play(), '-=2') // Start scramble effect earlier to match the text appearance
-
-    // Final image transitions - start centerImage fade-in earlier for better overlap
+    .add(scrambleTlTwo.play(), '-=2')
     .to(
       centerImage,
       {
         autoAlpha: 1,
-        duration: 4.5, // Slightly increased duration
+        duration: 4.5,
         ease: 'power1.inOut',
       },
-      '-=3.5' // Begin earlier for improved image cross-fade
+      '-=3.5'
     )
-
     .to(
       secondImage,
       {
         autoAlpha: 0,
-        duration: 3, // Added explicit duration
+        duration: 3,
         ease: 'power1.inOut',
       },
       '<'
     )
-
     .to(
       '.content-bottom',
       {
         opacity: 0,
-        duration: 2.5, // Increased from 1.2
+        duration: 2.5,
         ease: 'power1.inOut',
       },
       '-=1.5'
     )
-
     .to(
       centerImage,
       {
         scale: 0.7,
         ease: 'power1.inOut',
-        duration: 4, // Doubled from 2 for a much slower scale effect
+        duration: 4,
       },
       '-=2'
-    ); // Better overlap
+    );
 
   return firstTl;
 };
@@ -317,13 +319,17 @@ export function meetAnybody() {
     meetImg: document.querySelector('.meet-img') as HTMLElement,
   };
 
-  // Split the content text into characters for the scramble effect
+  // Prepare text elements to prevent word breaking
+  prepareTextForAnimation(elements.meetContent);
+
+  // Then split for character animation
   const meetAnybodySplit = new SplitText(elements.meetContent, {
     type: 'chars',
     charsClass: 'char',
   });
 
   // Set initial states for key elements
+  gsap.set(meetAnybodySplit.chars, { opacity: 0 });
   gsap.set(
     [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
     { autoAlpha: 0 }
@@ -335,11 +341,11 @@ export function meetAnybody() {
     meetAnybodySplit.chars,
     { opacity: 0 },
     {
-      duration: 5, // longer duration for a smoother scramble reveal
+      duration: 5,
       scrambleText: {
         text: '{original}',
         chars: 'upperCase',
-        revealDelay: 0.3, // slower reveal for added smoothness
+        revealDelay: 0.3,
         speed: 0.4,
         tweenLength: false,
       },
@@ -629,21 +635,13 @@ function readyPlayerTl() {
     scrollTrigger: {
       trigger: readyPlayerSection,
       start: 'top top',
-      end: '+=300%', // Increased scroll distance
+      end: '+=200%', // Increased scroll distance
       pin: true,
       scrub: 2, // Increased scrub value for smoother animation
-      // markers: true, // Remove markers in production
     },
   });
 
   // Initial states
-  gsap.set(cartridgeWrapper, {
-    transformOrigin: '50% 50% -150',
-    perspective: 1200,
-    backfaceVisibility: 'visible',
-    transformStyle: 'preserve-3d',
-    yPercent: -100,
-  });
   gsap.set([readyText, playerText], { autoAlpha: 0 });
 
   tl.to(readyText, {
@@ -660,26 +658,41 @@ function readyPlayerTl() {
       },
       '-=1' // Overlap fade-in slightly for a smoother transition
     )
-    .from(cartridgeWrapper, { yPercent: 0, duration: 3, ease: 'none' }, 0);
+    .from(cartridgeWrapper, { yPercent: -100, duration: 3, ease: 'none' }, 0);
 
   return tl;
 }
 
-// Export the function to use within your Finsweet setup
+// Add CSS for word wrapping
+function addWordWrappingStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .split-word {
+      display: inline-block;
+      white-space: nowrap;
+      margin: 0 0.2em 0 0;
+    }
+    
+    .char {
+      display: inline-block;
+    }
+  `;
+  document.head.appendChild(style);
+}
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
   console.log('GSAP Scroll Animation Loaded!');
 
+  // Add necessary styles for word wrapping prevention
+  addWordWrappingStyles();
+
   const pageTl = gsap.timeline({});
 
   pageTl
-    .add(landingTimeline()) // Add landing timeline
-
-    .add(beAnyoneTl()) // Add beAnyone timeline
-    .add(createAnythingV2()) // Overlap createAnything timeline by 0.5 seconds
+    .add(landingTimeline())
+    .add(beAnyoneTl())
+    .add(createAnythingV2())
     .add(meetAnybody())
-    .add(readyPlayerTl()); // Add ready player timeline
-
-  // .add(horizontalScroll());
+    .add(readyPlayerTl());
 });
