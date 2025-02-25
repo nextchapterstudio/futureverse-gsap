@@ -282,56 +282,70 @@ export function meetAnybody() {
     meetImg: document.querySelector('.meet-img') as HTMLElement,
   };
 
+  // Split the content text into characters for the scramble effect
   const meetAnybodySplit = new SplitText(elements.meetContent, {
     type: 'chars',
     charsClass: 'char',
   });
-  // Initial states
+
+  // Set initial states for key elements
   gsap.set(
     [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
-    {
-      autoAlpha: 0,
-    }
+    { autoAlpha: 0 }
   );
 
+  // Create a timeline for the scramble text animation
   const scrambleTl = gsap.timeline();
   scrambleTl.fromTo(
     meetAnybodySplit.chars,
     { opacity: 0 },
     {
-      duration: 5, // Increased from 1.5 for smoother text appearance
+      duration: 5, // longer duration for a smoother scramble reveal
       scrambleText: {
         text: '{original}',
         chars: 'upperCase',
-        revealDelay: 0.3, // Increased from 0.2
-        speed: 0.4, // Decreased from 0.6 for a slower scramble effect
+        revealDelay: 0.3, // slower reveal for added smoothness
+        speed: 0.4,
         tweenLength: false,
       },
       opacity: 1,
-      stagger: 0.05, // Increased from 0.05 for more noticeable character sequence
-      ease: 'power1.inOut', // Changed from 'none' for smoother transitions
+      stagger: 0.05,
+      ease: 'power1.inOut',
     }
   );
 
-  // Separate non-scrubbed blink animations with their own triggers
+  // Master timeline with scroll trigger for a seamless scroll-driven sequence
   const masterTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: elements.section,
       start: 'top top',
       end: '+=350%',
       pin: true,
-      scrub: true, // or only enable scrub once blinking is done
+      scrub: true,
     },
   });
 
-  // BLINK (no scrub)
   masterTimeline
-    .to(elements.meetHeading, { autoAlpha: 1, duration: 2 })
-    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 }, '>')
-    .to(elements.windowContainer, { autoAlpha: 1 })
-    .to(elements.windowContainer, { width: '100vw', height: '100vh', duration: 5 })
-    // .to(elements.meetImg, { autoAlpha: 1, duration: 1 }, '-=1.8') // start just after the start of the window expansion
-    .add(scrambleTl, '-=1'); // start half thrid way through window expansion
+    // Fade in the headings
+    .to(elements.meetHeading, { autoAlpha: 1, duration: 2, ease: 'power2.out' })
+    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2, ease: 'power2.out' }, '>')
+    // Fade in the window container before expanding it
+    .to(elements.windowContainer, { autoAlpha: 1, duration: 1, ease: 'power2.out' }, '>')
+    // Expand the window container to fill the viewport
+    .to(elements.windowContainer, {
+      width: '100vw',
+      height: '100vh',
+      duration: 5,
+      ease: 'power2.inOut',
+    })
+    // Start the scrambled text effect shortly after the window expansion begins
+    .add(scrambleTl, '-=1')
+    // Fade out all text elements (both headings and scrambled content)
+    .to(
+      [elements.meetHeading, elements.anyBodyHeading, elements.meetContent],
+      { autoAlpha: 0, duration: 2, ease: 'power2.inOut' },
+      '-=1' // start fading out just before the window expansion tween ends
+    );
 
   return masterTimeline;
 }
