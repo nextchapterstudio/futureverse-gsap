@@ -326,12 +326,12 @@ export function meetAnybody() {
 
   // BLINK (no scrub)
   masterTimeline
-    .to(elements.meetHeading, { autoAlpha: 1, duration: 0.5 })
-    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 0.5 }, '>')
-    .to(elements.windowContainer, { autoAlpha: 1, duration: 0.5 })
+    .to(elements.meetHeading, { autoAlpha: 1, duration: 2 })
+    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 }, '>')
+    .to(elements.windowContainer, { autoAlpha: 1 })
     .to(elements.windowContainer, { width: '100vw', height: '100vh', duration: 5 })
-    .to(elements.meetImg, { autoAlpha: 1, duration: 1 }, '-=1.8') // start just after the start of the window expansion
-    .to(elements.meetContent, { autoAlpha: 1, duration: 1 }, '-=1'); // start half thrid way through window expansion
+    // .to(elements.meetImg, { autoAlpha: 1, duration: 1 }, '-=1.8') // start just after the start of the window expansion
+    .add(scrambleTl, '-=1'); // start half thrid way through window expansion
 
   return masterTimeline;
 }
