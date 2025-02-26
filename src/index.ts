@@ -378,9 +378,9 @@ export function meetAnybody() {
 export function beAnyoneTl() {
   const wrapper = document.querySelector('.video-wrapper') as HTMLElement;
   const vidCard = document.querySelector('.vid-card') as HTMLElement;
-  const images = gsap.utils.toArray<HTMLElement>('.video-embed');
+  const images = gsap.utils.toArray<HTMLElement>('.avatar-img');
 
-  // Set initial states: first image fully visible, others partially faded
+  // Initial image state: the first image is active.
   images.forEach((img, i) => {
     gsap.set(img, {
       opacity: i === 0 ? 1 : 0.5,
@@ -388,41 +388,59 @@ export function beAnyoneTl() {
     });
   });
 
-  // Utility to wrap indices (cycling back to 0 when exceeding images.length)
-  const wrapIndex = gsap.utils.wrap(0, images.length);
+  // Total scrollable width and the visible width.
+  const totalWidth = wrapper.scrollWidth;
+  const visibleWidth = wrapper.clientWidth;
 
-  // Build an infinite looping timeline.
-  const loopTl = gsap.timeline({ repeat: -1, defaults: { ease: 'power2.out' } });
+  // Continuous scrolling tween.
+  const scrollTween = gsap.to(wrapper, {
+    scrollLeft: totalWidth, // We'll tween this value continuously.
+    duration: 30, // Adjust duration for desired speed.
+    ease: 'none',
+    repeat: -1,
+    modifiers: {
+      // Wrap the scrollLeft so that it resets smoothly when it reaches the end.
+      scrollLeft: (value) => {
+        return gsap.utils.wrap(0, totalWidth - visibleWidth, parseFloat(value)) + '';
+      },
+    },
+    onUpdate: () => {
+      // Get the current scroll position.
+      const scrollPos = wrapper.scrollLeft;
+      // Determine which images are currently active based on the scroll.
+      // Assuming images are laid out exactly one viewport-width apart.
+      const index = Math.floor(scrollPos / visibleWidth);
+      const progress = (scrollPos % visibleWidth) / visibleWidth;
 
-  // For each image transition, animate:
-  // 1. Scale down the card
-  // 2. Fade out & scale down the current image
-  // 3. Scroll the wrapper to the next image
-  // 4. Fade in & scale up the next image
-  // 5. Scale the card back up
-  // 6. Pause briefly before the next transition
-  for (let i = 0; i < images.length; i++) {
-    const nextIndex = wrapIndex(i + 1);
-    loopTl
-      // Step 1: Scale down the card
-      .to(vidCard, { scale: 0.98, duration: 0.3 })
-      // Step 2: Animate current image out (using "<" to start simultaneously)
-      .to(images[i], { opacity: 0.5, scale: 0.95, duration: 0.3 }, '<')
-      // Step 3: Scroll the wrapper to the next image position
-      .to(
-        wrapper,
-        { scrollLeft: images[nextIndex].offsetLeft, duration: 0.5, ease: 'power2.out' },
-        '<'
-      )
-      // Step 4: Animate next image in
-      .to(images[nextIndex], { opacity: 1, scale: 1, duration: 0.3 }, '<')
-      // Step 5: Scale card back up (starting slightly after the previous steps)
-      .to(vidCard, { scale: 1, duration: 0.3 }, 0.15)
-      // Step 6: Pause before the next cycle (optional)
-      .to({}, { duration: 1 });
-  }
+      // Update each image:
+      images.forEach((img, i) => {
+        if (i === index) {
+          // The current image fades out as we move to the next.
+          gsap.set(img, {
+            opacity: 1 - 0.5 * progress,
+            scale: 1 - 0.05 * progress,
+          });
+        } else if (i === (index + 1) % images.length) {
+          // The next image fades in.
+          gsap.set(img, {
+            opacity: 0.5 + 0.5 * progress,
+            scale: 0.95 + 0.05 * progress,
+          });
+        } else {
+          // Other images stay in their inactive state.
+          gsap.set(img, { opacity: 0.5, scale: 0.95 });
+        }
+      });
 
-  return loopTl;
+      // Optionally, you can also animate the vidCard if needed.
+      // For example, you might tie its scale to the progress:
+      gsap.set(vidCard, {
+        scale: 0.98 + 0.02 * (1 - Math.abs(progress - 0.5) * 2),
+      });
+    },
+  });
+
+  return scrollTween;
 }
 
 function readyPlayerTl() {
