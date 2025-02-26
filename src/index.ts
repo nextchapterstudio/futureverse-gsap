@@ -299,13 +299,7 @@ export function meetAnybody() {
 
   // Set initial states for key elements
   gsap.set(
-    [
-      elements.meetHeading,
-      elements.anyBodyHeading,
-      elements.windowContainer,
-      elements.meetImg,
-      elements.meetContent,
-    ],
+    [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
     { autoAlpha: 0 }
   );
 
