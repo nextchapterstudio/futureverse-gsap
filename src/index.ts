@@ -160,7 +160,7 @@ const createAnythingV2 = () => {
     .to(content, { autoAlpha: 1, duration: 2, ease: 'power1.inOut' })
     .to(scramble1, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(scramble2, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
-    .add(goAnywhereTextSplit, '<')
+    .to(goAnywhereCopy, { opacity: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(
       secondImage,
       {
@@ -239,7 +239,7 @@ const createAnythingV2 = () => {
       },
       '-=2.5'
     )
-    .add(createAnythingTextSplit, '-=2')
+    .to(createAnythingCopy, { opacity: 1, duration: 3.5, ease: 'power1.inOut' }, '>-1')
     .to(
       centerImage,
       {
@@ -303,7 +303,13 @@ export function meetAnybody() {
 
   // Set initial states for key elements
   gsap.set(
-    [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
+    [
+      elements.meetHeading,
+      elements.anyBodyHeading,
+      elements.windowContainer,
+      elements.meetImg,
+      elements.meetContent,
+    ],
     { autoAlpha: 0 }
   );
 
@@ -358,7 +364,7 @@ export function meetAnybody() {
       ease: 'power2.inOut',
     })
     // Start the scrambled text effect shortly after the window expansion begins
-    .add(scrambleTl, '-=2')
+    .to(elements.meetContent, { autoAlpha: 1, duration: 1.5 }, '-=2')
     // Fade out all text elements (both headings and scrambled content)
     .to(
       [elements.meetHeading, elements.anyBodyHeading, elements.meetContent],
