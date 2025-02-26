@@ -363,13 +363,13 @@ export function meetAnybody() {
       duration: 5,
       ease: 'power2.inOut',
     })
-    // Start the scrambled text effect shortly after the window expansion begins
-    .to(elements.meetText, { autoAlpha: 1, duration: 1.5 }, '-=2')
+    // Fade in the meetText shortly after the window expansion begins
+    .to(elements.meetText, { autoAlpha: 1, duration: 1.5 }, '-=4')
     // Fade out all text elements (both headings and scrambled content)
     .to(
       [elements.meetHeading, elements.anyBodyHeading, elements.meetText],
       { autoAlpha: 0, duration: 2, ease: 'power2.inOut' },
-      '-=3' // start fading out just before the window expansion tween ends
+      '-=1' // only start fading out toward the very end of the window expansion
     );
 
   return masterTimeline;
