@@ -588,9 +588,6 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   console.log('GSAP Scroll Animation Loaded with Line-Based Splitting!');
 
-  // Add necessary styles for line-based animation
-  addLineBasedStyles();
-
   const pageTl = gsap.timeline({});
 
   pageTl
