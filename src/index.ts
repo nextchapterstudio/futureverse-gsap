@@ -94,7 +94,7 @@ const createAnythingV2 = () => {
   const goAnywhereCopy = document.querySelector('.go-anywhere-copy') as HTMLElement;
   const createText = document.querySelector('.scramble-3') as HTMLElement;
   const anythingText = document.querySelector('.scramble-4') as HTMLElement;
-  const createAnythingCopy = document.querySelector('.create-anything-copy') as HTMLElement;
+  const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
 
   // Use line-based splitting for both text elements
   const goAnywhereTextSplit = createSequentialScrambleAnimation(goAnywhereCopy);
