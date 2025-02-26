@@ -266,16 +266,27 @@ const createAnythingV2 = () => {
         ease: 'power1.inOut',
       },
       '-=1.5'
-    )
-    .to(
-      centerImage,
-      {
+    );
+
+  const mm = gsap.matchMedia();
+
+  // Add the scale animation only on desktop/tablet
+  mm.add('(min-width: 768px)', () => {
+    // Add scale animation as the very last step
+    firstTl.add(
+      gsap.to(centerImage, {
         scale: 0.7,
         ease: 'power1.inOut',
         duration: 4,
-      },
-      '-=2'
+      }),
+      // Adding after the previous timeline is complete
+      '>'
     );
+
+    return () => {
+      // Clean up if needed
+    };
+  });
 
   return firstTl;
 };
