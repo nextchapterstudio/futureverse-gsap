@@ -365,15 +365,13 @@ export function meetAnybody() {
 
   return masterTimeline;
 }
+
 export function beAnyoneTl() {
   const wrapper = document.querySelector('.video-wrapper') as HTMLElement;
   const vidCard = document.querySelector('.vid-card') as HTMLElement;
-  const images = gsap.utils.toArray<HTMLElement>('.avatar-img');
-  let currentIndex = 0;
-  let isScrolling = false;
-  let scrollTimeout: NodeJS.Timeout;
+  const images = gsap.utils.toArray<HTMLElement>('.video-embed');
 
-  // Setup initial states
+  // Set initial states: first image fully visible, others partially faded
   images.forEach((img, i) => {
     gsap.set(img, {
       opacity: i === 0 ? 1 : 0.5,
@@ -381,221 +379,41 @@ export function beAnyoneTl() {
     });
   });
 
-  // Smooth scroll function with synchronized card animation
-  function smoothScrollTo(element: HTMLElement) {
-    isScrolling = true;
+  // Utility to wrap indices (cycling back to 0 when exceeding images.length)
+  const wrapIndex = gsap.utils.wrap(0, images.length);
 
-    // Timeline for synchronized animations
-    const tl = gsap.timeline({
-      onComplete: () => {
-        isScrolling = false;
-      },
-    });
+  // Build an infinite looping timeline.
+  const loopTl = gsap.timeline({ repeat: -1, defaults: { ease: 'power2.out' } });
 
-    // Scale down card slightly
-    tl.to(
-      vidCard,
-      {
-        scale: 0.98,
-        duration: 0.3,
-        ease: 'power2.out',
-      },
-      0
-    );
-
-    // Scroll to new position
-    tl.to(
-      wrapper,
-      {
-        scrollLeft: element.offsetLeft,
-        duration: 0.5,
-        ease: 'power2.out',
-      },
-      0
-    );
-
-    // Scale card back up
-    tl.to(
-      vidCard,
-      {
-        scale: 1,
-        duration: 0.3,
-        ease: 'power2.out',
-      },
-      0.3
-    );
+  // For each image transition, animate:
+  // 1. Scale down the card
+  // 2. Fade out & scale down the current image
+  // 3. Scroll the wrapper to the next image
+  // 4. Fade in & scale up the next image
+  // 5. Scale the card back up
+  // 6. Pause briefly before the next transition
+  for (let i = 0; i < images.length; i++) {
+    const nextIndex = wrapIndex(i + 1);
+    loopTl
+      // Step 1: Scale down the card
+      .to(vidCard, { scale: 0.98, duration: 0.3 })
+      // Step 2: Animate current image out (using "<" to start simultaneously)
+      .to(images[i], { opacity: 0.5, scale: 0.95, duration: 0.3 }, '<')
+      // Step 3: Scroll the wrapper to the next image position
+      .to(
+        wrapper,
+        { scrollLeft: images[nextIndex].offsetLeft, duration: 0.5, ease: 'power2.out' },
+        '<'
+      )
+      // Step 4: Animate next image in
+      .to(images[nextIndex], { opacity: 1, scale: 1, duration: 0.3 }, '<')
+      // Step 5: Scale card back up (starting slightly after the previous steps)
+      .to(vidCard, { scale: 1, duration: 0.3 }, 0.15)
+      // Step 6: Pause before the next cycle (optional)
+      .to({}, { duration: 1 });
   }
 
-  // Handle scroll events with debounce and synchronized animations
-  wrapper.addEventListener('scroll', () => {
-    if (isScrolling) return;
-
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      const { scrollLeft } = wrapper;
-      const imageWidth = wrapper.clientWidth;
-      const newIndex = Math.round(scrollLeft / imageWidth);
-
-      if (newIndex !== currentIndex && newIndex >= 0 && newIndex < images.length) {
-        // Create timeline for synchronized animations
-        const tl = gsap.timeline();
-
-        // Scale down card
-        tl.to(
-          vidCard,
-          {
-            scale: 0.98,
-            duration: 0.3,
-            ease: 'power2.out',
-          },
-          0
-        );
-
-        // Animate out current image
-        tl.to(
-          images[currentIndex],
-          {
-            opacity: 0.5,
-            scale: 0.95,
-            duration: 0.3,
-            ease: 'power2.out',
-          },
-          0
-        );
-
-        // Animate in new image
-        tl.to(
-          images[newIndex],
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.3,
-            ease: 'power2.out',
-          },
-          0
-        );
-
-        // Scale card back up
-        tl.to(
-          vidCard,
-          {
-            scale: 1,
-            duration: 0.3,
-            ease: 'power2.out',
-          },
-          0.15
-        );
-
-        currentIndex = newIndex;
-      }
-    }, 50);
-  });
-
-  // Add touch event handling
-  let touchStart: number;
-  let touchStartTime: number;
-
-  wrapper.addEventListener(
-    'touchstart',
-    (e) => {
-      touchStart = e.touches[0].clientX;
-      touchStartTime = Date.now();
-
-      // Scale down card slightly on touch start
-      gsap.to(vidCard, {
-        scale: 0.98,
-        duration: 0.3,
-        ease: 'power2.out',
-      });
-    },
-    { passive: true }
-  );
-
-  wrapper.addEventListener(
-    'touchend',
-    (e) => {
-      const touchEnd = e.changedTouches[0].clientX;
-      const touchEndTime = Date.now();
-      const touchDuration = touchEndTime - touchStartTime;
-      const diff = touchStart - touchEnd;
-
-      // Calculate velocity of swipe
-      const velocity = Math.abs(diff / touchDuration);
-
-      // Scale card back up
-      gsap.to(vidCard, {
-        scale: 1,
-        duration: 0.3,
-        ease: 'power2.out',
-      });
-
-      // Adjust sensitivity based on velocity and distance
-      if (Math.abs(diff) > 30 || velocity > 0.5) {
-        const nextIndex =
-          diff > 0 ? Math.min(currentIndex + 1, images.length - 1) : Math.max(currentIndex - 1, 0);
-
-        smoothScrollTo(images[nextIndex]);
-      }
-    },
-    { passive: true }
-  );
-
-  // Optional: Add mouse drag scrolling
-  let isMouseDown = false;
-  let startX: number;
-  let scrollLeft: number;
-
-  wrapper.addEventListener('mousedown', (e) => {
-    isMouseDown = true;
-    startX = e.pageX - wrapper.offsetLeft;
-    scrollLeft = wrapper.scrollLeft;
-    wrapper.style.cursor = 'grabbing';
-
-    // Scale down card on mouse down
-    gsap.to(vidCard, {
-      scale: 0.98,
-      duration: 0.3,
-      ease: 'power2.out',
-    });
-  });
-
-  wrapper.addEventListener('mouseleave', () => {
-    if (isMouseDown) {
-      // Scale card back up
-      gsap.to(vidCard, {
-        scale: 1,
-        duration: 0.3,
-        ease: 'power2.out',
-      });
-    }
-    isMouseDown = false;
-    wrapper.style.cursor = 'grab';
-  });
-
-  wrapper.addEventListener('mouseup', () => {
-    isMouseDown = false;
-    wrapper.style.cursor = 'grab';
-
-    // Scale card back up
-    gsap.to(vidCard, {
-      scale: 1,
-      duration: 0.3,
-      ease: 'power2.out',
-    });
-  });
-
-  wrapper.addEventListener('mousemove', (e) => {
-    if (!isMouseDown) return;
-    e.preventDefault();
-    const x = e.pageX - wrapper.offsetLeft;
-    const walk = (x - startX) * 2;
-    wrapper.scrollLeft = scrollLeft - walk;
-  });
-
-  // Set initial cursor style
-  wrapper.style.cursor = 'grab';
-
-  return gsap.timeline();
+  return loopTl;
 }
 
 function readyPlayerTl() {
