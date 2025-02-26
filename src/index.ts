@@ -597,9 +597,6 @@ function readyPlayerTl() {
   // Initial states
   gsap.set([readyText, playerText], { autoAlpha: 0 });
 
-  // Set initial state for cartridge (hidden and positioned above viewport)
-  gsap.set(cartridgeWrapper, { yPercent: -100, autoAlpha: 0 });
-
   // Sequence the animations properly
   tl
     // First phase - fade in the headings
@@ -621,12 +618,6 @@ function readyPlayerTl() {
     .to({}, { duration: 1 })
 
     // Second phase - bring in the cartridge after text is fully visible
-    .to(cartridgeWrapper, {
-      yPercent: 0,
-      autoAlpha: 1,
-      duration: isMobile ? 4 : 5, // Longer duration to ensure it completes
-      ease: 'power2.inOut', // Changed to inOut for smoother motion
-    })
 
     // Third phase - hold the final state for a moment
     .to({}, { duration: 2 }); // Hold the final state longer
