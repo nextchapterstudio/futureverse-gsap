@@ -282,12 +282,15 @@ export function meetAnybody() {
     meetHeading: document.querySelector('.meet-text') as HTMLElement,
     anyBodyHeading: document.querySelector('.anybody-text') as HTMLElement,
     windowContainer: document.querySelector('.image-box-home') as HTMLElement,
-    meetContent: document.querySelector('.meet-content') as HTMLElement,
-    meetImg: document.querySelector('.meet-img') as HTMLElement,
+    meetContent: document.querySelector('.meet-anybody-text') as HTMLElement,
+    meetImg: document.querySelector('.meet-content') as HTMLElement,
   };
 
   // Use line-based splitting for text elements
-  const meetContentSplit = prepareTextForAnimation(elements.meetContent);
+  const meetContentSplit = new SplitText(elements.meetContent, {
+    type: 'chars',
+    wordsClass: 'split-word',
+  });
 
   // Set initial states for key elements
   gsap.set(meetContentSplit.chars, { opacity: 0 });
