@@ -7,43 +7,75 @@ import SplitText from 'gsap/SplitText';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
 
-// Helper function to apply word wrapping to prevent splitting across lines
-function prepareTextForAnimation(element) {
+// Consistent helper function to apply line-based splitting for all text animations
+function prepareTextForAnimation(element: HTMLElement) {
   if (!element) return null;
 
-  // First split into words
-  const splitWords = new SplitText(element, {
-    type: 'words',
-    wordsClass: 'split-word',
+  // First split into lines
+  const splitLines = new SplitText(element, {
+    type: 'lines',
+    linesClass: 'split-line',
   });
 
-  // Add word-wrap: nowrap to each word to prevent breaking
-  gsap.set(splitWords.words, {
-    display: 'inline-block',
-    whiteSpace: 'nowrap',
-    margin: '0 0.2em 0 0', // Add a small gap between words
+  // Then split each line into chars for animation
+  const splitChars = new SplitText(splitLines.lines, {
+    type: 'chars',
+    charsClass: 'char',
   });
 
-  return splitWords;
+  // Set initial styles for the lines to maintain layout
+  gsap.set(splitLines.lines, {
+    overflow: 'hidden',
+    position: 'relative',
+    display: 'block',
+  });
+
+  return {
+    lines: splitLines.lines,
+    chars: splitChars.chars,
+  };
+}
+
+// Add CSS for line-based text animation
+function addLineBasedStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .split-line {
+      display: block;
+      overflow: hidden;
+      position: relative;
+      width: 100%; /* Ensure lines take full width */
+      height: auto; /* Let height adjust automatically */
+      line-height: 1.2; /* Consistent line height */
+    }
+    
+    .char {
+      display: inline-block;
+      position: relative; /* Needed for proper GSAP animations */
+      transform-origin: center bottom; /* Better animation origin */
+    }
+
+    /* Fix for parent containers to maintain proper layout */
+    .intro-text, .go-anywhere-copy, .create-anything-copy, .meet-content {
+      overflow: hidden; /* Ensure no characters spill outside */
+      line-height: 1.2; /* Control overall line height */
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 export const landingTimeline = () => {
   const intoText = document.querySelector('.intro-text') as HTMLElement;
 
-  // First prepare words to prevent line breaking
-  prepareTextForAnimation(intoText);
+  // Use the new line-based splitting function
+  const splitText = prepareTextForAnimation(intoText);
 
-  // Then split for character animation
-  const splitLandingCopy = new SplitText(intoText, {
-    type: 'chars',
-    charsClass: 'char',
-  });
-
-  gsap.set(splitLandingCopy.chars, { opacity: 0, visibility: 'visible' });
+  // Set initial state for characters
+  gsap.set(splitText.chars, { opacity: 0, visibility: 'visible' });
 
   // Create the scramble timeline in a paused state
   const scrambleTl = gsap.timeline();
-  scrambleTl.to(splitLandingCopy.chars, {
+  scrambleTl.to(splitText.chars, {
     duration: 5,
     scrambleText: {
       text: '{original}',
@@ -53,7 +85,11 @@ export const landingTimeline = () => {
       tweenLength: false,
     },
     opacity: 1,
-    stagger: 0.05,
+    stagger: {
+      each: 0.05,
+      from: 'start',
+      grid: 'auto',
+    },
     ease: 'power1.inOut',
   });
 
@@ -98,27 +134,17 @@ const createAnythingV2 = () => {
   const anythingText = document.querySelector('.scramble-4') as HTMLElement;
   const createAnythingCopy = document.querySelector('.create-anything-copy') as HTMLElement;
 
-  // Prepare text elements to prevent word breaking
-  prepareTextForAnimation(goAnywhereCopy);
-  prepareTextForAnimation(createAnythingCopy);
+  // Use line-based splitting for both text elements
+  const goAnywhereTextSplit = prepareTextForAnimation(goAnywhereCopy);
+  const createAnythingTextSplit = prepareTextForAnimation(createAnythingCopy);
 
-  // Then split for character animation
-  const splitGoAnywhereCopy = new SplitText(goAnywhereCopy, {
-    type: 'chars',
-    charsClass: 'char',
-  });
-
-  const createAnythingSplit = new SplitText(createAnythingCopy, {
-    type: 'chars',
-    charsClass: 'char',
-  });
-
-  gsap.set(splitGoAnywhereCopy.chars, { opacity: 0 });
-  gsap.set(createAnythingSplit.chars, { opacity: 0 });
+  // Set initial states
+  gsap.set(goAnywhereTextSplit.chars, { opacity: 0 });
+  gsap.set(createAnythingTextSplit.chars, { opacity: 0 });
 
   const scrambleTl = gsap.timeline({ paused: true });
   scrambleTl.fromTo(
-    splitGoAnywhereCopy.chars,
+    goAnywhereTextSplit.chars,
     { opacity: 0 },
     {
       duration: 2.5,
@@ -130,14 +156,18 @@ const createAnythingV2 = () => {
         tweenLength: false,
       },
       opacity: 1,
-      stagger: 0.05,
+      stagger: {
+        each: 0.05,
+        from: 'start',
+        grid: 'auto',
+      },
       ease: 'power1.inOut',
     }
   );
 
   const scrambleTlTwo = gsap.timeline({ paused: true });
   scrambleTlTwo.fromTo(
-    createAnythingSplit.chars,
+    createAnythingTextSplit.chars,
     { opacity: 0 },
     {
       duration: 5,
@@ -149,7 +179,11 @@ const createAnythingV2 = () => {
         tweenLength: false,
       },
       opacity: 1,
-      stagger: 0.05,
+      stagger: {
+        each: 0.05,
+        from: 'start',
+        grid: 'auto',
+      },
       ease: 'power1.inOut',
     }
   );
@@ -319,17 +353,11 @@ export function meetAnybody() {
     meetImg: document.querySelector('.meet-img') as HTMLElement,
   };
 
-  // Prepare text elements to prevent word breaking
-  prepareTextForAnimation(elements.meetContent);
-
-  // Then split for character animation
-  const meetAnybodySplit = new SplitText(elements.meetContent, {
-    type: 'chars',
-    charsClass: 'char',
-  });
+  // Use line-based splitting for text elements
+  const meetContentSplit = prepareTextForAnimation(elements.meetContent);
 
   // Set initial states for key elements
-  gsap.set(meetAnybodySplit.chars, { opacity: 0 });
+  gsap.set(meetContentSplit.chars, { opacity: 0 });
   gsap.set(
     [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
     { autoAlpha: 0 }
@@ -338,7 +366,7 @@ export function meetAnybody() {
   // Create a timeline for the scramble text animation
   const scrambleTl = gsap.timeline();
   scrambleTl.fromTo(
-    meetAnybodySplit.chars,
+    meetContentSplit.chars,
     { opacity: 0 },
     {
       duration: 5,
@@ -350,7 +378,11 @@ export function meetAnybody() {
         tweenLength: false,
       },
       opacity: 1,
-      stagger: 0.05,
+      stagger: {
+        each: 0.05,
+        from: 'start',
+        grid: 'auto',
+      },
       ease: 'power1.inOut',
     }
   );
@@ -663,38 +695,12 @@ function readyPlayerTl() {
   return tl;
 }
 
-// Add CSS for word wrapping
-function addWordWrappingStyles() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .split-word {
-      display: inline-block;
-      white-space: nowrap;
-      margin: 0 0.05em 0 0; /* Minimal horizontal margin */
-      vertical-align: top; /* Ensures consistent vertical alignment */
-      line-height: 1.1; /* Tighter line height */
-    }
-    
-    .char {
-      display: inline-block;
-      line-height: 1; /* Even tighter line height for characters */
-      position: relative; /* Needed for proper GSAP animations */
-    }
-
-    /* Fix for parent containers to maintain proper layout */
-    .intro-text, .go-anywhere-copy, .create-anything-copy, .meet-content {
-      line-height: 1.2; /* Control overall line height */
-    }
-  `;
-  document.head.appendChild(style);
-}
-
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  console.log('GSAP Scroll Animation Loaded!');
+  console.log('GSAP Scroll Animation Loaded with Line-Based Splitting!');
 
-  // Add necessary styles for word wrapping prevention
-  addWordWrappingStyles();
+  // Add necessary styles for line-based animation
+  addLineBasedStyles();
 
   const pageTl = gsap.timeline({});
 
