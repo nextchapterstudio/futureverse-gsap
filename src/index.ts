@@ -97,7 +97,10 @@ export const landingTimeline = () => {
       duration: 1.5,
       ease: 'power2.out',
     })
-    .add(splitTextAnimation, '<');
+    .to(intoText, {
+      opacity: 1,
+      duration: 2,
+    });
 
   return landing;
 };
