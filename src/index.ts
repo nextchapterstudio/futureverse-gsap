@@ -7,6 +7,27 @@ import SplitText from 'gsap/SplitText';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
 
+// Helper function to apply word wrapping to prevent splitting across lines
+
+function prepareTextForAnimation(element) {
+  if (!element) return null;
+
+  // First split into words
+  const splitWords = new SplitText(element, {
+    type: 'words',
+    wordsClass: 'split-word',
+  });
+
+  // Add word-wrap: nowrap to each word to prevent breaking
+  gsap.set(splitWords.words, {
+    display: 'inline-block',
+    whiteSpace: 'nowrap',
+    margin: '0 0.2em 0 0', // Add a small gap between words
+  });
+
+  return splitWords;
+}
+
 function createSequentialScrambleAnimation(element) {
   if (!element) return gsap.timeline(); // Return empty timeline if no element
 
@@ -266,13 +287,37 @@ export function meetAnybody() {
   };
 
   // Use line-based splitting for text elements
-  const meetContentSplit = createSequentialScrambleAnimation(elements.meetContent);
+  const meetContentSplit = prepareTextForAnimation(elements.meetContent);
 
   // Set initial states for key elements
-
+  gsap.set(meetContentSplit.chars, { opacity: 0 });
   gsap.set(
     [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
     { autoAlpha: 0 }
+  );
+
+  // Create a timeline for the scramble text animation
+  const scrambleTl = gsap.timeline();
+  scrambleTl.fromTo(
+    meetContentSplit.chars,
+    { opacity: 0 },
+    {
+      duration: 5,
+      scrambleText: {
+        text: '{original}',
+        chars: 'upperCase',
+        revealDelay: 0.3,
+        speed: 0.4,
+        tweenLength: false,
+      },
+      opacity: 1,
+      stagger: {
+        each: 0.05,
+        from: 'start',
+        grid: 'auto',
+      },
+      ease: 'power1.inOut',
+    }
   );
 
   // Master timeline with scroll trigger for a seamless scroll-driven sequence
@@ -300,7 +345,7 @@ export function meetAnybody() {
       ease: 'power2.inOut',
     })
     // Start the scrambled text effect shortly after the window expansion begins
-    .add(meetContentSplit, '-=2')
+    .add(scrambleTl, '-=2')
     // Fade out all text elements (both headings and scrambled content)
     .to(
       [elements.meetHeading, elements.anyBodyHeading, elements.meetContent],
@@ -310,7 +355,6 @@ export function meetAnybody() {
 
   return masterTimeline;
 }
-
 export function beAnyoneTl() {
   const wrapper = document.querySelector('.video-wrapper') as HTMLElement;
   const vidCard = document.querySelector('.vid-card') as HTMLElement;
