@@ -1,11 +1,10 @@
 import gsap from 'gsap';
-import Draggable from 'gsap/Draggable';
-import InertiaPlugin from 'gsap/InertiaPlugin';
 import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
+import ScrollSmoother from 'gsap/ScrollSmoother';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import SplitText from 'gsap/SplitText';
 
-gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
+gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, ScrollSmoother, SplitText);
 
 // Set up responsive breakpoints
 const breakpoints = {
@@ -20,9 +19,10 @@ function getScrollSettings(baseSettings, isMobile) {
   const settings = { ...baseSettings };
 
   if (isMobile) {
+    // If mobile, adjust settings for better performance
     // Adjust end distance for mobile (smoother exit)
     settings.end = settings.end.replace(/\+=(\d+)%/, (match, percent) => {
-      const mobilePercent = Math.round(parseInt(percent) * 0.8); // 80% of desktop value
+      const mobilePercent = Math.round(parseInt(percent) * 0.9); // 90% of desktop value
       return `+=${mobilePercent}%`;
     });
 
@@ -33,9 +33,6 @@ function getScrollSettings(baseSettings, isMobile) {
 
     // Add a small delay to prevent immediate pinning when scrolling starts
     settings.anticipatePin = settings.anticipatePin || 0.2;
-
-    // Add markers for debugging (remove in production)
-    // settings.markers = true;
   }
 
   return settings;
@@ -672,19 +669,133 @@ function setupResizeHandler() {
 // Main initialization
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  console.log('GSAP Scroll Animation Loaded with Mobile Optimizations!');
+  console.log('GSAP Scroll Animation with ScrollSmoother loaded!');
+
+  // Set up the DOM structure required for ScrollSmoother
+  // This needs to wrap all content that will be scrolled
+  const setupScrollSmoother = () => {
+    // Check if the wrapper elements already exist to avoid duplicates
+    if (document.querySelector('#smooth-wrapper')) {
+      return;
+    }
+
+    // Get the body element
+    const { body } = document;
+
+    // Create the smoother container
+    const smoothContent = document.createElement('div');
+    smoothContent.id = 'smooth-content';
+
+    // Move all direct children of body into the smooth content
+    while (body.firstChild) {
+      smoothContent.appendChild(body.firstChild);
+    }
+
+    // Create the wrapper
+    const smoothWrapper = document.createElement('div');
+    smoothWrapper.id = 'smooth-wrapper';
+    smoothWrapper.appendChild(smoothContent);
+
+    // Add wrapper to the body
+    body.appendChild(smoothWrapper);
+
+    // Add necessary CSS for the containers
+    const style = document.createElement('style');
+    style.textContent = `
+      html, body {
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #smooth-wrapper {
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+      }
+      #smooth-content {
+        min-height: 100vh;
+        will-change: transform;
+      }
+    `;
+    document.head.appendChild(style);
+  };
+
+  // Set up ScrollSmoother with appropriate settings
+  const initScrollSmoother = () => {
+    const isMobile = window.innerWidth <= breakpoints.mobile;
+
+    // Create the ScrollSmoother instance
+    const smoother = ScrollSmoother.create({
+      wrapper: '#smooth-wrapper',
+      content: '#smooth-content',
+      smooth: isMobile ? 0.8 : 1.2, // Less smoothing on mobile (more responsive)
+      effects: true,
+      smoothTouch: 0.2, // Light smoothing for touch devices
+      normalizeScroll: true, // Normalizes scroll behavior across devices
+      ignoreMobileResize: true, // Prevents issues with mobile browser address bars
+      speed: 0.9, // Slightly slower scrolling (0.9x)
+    });
+
+    // Store the instance for potential use later
+    window.smoother = smoother;
+
+    return smoother;
+  };
 
   // Set up resize handler
+  const setupResizeHandler = () => {
+    let resizeTimeout;
+    let prevWidth = window.innerWidth;
+
+    window.addEventListener('resize', () => {
+      // Clear previous timeout to prevent multiple refreshes
+      clearTimeout(resizeTimeout);
+
+      // Set a timeout to avoid excessive refreshes during resize
+      resizeTimeout = setTimeout(() => {
+        const currentWidth = window.innerWidth;
+
+        // Check if we've crossed a breakpoint
+        const wasMobile = prevWidth <= breakpoints.mobile;
+        const isMobile = currentWidth <= breakpoints.mobile;
+
+        if ((wasMobile && !isMobile) || (!wasMobile && isMobile)) {
+          // Update classes
+          if (isMobile) {
+            document.body.classList.add('is-mobile');
+          } else {
+            document.body.classList.remove('is-mobile');
+          }
+
+          // Refresh ScrollTrigger and ScrollSmoother
+          ScrollTrigger.refresh();
+          if (window.smoother) {
+            window.smoother.kill();
+            window.smoother = initScrollSmoother();
+          }
+        }
+
+        prevWidth = currentWidth;
+      }, 250); // 250ms debounce
+    });
+  };
+
+  // Set up mobile-specific class
+  if (window.innerWidth <= breakpoints.mobile) {
+    document.body.classList.add('is-mobile');
+  }
+
+  // Initialize everything in the correct order
+  setupScrollSmoother();
+  const smoother = initScrollSmoother();
   setupResizeHandler();
 
-  // // Add mobile-specific CSS adjustments
-  // if (window.innerWidth <= breakpoints.mobile) {
-  //   // Add any mobile-specific CSS here if needed
-  //   document.body.classList.add('is-mobile');
-  // }
-
+  // Create the main timeline
   const pageTl = gsap.timeline({});
 
+  // Add all the animations to the timeline
   pageTl
     .add(landingTimeline())
     .add(beAnyoneTl())
@@ -692,8 +803,9 @@ window.Webflow.push(() => {
     .add(meetAnybody())
     .add(readyPlayerTl());
 
-  // Add a small delay before refreshing ScrollTrigger to ensure everything is properly set up
+  // Add a small delay before refreshing everything
   setTimeout(() => {
     ScrollTrigger.refresh();
+    smoother.refresh();
   }, 200);
 });
