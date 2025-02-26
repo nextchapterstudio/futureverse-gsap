@@ -292,7 +292,7 @@ export function meetAnybody() {
     anyBodyHeading: document.querySelector('.anybody-text') as HTMLElement,
     windowContainer: document.querySelector('.image-box-home') as HTMLElement,
     meetContent: document.querySelector('.meet-anybody-text') as HTMLElement,
-    meetImg: document.querySelector('.meet-content') as HTMLElement,
+    meetText: document.querySelector('.meet-content') as HTMLElement,
   };
 
   // Use line-based splitting for text elements
@@ -307,8 +307,8 @@ export function meetAnybody() {
       elements.meetHeading,
       elements.anyBodyHeading,
       elements.windowContainer,
-      elements.meetImg,
-      elements.meetContent,
+      elements.meetText,
+      // elements.meetContent,
     ],
     { autoAlpha: 0 }
   );
@@ -364,10 +364,10 @@ export function meetAnybody() {
       ease: 'power2.inOut',
     })
     // Start the scrambled text effect shortly after the window expansion begins
-    .to(elements.meetContent, { autoAlpha: 1, duration: 1.5 }, '-=2')
+    .to(elements.meetText, { autoAlpha: 1, duration: 1.5 }, '-=2')
     // Fade out all text elements (both headings and scrambled content)
     .to(
-      [elements.meetHeading, elements.anyBodyHeading, elements.meetContent],
+      [elements.meetHeading, elements.anyBodyHeading, elements.meetText],
       { autoAlpha: 0, duration: 2, ease: 'power2.inOut' },
       '-=3' // start fading out just before the window expansion tween ends
     );
