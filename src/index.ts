@@ -574,7 +574,6 @@ export function beAnyoneTl() {
 
   return loopTl;
 }
-
 function readyPlayerTl() {
   const readyPlayerSection = document.querySelector('.ready-player-section') as HTMLElement;
   const readyText = document.querySelector('.ready-text') as HTMLElement;
@@ -582,13 +581,13 @@ function readyPlayerTl() {
   const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
-  // Base settings
+  // Base settings - increase the end value to allow more time for animation
   const baseSettings = {
     trigger: readyPlayerSection,
     start: 'top top',
-    end: '+=200%',
+    end: '+=300%', // Increased from 200% to 300% to provide more scroll space
     pin: true,
-    scrub: 2,
+    scrub: isMobile ? 3 : 2, // Smoother scrub for mobile
   };
 
   // Get responsive settings
@@ -601,11 +600,17 @@ function readyPlayerTl() {
   // Initial states
   gsap.set([readyText, playerText], { autoAlpha: 0 });
 
-  tl.to(readyText, {
-    autoAlpha: 1,
-    duration: 2,
-    ease: 'power2.out',
-  })
+  // Set initial state for cartridge (hidden and positioned above viewport)
+  gsap.set(cartridgeWrapper, { yPercent: -100, autoAlpha: 0 });
+
+  // Sequence the animations properly
+  tl
+    // First phase - fade in the headings
+    .to(readyText, {
+      autoAlpha: 1,
+      duration: 2,
+      ease: 'power2.out',
+    })
     .to(
       playerText,
       {
@@ -613,22 +618,25 @@ function readyPlayerTl() {
         duration: 2,
         ease: 'power2.out',
       },
-      '-=1'
+      '-=1' // Overlap slightly with previous animation
     )
-    .from(
-      cartridgeWrapper,
-      {
-        yPercent: -100,
-        autoAlpha: 0,
-        duration: isMobile ? 2.5 : 3, // Slightly faster on mobile
-        ease: 'none',
-      },
-      0
-    );
+    // Add a small pause to let the text be read fully
+    .to({}, { duration: 1 })
 
-  // Add a small pause at the end for mobile to prevent abrupt endings
+    // Second phase - bring in the cartridge after text is fully visible
+    .to(cartridgeWrapper, {
+      yPercent: 0,
+      autoAlpha: 1,
+      duration: isMobile ? 4 : 5, // Longer duration to ensure it completes
+      ease: 'power2.inOut', // Changed to inOut for smoother motion
+    })
+
+    // Third phase - hold the final state for a moment
+    .to({}, { duration: 2 }); // Hold the final state longer
+
+  // For mobile, add an additional pause at the end to ensure smooth exit
   if (isMobile) {
-    tl.to({}, { duration: 0.5 });
+    tl.to({}, { duration: 1.5 });
   }
 
   return tl;
