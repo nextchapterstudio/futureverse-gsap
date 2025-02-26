@@ -38,7 +38,6 @@ function createSequentialScrambleAnimation(element) {
   });
 
   // Initially hide all lines
-  gsap.set(splitText.lines, { opacity: 0 });
 
   // Create a master timeline for the entire animation
   const masterTl = gsap.timeline();
@@ -136,6 +135,8 @@ const createAnythingV2 = () => {
     ],
     { autoAlpha: 0 }
   );
+
+  gsap.set([createAnythingCopy, goAnywhereCopy], { opacity: 0 });
 
   gsap.set(centerImage, { zIndex: 5 });
 
