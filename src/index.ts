@@ -7,91 +7,54 @@ import SplitText from 'gsap/SplitText';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
 
-// Consistent helper function to apply line-based splitting for all text animations
-function prepareTextForAnimation(element: HTMLElement) {
-  if (!element) return null;
+function createSequentialScrambleAnimation(element) {
+  if (!element) return gsap.timeline(); // Return empty timeline if no element
 
-  // First split into lines
-  const splitLines = new SplitText(element, {
+  // Split text into lines
+  const splitText = new SplitText(element, {
     type: 'lines',
-    linesClass: 'split-line',
+    linesClass: 'scramble-line',
   });
 
-  // Then split each line into chars for animation
-  const splitChars = new SplitText(splitLines.lines, {
-    type: 'chars',
-    charsClass: 'char',
+  // Initially hide all lines
+  gsap.set(splitText.lines, { opacity: 0 });
+
+  // Create a master timeline for the entire animation
+  const masterTl = gsap.timeline();
+
+  // Animate each line sequentially
+  splitText.lines.forEach((line, index) => {
+    // Create a timeline for this specific line
+    const lineTl = gsap.timeline();
+
+    // Animate the line with scramble text
+    lineTl.to(line, {
+      duration: 1.2,
+      opacity: 1,
+      scrambleText: {
+        text: line.innerHTML,
+        chars: 'upperCase',
+        revealDelay: 0.5,
+        speed: 0.3,
+        tweenLength: false,
+      },
+      ease: 'power1.inOut',
+    });
+
+    // Add this line's animation to the master timeline
+    masterTl.add(lineTl, index > 0 ? '-=0.8' : 0);
   });
 
-  // Set initial styles for the lines to maintain layout
-  gsap.set(splitLines.lines, {
-    overflow: 'hidden',
-    position: 'relative',
-    display: 'block',
-  });
-
-  return {
-    lines: splitLines.lines,
-    chars: splitChars.chars,
-  };
-}
-
-// Add CSS for line-based text animation
-function addLineBasedStyles() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .split-line {
-      display: block;
-      overflow: hidden;
-      position: relative;
-      width: 100%; /* Ensure lines take full width */
-      height: auto; /* Let height adjust automatically */
-      line-height: 1.2; /* Consistent line height */
-    }
-    
-    .char {
-      display: inline-block;
-      position: relative; /* Needed for proper GSAP animations */
-      transform-origin: center bottom; /* Better animation origin */
-    }
-
-    /* Fix for parent containers to maintain proper layout */
-    .intro-text, .go-anywhere-copy, .create-anything-copy, .meet-content {
-      overflow: hidden; /* Ensure no characters spill outside */
-      line-height: 1.2; /* Control overall line height */
-    }
-  `;
-  document.head.appendChild(style);
+  // Just return the timeline
+  return masterTl;
 }
 
 export const landingTimeline = () => {
   const intoText = document.querySelector('.intro-text') as HTMLElement;
 
   // Use the new line-based splitting function
-  const splitText = prepareTextForAnimation(intoText);
-
-  // Set initial state for characters
-  gsap.set(splitText.chars, { opacity: 0, visibility: 'visible' });
-
-  // Create the scramble timeline in a paused state
-  const scrambleTl = gsap.timeline();
-  scrambleTl.to(splitText.chars, {
-    duration: 5,
-    scrambleText: {
-      text: '{original}',
-      chars: 'upperCase',
-      revealDelay: 0.3,
-      speed: 0.4,
-      tweenLength: false,
-    },
-    opacity: 1,
-    stagger: {
-      each: 0.05,
-      from: 'start',
-      grid: 'auto',
-    },
-    ease: 'power1.inOut',
-  });
+  const splitTextAnimation = createSequentialScrambleAnimation(intoText);
+  splitTextAnimation.pause();
 
   const landing = gsap.timeline({
     scrollTrigger: {
@@ -115,7 +78,7 @@ export const landingTimeline = () => {
       duration: 1.5,
       ease: 'power2.out',
     })
-    .add(scrambleTl, '<');
+    .add(splitTextAnimation, '<');
 
   return landing;
 };
@@ -135,58 +98,8 @@ const createAnythingV2 = () => {
   const createAnythingCopy = document.querySelector('.create-anything-copy') as HTMLElement;
 
   // Use line-based splitting for both text elements
-  const goAnywhereTextSplit = prepareTextForAnimation(goAnywhereCopy);
-  const createAnythingTextSplit = prepareTextForAnimation(createAnythingCopy);
-
-  // Set initial states
-  gsap.set(goAnywhereTextSplit.chars, { opacity: 0 });
-  gsap.set(createAnythingTextSplit.chars, { opacity: 0 });
-
-  const scrambleTl = gsap.timeline({ paused: true });
-  scrambleTl.fromTo(
-    goAnywhereTextSplit.chars,
-    { opacity: 0 },
-    {
-      duration: 2.5,
-      scrambleText: {
-        text: '{original}',
-        chars: 'upperCase',
-        revealDelay: 0.3,
-        speed: 0.4,
-        tweenLength: false,
-      },
-      opacity: 1,
-      stagger: {
-        each: 0.05,
-        from: 'start',
-        grid: 'auto',
-      },
-      ease: 'power1.inOut',
-    }
-  );
-
-  const scrambleTlTwo = gsap.timeline({ paused: true });
-  scrambleTlTwo.fromTo(
-    createAnythingTextSplit.chars,
-    { opacity: 0 },
-    {
-      duration: 5,
-      scrambleText: {
-        text: '{original}',
-        chars: 'upperCase',
-        revealDelay: 0.3,
-        speed: 0.4,
-        tweenLength: false,
-      },
-      opacity: 1,
-      stagger: {
-        each: 0.05,
-        from: 'start',
-        grid: 'auto',
-      },
-      ease: 'power1.inOut',
-    }
-  );
+  const goAnywhereTextSplit = createSequentialScrambleAnimation(goAnywhereCopy);
+  const createAnythingTextSplit = createSequentialScrambleAnimation(createAnythingCopy);
 
   // Pre-set elements to hidden for performance
   gsap.set(
@@ -223,7 +136,7 @@ const createAnythingV2 = () => {
     .to(content, { autoAlpha: 1, duration: 2, ease: 'power1.inOut' })
     .to(scramble1, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
     .to(scramble2, { autoAlpha: 1, duration: 1.5, ease: 'power1.inOut' }, '>')
-    .add(scrambleTl.play(), '<')
+    .add(goAnywhereTextSplit, '<')
     .to(
       secondImage,
       {
@@ -302,7 +215,7 @@ const createAnythingV2 = () => {
       },
       '-=2.5'
     )
-    .add(scrambleTlTwo.play(), '-=2')
+    .add(createAnythingTextSplit, '-=2')
     .to(
       centerImage,
       {
@@ -354,37 +267,13 @@ export function meetAnybody() {
   };
 
   // Use line-based splitting for text elements
-  const meetContentSplit = prepareTextForAnimation(elements.meetContent);
+  const meetContentSplit = createSequentialScrambleAnimation(elements.meetContent);
 
   // Set initial states for key elements
-  gsap.set(meetContentSplit.chars, { opacity: 0 });
+
   gsap.set(
     [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
     { autoAlpha: 0 }
-  );
-
-  // Create a timeline for the scramble text animation
-  const scrambleTl = gsap.timeline();
-  scrambleTl.fromTo(
-    meetContentSplit.chars,
-    { opacity: 0 },
-    {
-      duration: 5,
-      scrambleText: {
-        text: '{original}',
-        chars: 'upperCase',
-        revealDelay: 0.3,
-        speed: 0.4,
-        tweenLength: false,
-      },
-      opacity: 1,
-      stagger: {
-        each: 0.05,
-        from: 'start',
-        grid: 'auto',
-      },
-      ease: 'power1.inOut',
-    }
   );
 
   // Master timeline with scroll trigger for a seamless scroll-driven sequence
@@ -412,7 +301,7 @@ export function meetAnybody() {
       ease: 'power2.inOut',
     })
     // Start the scrambled text effect shortly after the window expansion begins
-    .add(scrambleTl, '-=2')
+    .add(meetContentSplit, '-=2')
     // Fade out all text elements (both headings and scrambled content)
     .to(
       [elements.meetHeading, elements.anyBodyHeading, elements.meetContent],
