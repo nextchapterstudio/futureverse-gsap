@@ -37,6 +37,7 @@ function createSequentialScrambleAnimation(element) {
         revealDelay: 0.5,
         speed: 0.3,
         tweenLength: false,
+        delimiter: ' ',
       },
       ease: 'power1.inOut',
     });
@@ -50,12 +51,10 @@ function createSequentialScrambleAnimation(element) {
 }
 
 export const landingTimeline = () => {
-  const intoText = document.querySelector('.intro-text') as HTMLElement;
+  const intoText = document.querySelector('.landing-text') as HTMLElement;
 
   // Use the new line-based splitting function
   const splitTextAnimation = createSequentialScrambleAnimation(intoText);
-  splitTextAnimation.pause();
-
   const landing = gsap.timeline({
     scrollTrigger: {
       trigger: '.home-landing-section',
