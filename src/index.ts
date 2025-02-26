@@ -277,6 +277,11 @@ const createAnythingV2 = () => {
 };
 
 export function meetAnybody() {
+  // First, make sure the ScrambleText plugin is imported
+  // Import at the top of your file:
+  // import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
+  // gsap.registerPlugin(ScrambleTextPlugin);
+
   const elements = {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
     meetHeading: document.querySelector('.meet-text') as HTMLElement,
@@ -293,14 +298,21 @@ export function meetAnybody() {
   });
 
   // Set initial states for key elements
-
   gsap.set(
-    [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetImg],
+    [
+      elements.meetHeading,
+      elements.anyBodyHeading,
+      elements.windowContainer,
+      elements.meetImg,
+      elements.meetContent,
+    ],
     { autoAlpha: 0 }
   );
 
   // Create a timeline for the scramble text animation
   const scrambleTl = gsap.timeline();
+
+  // Modified scramble animation to use the plugin correctly
   scrambleTl.fromTo(
     meetContentSplit.chars,
     { opacity: 0 },
