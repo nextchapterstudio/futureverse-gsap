@@ -31,7 +31,7 @@ window.Webflow.push(() => {
       trigger: splitTextArray[0], // Use the first paragraph as trigger
       start: 'top bottom', // Start when the first paragraph enters viewport
       end: 'bottom top+=60%', // End when the last paragraph is about to leave viewport (before reaching partners)
-      markers: true,
+
       toggleActions: 'play none none reset',
       scrub: 0.5, // Smoother scrubbing
     },
