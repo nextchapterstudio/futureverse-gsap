@@ -595,7 +595,7 @@ function readyPlayerTl() {
   });
 
   // Initial states
-  gsap.set([readyText, playerText, cartridgeWrapper], { autoAlpha: 0 });
+  gsap.set([readyText, playerText], { autoAlpha: 0 });
 
   // Sequence the animations properly
   tl
@@ -616,6 +616,7 @@ function readyPlayerTl() {
     )
     .to(cartridgeWrapper, {
       autoAlpha: 1,
+      yPercent: -50,
       duration: 2,
       ease: 'power2.out',
     })
