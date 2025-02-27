@@ -595,7 +595,7 @@ function readyPlayerTl() {
   });
 
   // Initial states
-  gsap.set([readyText, playerText], { autoAlpha: 0 });
+  gsap.set([readyText, playerText, cartridgeWrapper], { autoAlpha: 0 });
 
   // Sequence the animations properly
   tl
@@ -614,6 +614,11 @@ function readyPlayerTl() {
       },
       '-=1' // Overlap slightly with previous animation
     )
+    .to(cartridgeWrapper, {
+      autoAlpha: 1,
+      duration: 2,
+      ease: 'power2.out',
+    })
     // Add a small pause to let the text be read fully
     .to({}, { duration: 1 })
 
