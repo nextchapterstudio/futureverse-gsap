@@ -99,7 +99,7 @@ function createSequentialScrambleAnimation(element) {
 }
 
 export const landingTimeline = () => {
-  const intoText = document.querySelector('.landing-text') as HTMLElement;
+  const intoText = document.querySelector('.home-landing-text') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
   // Use the new line-based splitting function
