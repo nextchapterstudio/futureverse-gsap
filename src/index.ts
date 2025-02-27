@@ -614,8 +614,8 @@ function readyPlayerTl() {
       },
       '-=1' // Overlap slightly with previous animation
     )
-    .to(cartridgeWrapper, {
-      autoAlpha: 1,
+    .from(cartridgeWrapper, {
+      autoAlpha: 0,
       yPercent: -50,
       duration: 2,
       ease: 'power2.out',
