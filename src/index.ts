@@ -431,10 +431,10 @@ export function meetAnybody() {
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
   // Use line-based splitting for text elements
-  const meetContentSplit = new SplitText(elements.meetContent, {
-    type: 'chars',
-    wordsClass: 'split-word',
-  });
+  // const meetContentSplit = new SplitText(elements.meetContent, {
+  //   type: 'chars',
+  //   wordsClass: 'split-word',
+  // });
 
   // Set initial states for key elements
   gsap.set(
@@ -443,30 +443,30 @@ export function meetAnybody() {
   );
 
   // Create a timeline for the scramble text animation
-  const scrambleTl = gsap.timeline();
+  // const scrambleTl = gsap.timeline();
 
   // Modified scramble animation to use the plugin correctly
-  scrambleTl.fromTo(
-    meetContentSplit.chars,
-    { opacity: 0 },
-    {
-      duration: 5,
-      scrambleText: {
-        text: '{original}',
-        chars: 'upperCase',
-        revealDelay: 0.3,
-        speed: 0.4,
-        tweenLength: false,
-      },
-      opacity: 1,
-      stagger: {
-        each: 0.05,
-        from: 'start',
-        grid: 'auto',
-      },
-      ease: 'power1.inOut',
-    }
-  );
+  // scrambleTl.fromTo(
+  //   meetContentSplit.chars,
+  //   { opacity: 0 },
+  //   {
+  //     duration: 5,
+  //     scrambleText: {
+  //       text: '{original}',
+  //       chars: 'upperCase',
+  //       revealDelay: 0.3,
+  //       speed: 0.4,
+  //       tweenLength: false,
+  //     },
+  //     opacity: 1,
+  //     stagger: {
+  //       each: 0.05,
+  //       from: 'start',
+  //       grid: 'auto',
+  //     },
+  //     ease: 'power1.inOut',
+  //   }
+  // );
 
   // Base settings
   const baseSettings = {
