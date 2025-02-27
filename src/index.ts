@@ -614,19 +614,23 @@ function readyPlayerTl() {
       },
       '-=1' // Overlap slightly with previous animation
     )
-    .from(cartridgeWrapper, {
-      autoAlpha: 0,
-      yPercent: -50,
-      duration: 2,
-      ease: 'power2.out',
-    })
-    // Add a small pause to let the text be read fully
-    .to({}, { duration: 1 })
+    .from(
+      cartridgeWrapper,
+      {
+        autoAlpha: 0,
+        yPercent: -50,
+        duration: 4,
+        ease: 'power2.out',
+      },
+      '-=1'
+    );
+  // Add a small pause to let the text be read fully
+  // .to({}, { duration: 1 })
 
-    // Second phase - bring in the cartridge after text is fully visible
+  // Second phase - bring in the cartridge after text is fully visible
 
-    // Third phase - hold the final state for a moment
-    .to({}, { duration: 2 }); // Hold the final state longer
+  // Third phase - hold the final state for a moment
+  // .to({}, { duration: 2 }); // Hold the final state longer
 
   // For mobile, add an additional pause at the end to ensure smooth exit
   if (isMobile) {
