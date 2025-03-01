@@ -162,19 +162,11 @@ const createAnythingV2 = () => {
 
   // Pre-set elements to hidden for performance
   gsap.set(
-    [
-      secondImage,
-      centerImage,
-      clippedBox,
-      scramble1,
-      scramble2,
-      content,
-      swappableWrapper,
-      createText,
-      anythingText,
-    ],
+    [secondImage, centerImage, clippedBox, content, swappableWrapper, createText, anythingText],
     { autoAlpha: 0 }
   );
+
+  gsap.set(content, { yPercent: 100 });
 
   gsap.set([createAnythingCopy, goAnywhereCopy], { opacity: 0 });
 
@@ -187,6 +179,7 @@ const createAnythingV2 = () => {
     end: '+=650%',
     pin: true,
     scrub: 2.5,
+    markers: true,
     anticipatePin: 0.5,
   };
 
@@ -236,24 +229,31 @@ const createAnythingV2 = () => {
       duration: adjustDuration(2),
       ease: mobileAdjustments.easeIn,
     })
-    .to(
-      scramble1,
-      {
-        autoAlpha: 1,
-        duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
-      },
-      '>'
-    )
-    .to(
-      scramble2,
-      {
-        autoAlpha: 1,
-        duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
-      },
-      '>'
-    )
+    .to(content, {
+      yPercent: -150,
+      duration: adjustDuration(25),
+      ease: 'none',
+    })
+    // .to(
+    //   scramble1,
+    //   {
+    //     autoAlpha: 1,
+    //     yPercent: 0,
+    //     duration: adjustDuration(1.5),
+    //     ease: mobileAdjustments.easeIn,
+    //   },
+    //   '>'
+    // )
+    // .to(
+    //   scramble2,
+    //   {
+    //     autoAlpha: 1,
+    //     yPercent: 0,
+    //     duration: adjustDuration(1.5),
+    //     ease: mobileAdjustments.easeIn,
+    //   },
+    //   '>'
+    // )
     .to(
       goAnywhereCopy,
       {
