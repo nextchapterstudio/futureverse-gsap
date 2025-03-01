@@ -3,8 +3,110 @@ import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
 import ScrollSmoother from 'gsap/ScrollSmoother';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import SplitText from 'gsap/SplitText';
+import Typed from 'typed.js';
 
 gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, ScrollSmoother, SplitText);
+
+import { gsap } from 'gsap';
+import { SplitText } from 'gsap/SplitText';
+
+// Register the SplitText plugin
+gsap.registerPlugin(SplitText);
+
+interface TypeAnimationOptions {
+  element: HTMLElement | string; // Element or selector
+  text?: string; // Optional text to set (if not using existing text)
+  duration?: number; // Duration per character
+  staggerDelay?: number; // Delay between each character
+  ease?: string; // GSAP easing function
+  onComplete?: () => void; // Callback when animation completes
+}
+
+/**
+ * Creates a typing animation on the target element
+ * @param options Configuration options for the typing animation
+ * @returns The GSAP timeline that controls the animation
+ */
+export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.Timeline => {
+  // Default values
+  const {
+    element,
+    text,
+    duration = 0.03,
+    staggerDelay = 0.03,
+    ease = 'none',
+    onComplete,
+  } = options;
+
+  // Get the element
+  const targetElement =
+    typeof element === 'string' ? (document.querySelector(element) as HTMLElement) : element;
+
+  if (!targetElement) {
+    console.error('Target element not found for typing animation');
+    return gsap.timeline(); // Return empty timeline
+  }
+
+  // Set text content if provided
+  if (text) {
+    targetElement.textContent = text;
+  }
+
+  // Ensure the container is visible
+  gsap.set(targetElement, { opacity: 1 });
+
+  // Create SplitText instance
+  const splitText = new SplitText(targetElement, {
+    type: 'words, chars',
+    wordsClass: 'word',
+    charsClass: 'char',
+  });
+
+  // Get the characters array
+  const { chars } = splitText;
+
+  // Initially hide all characters
+  gsap.set(chars, { opacity: 0 });
+
+  // Create timeline for the typing animation
+  const timeline = gsap.timeline({
+    onComplete: () => {
+      // Optional callback
+      if (onComplete) onComplete();
+    },
+  });
+
+  // Add the typing animation to the timeline
+  timeline.to(chars, {
+    opacity: 1,
+    duration,
+    stagger: staggerDelay,
+    ease,
+  });
+
+  return timeline;
+};
+
+/**
+ * Creates a typing animation within a ScrollTrigger context
+ * @param options TypeAnimationOptions plus ScrollTrigger settings
+ * @returns The GSAP timeline
+ */
+export const createScrollTriggeredTypingAnimation = (
+  animationOptions: TypeAnimationOptions,
+  scrollTriggerOptions: gsap.plugins.ScrollTriggerInstanceVars
+): gsap.core.Timeline => {
+  // Create the base timeline with scroll trigger
+  const timeline = gsap.timeline({
+    scrollTrigger: scrollTriggerOptions,
+  });
+
+  // Create the typing animation and add it to our timeline
+  const typingTimeline = createTypingAnimation(animationOptions);
+  timeline.add(typingTimeline);
+
+  return timeline;
+};
 
 // Set up responsive breakpoints
 const breakpoints = {
@@ -39,73 +141,12 @@ function getScrollSettings(baseSettings, isMobile) {
 }
 
 // Helper function to apply word wrapping to prevent splitting across lines
-function prepareTextForAnimation(element) {
-  if (!element) return null;
-
-  // First split into words
-  const splitWords = new SplitText(element, {
-    type: 'words',
-    wordsClass: 'split-word',
-  });
-
-  // Add word-wrap: nowrap to each word to prevent breaking
-  gsap.set(splitWords.words, {
-    display: 'inline-block',
-    whiteSpace: 'nowrap',
-    margin: '0 0.2em 0 0', // Add a small gap between words
-  });
-
-  return splitWords;
-}
-
-function createSequentialScrambleAnimation(element) {
-  if (!element) return gsap.timeline(); // Return empty timeline if no element
-
-  // Split text into lines
-  const splitText = new SplitText(element, {
-    type: 'lines',
-    linesClass: 'scramble-line',
-  });
-
-  // Create a master timeline for the entire animation
-  const masterTl = gsap.timeline();
-
-  // Animate each line sequentially
-  splitText.lines.forEach((line, index) => {
-    // Create a timeline for this specific line
-    const lineTl = gsap.timeline();
-
-    // Animate the line with scramble text
-    lineTl.to(line, {
-      duration: 1.2,
-      opacity: 1,
-      scrambleText: {
-        text: line.innerHTML,
-        chars: 'upperCase',
-        revealDelay: 0.5,
-        speed: 0.3,
-        tweenLength: false,
-        delimiter: ' ',
-      },
-      ease: 'power1.inOut',
-    });
-
-    // Add this line's animation to the master timeline
-    masterTl.add(lineTl, index > 0 ? '-=0.8' : 0);
-  });
-
-  // Just return the timeline
-  return masterTl;
-}
 
 export const landingTimeline = () => {
   const intoText = document.querySelector('.home-landing-text') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
-  // Use the new line-based splitting function
-  const splitTextAnimation = createSequentialScrambleAnimation(intoText);
-
-  // Base settings
+  // Base scroll settings
   const baseSettings = {
     trigger: '.home-landing-section',
     start: 'top top',
@@ -115,31 +156,42 @@ export const landingTimeline = () => {
     anticipatePin: 0.5,
   };
 
-  // Get responsive settings
+  // Get responsive settings (assuming this function is defined elsewhere)
   const scrollSettings = getScrollSettings(baseSettings, isMobile);
 
+  // Create timeline
   const landing = gsap.timeline({
     scrollTrigger: scrollSettings,
   });
 
   landing
+    // Fade in your logo
     .to('.readyverse-logo-home', {
       opacity: 1,
       duration: 2,
     })
+    // Then fade it out and move it up
     .to('.readyverse-logo-home', {
       opacity: 0,
       y: -50,
       duration: 1.5,
       ease: 'power2.out',
-    })
-    .to(intoText, {
-      opacity: 1,
-      duration: 2,
     });
+
+  // Add the typing animation
+  const typingAnimation = createTypingAnimation({
+    element: intoText,
+    text: 'THE IMMERSIVE GAMING PLATFORM POWERING A UNIVERSE OF CONNECTED PLAY.',
+    staggerDelay: 0.03,
+  });
+
+  // Add the typing animation to our main timeline
+  landing.add(typingAnimation);
 
   return landing;
 };
+
+// Example of using the standalone typing animation elsewhere
 
 const createAnythingV2 = () => {
   const secondImage = document.querySelector('.second-img') as HTMLElement;
@@ -157,16 +209,11 @@ const createAnythingV2 = () => {
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
   // Use line-based splitting for both text elements
-  const goAnywhereTextSplit = createSequentialScrambleAnimation(goAnywhereCopy);
-  const createAnythingTextSplit = createSequentialScrambleAnimation(createAnythingCopy);
 
   // Pre-set elements to hidden for performance
-  gsap.set(
-    [secondImage, centerImage, clippedBox, content, swappableWrapper, createText, anythingText],
-    { autoAlpha: 0 }
-  );
-
-  gsap.set(content, { yPercent: 100 });
+  gsap.set([secondImage, centerImage, clippedBox, swappableWrapper, createText, anythingText], {
+    autoAlpha: 0,
+  });
 
   gsap.set([createAnythingCopy, goAnywhereCopy], { opacity: 0 });
 
@@ -224,36 +271,27 @@ const createAnythingV2 = () => {
       },
       '>'
     )
-    .to(content, {
-      autoAlpha: 1,
-      duration: adjustDuration(2),
-      ease: mobileAdjustments.easeIn,
-    })
-    .to(content, {
-      yPercent: -150,
-      duration: adjustDuration(25),
-      ease: 'none',
-    })
-    // .to(
-    //   scramble1,
-    //   {
-    //     autoAlpha: 1,
-    //     yPercent: 0,
-    //     duration: adjustDuration(1.5),
-    //     ease: mobileAdjustments.easeIn,
-    //   },
-    //   '>'
-    // )
-    // .to(
-    //   scramble2,
-    //   {
-    //     autoAlpha: 1,
-    //     yPercent: 0,
-    //     duration: adjustDuration(1.5),
-    //     ease: mobileAdjustments.easeIn,
-    //   },
-    //   '>'
-    // )
+
+    .to(
+      scramble1,
+      {
+        autoAlpha: 1,
+        yPercent: 0,
+        duration: adjustDuration(1.5),
+        ease: mobileAdjustments.easeIn,
+      },
+      '>'
+    )
+    .to(
+      scramble2,
+      {
+        autoAlpha: 1,
+        yPercent: 0,
+        duration: adjustDuration(1.5),
+        ease: mobileAdjustments.easeIn,
+      },
+      '>'
+    )
     .to(
       goAnywhereCopy,
       {
@@ -418,7 +456,6 @@ const createAnythingV2 = () => {
 
   return firstTl;
 };
-
 export function meetAnybody() {
   const elements = {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
@@ -801,6 +838,7 @@ window.Webflow.push(() => {
   // Add all the animations to the timeline
   pageTl
     .add(landingTimeline())
+
     .add(beAnyoneTl())
     .add(createAnythingV2())
     .add(meetAnybody())
