@@ -521,6 +521,11 @@ export function beAnyoneTl() {
   const images = gsap.utils.toArray<HTMLElement>('.video-embed');
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
+  // Duplicate the first image and append it to the end for a seamless loop
+  const firstClone = images[0].cloneNode(true) as HTMLElement;
+  wrapper.appendChild(firstClone);
+  images.push(firstClone);
+
   // Set initial states: first image fully visible, others partially faded
   images.forEach((img, i) => {
     gsap.set(img, {
@@ -529,11 +534,7 @@ export function beAnyoneTl() {
     });
   });
 
-  // Utility to wrap indices (cycling back to 0 when exceeding images.length)
-  const wrapIndex = gsap.utils.wrap(0, images.length);
-
   // Build an infinite looping timeline
-  // On mobile, make transitions a bit slower for a smoother feel
   const loopTl = gsap.timeline({
     repeat: -1,
     defaults: {
@@ -542,9 +543,8 @@ export function beAnyoneTl() {
     },
   });
 
-  // For each image transition
-  for (let i = 0; i < images.length; i++) {
-    const nextIndex = wrapIndex(i + 1);
+  // Animate from each image to the next (including the clone at the end)
+  for (let i = 0; i < images.length - 1; i++) {
     loopTl
       // Step 1: Scale down the card
       .to(vidCard, { scale: 0.98 })
@@ -554,20 +554,22 @@ export function beAnyoneTl() {
       .to(
         wrapper,
         {
-          scrollLeft: images[nextIndex].offsetLeft,
-          duration: isMobile ? 0.6 : 0.5, // Slower scroll on mobile
+          scrollLeft: images[i + 1].offsetLeft,
+          duration: isMobile ? 0.6 : 0.5,
           ease: 'power2.out',
         },
         '<'
       )
       // Step 4: Animate next image in
-      .to(images[nextIndex], { opacity: 1, scale: 1 }, '<')
+      .to(images[i + 1], { opacity: 1, scale: 1 }, '<')
       // Step 5: Scale card back up
       .to(vidCard, { scale: 1 }, 0.15)
       // Step 6: Pause before the next cycle
-      // Longer pause on mobile for easier viewing
       .to({}, { duration: isMobile ? 1.5 : 1 });
   }
+
+  // When reaching the clone (which is identical to the first image), reset scrollLeft instantly
+  loopTl.set(wrapper, { scrollLeft: 0 });
 
   return loopTl;
 }
