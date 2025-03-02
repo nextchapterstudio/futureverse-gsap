@@ -425,10 +425,8 @@ export function meetAnybody() {
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
   elements.meetText.textContent = '';
-  elements.meetHeading.textContent = '';
-  elements.anyBodyHeading.textContent = '';
 
-  gsap.set(elements.windowContainer, {
+  gsap.set([elements.meetHeading, elements.anyBodyHeading, elements.windowContainer], {
     autoAlpha: 0,
   });
 
@@ -440,18 +438,6 @@ export function meetAnybody() {
     pin: true,
     scrub: true,
   };
-
-  const meetHeadingTypingAnimation = createTypingAnimation({
-    element: elements.meetHeading,
-    text: 'MEET',
-    staggerDelay: 0.05,
-  });
-
-  const anyBodyHeadingTypingAnimation = createTypingAnimation({
-    element: elements.anyBodyHeading,
-    text: 'ANYBODY',
-    staggerDelay: 0.05,
-  });
 
   const meetCopyTypingAnimation = createTypingAnimation({
     element: elements.meetText,
@@ -472,8 +458,8 @@ export function meetAnybody() {
 
   masterTimeline
     // Fade in the headings
-    .add(meetHeadingTypingAnimation)
-    .add(anyBodyHeadingTypingAnimation, '<')
+    .to(elements.meetHeading, { autoAlpha: 1, duration: 2 })
+    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 }, '>')
     // Fade in the window container before expanding it
     .to(elements.windowContainer, { autoAlpha: 1, duration: 1 }, '>')
     // Expand the window container to fill the viewport
@@ -483,13 +469,8 @@ export function meetAnybody() {
       duration: isMobile ? 4 : 5, // Slightly faster on mobile
     })
     // Fade in the meetText shortly after the window expansion begins
-    .add(meetCopyTypingAnimation, '-=4')
-    // Fade out all text elements (both headings and scrambled content)
-    .to(
-      [elements.meetHeading, elements.anyBodyHeading, elements.meetText],
-      { autoAlpha: 0, duration: 2 },
-      '-=1' // only start fading out toward the very end of the window expansion
-    );
+    .add(meetCopyTypingAnimation, '-=5');
+  // Fade out all text elements (both headings and scrambled content)
 
   // Add a small pause at the end for mobile to prevent abrupt endings
   if (isMobile) {
@@ -582,24 +563,9 @@ function readyPlayerTl() {
     },
   });
 
-  // Initial states
-  gsap.set([readyText, playerText], { autoAlpha: 0 });
-
   // Sequence the animations properly
   tl
-    // First phase - fade in the headings
-    .to(readyText, {
-      autoAlpha: 1,
-      duration: 2,
-    })
-    .to(
-      playerText,
-      {
-        autoAlpha: 1,
-        duration: 2,
-      },
-      '-=1' // Overlap slightly with previous animation
-    )
+    // First phase - fade in the heading
     .from(
       cartridgeWrapper,
       {
