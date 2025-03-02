@@ -6,31 +6,58 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
-  const foundersWrapper = document.querySelector('.founders-wrapper');
-  const foundersImages = gsap.utils.toArray('.founders-image');
+  // ---------------------------
+  // Founders Images Animation
+  // ---------------------------
+  const foundersWrapper = document.querySelector('.founders-wrapper') as HTMLElement;
+  const foundersImages = gsap.utils.toArray<HTMLDivElement>('.founders-image');
   const foundersSection = document.querySelector('.founders-section');
 
+  // Set initial opacity for all founder image divs to 40%
+  gsap.set(foundersImages, { opacity: 0.4 });
+
+  // Calculate the total scroll distance required for cycling through the images.
+  // Adjust the multiplier (200) as needed for your desired scroll distance.
+  const scrollDistance = foundersImages.length * 200;
+
+  // Create a timeline that pins the foundersSection until all highlights have run.
   const foundersTimeline = gsap.timeline({
     scrollTrigger: {
-      trigger: foundersSection,
-      start: 'top bottom',
-      end: 'bottom top',
-      pin: true,
+      trigger: foundersSection, // Use the entire section as the trigger
+      start: 'top top', // When the section hits the top of the viewport
+      end: `+=${scrollDistance}`, // Remain pinned for the calculated scroll distance
+      pin: foundersSection, // Pin the foundersSection
+      pinSpacing: true, // Maintain the layout spacing during pinning
+      scrub: true, // Sync the timeline with scroll progress
     },
   });
 
-  // Get all elements with the class .split-text
+  // Cycle through each founder image: highlight (opacity to 1) then revert back (opacity to 0.4)
+  foundersImages.forEach((div) => {
+    foundersTimeline
+      .to(div, {
+        opacity: 1,
+        duration: 0.5,
+        ease: 'none',
+      })
+      .to(div, {
+        opacity: 0.4,
+        duration: 0.5,
+        ease: 'none',
+      });
+  });
+
+  // ---------------------------
+  // Split Text Animations
+  // ---------------------------
   const splitTextArray = gsap.utils.toArray<HTMLParagraphElement>('.split-text');
 
-  // First, apply word wrapping to prevent splitting across lines
+  // Apply word splitting and wrapping to prevent breaking across lines
   splitTextArray.forEach((element) => {
-    // First split into words
     const splitWords = new SplitText(element, {
       type: 'words',
       wordsClass: 'split-word',
     });
-
-    // Add word-wrap: nowrap to each word to prevent breaking
     gsap.set(splitWords.words, {
       display: 'inline-block',
       whiteSpace: 'nowrap',
@@ -38,66 +65,49 @@ window.Webflow.push(() => {
     });
   });
 
-  // Create the master timeline for sequential animations
+  // Create the master timeline for sequential paragraph animations
   const masterTimeline = gsap.timeline({
     scrollTrigger: {
-      trigger: splitTextArray[0], // Use the first paragraph as trigger
-      start: 'top bottom', // Start when the first paragraph enters viewport
-      end: 'bottom top+=60%', // End when the last paragraph is about to leave viewport (before reaching partners)
-
+      trigger: splitTextArray[0],
+      start: 'top bottom',
+      end: 'bottom top+=60%', // Adjust as needed
       toggleActions: 'play none none reset',
-      scrub: 0.5, // Smoother scrubbing
+      scrub: 0.5,
     },
   });
 
-  // Process each split-text element for character animations
-  splitTextArray.forEach((element, index) => {
-    // Create character splits within each element
+  // Animate each paragraph's characters sequentially
+  splitTextArray.forEach((element) => {
     const splitChars = new SplitText(element, {
       type: 'chars',
       charsClass: 'chars',
     });
-
-    // Set initial states for characters
-    gsap.set(splitChars.chars, {
-      opacity: 0.3,
-    });
-
-    // Create timeline for this specific paragraph
+    gsap.set(splitChars.chars, { opacity: 0.3 });
     const paragraphTl = gsap.timeline();
-
-    // Add character animation for opacity
     paragraphTl.to(splitChars.chars, {
       opacity: 1,
       duration: 0.2,
       stagger: 0.01,
       ease: 'back.out(1.7)',
     });
-
-    // Add this paragraph's timeline to the master timeline
-    // Each paragraph starts after the previous one completes
     masterTimeline.add(paragraphTl);
   });
 
-  // Create a single color transition for all text elements
+  // Create a color transition timeline for text elements
   const colorTimeline = gsap.timeline({
     scrollTrigger: {
-      trigger: splitTextArray[0], // Use the first paragraph as the trigger
-      start: 'top center', // Start color change when first paragraph is at center
-      end: '.partners-section top', // End when reaching the partners section
+      trigger: splitTextArray[0],
+      start: 'top center',
+      end: '.partners-section top',
       scrub: true,
-      // markers: true,
     },
   });
 
-  // Add all character elements to the color timeline
   splitTextArray.forEach((element) => {
     const colorSplit = new SplitText(element, {
       type: 'chars',
       charsClass: 'color-chars',
     });
-
-    // Add to the color timeline (all paragraphs change together)
     colorTimeline.to(
       colorSplit.chars,
       {
@@ -105,7 +115,7 @@ window.Webflow.push(() => {
         duration: 0.5,
         ease: 'none',
       },
-      0
-    ); // The "0" makes all paragraphs start the color change at the same time
+      0 // All animations start simultaneously
+    );
   });
 });
