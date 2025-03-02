@@ -6,6 +6,19 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
+  const foundersWrapper = document.querySelector('.founders-wrapper');
+  const foundersImages = gsap.utils.toArray('.founders-image');
+  const foundersSection = document.querySelector('.founders-section');
+
+  const foundersTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: foundersSection,
+      start: 'top bottom',
+      end: 'bottom top',
+      pin: true,
+    },
+  });
+
   // Get all elements with the class .split-text
   const splitTextArray = gsap.utils.toArray<HTMLParagraphElement>('.split-text');
 

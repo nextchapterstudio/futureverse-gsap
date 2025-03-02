@@ -137,6 +137,7 @@ function getScrollSettings(baseSettings, isMobile) {
 export const landingTimeline = () => {
   const intoText = document.querySelector('.home-landing-text') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
+  const blackOverlay = document.querySelector('.black-overlay-landing') as HTMLElement;
 
   // Base scroll settings
   const baseSettings = {
@@ -168,6 +169,10 @@ export const landingTimeline = () => {
       y: -50,
       duration: 1.5,
       ease: 'power2.out',
+    })
+    .to(blackOverlay, {
+      opacity: 1,
+      duration: 5,
     });
 
   // Add the typing animation
@@ -178,7 +183,10 @@ export const landingTimeline = () => {
   });
 
   // Add the typing animation to our main timeline
-  landing.add(typingAnimation);
+  landing
+    .add(typingAnimation)
+    // Add a small pause at the end for mobile to prevent abrupt endings
+    .to({}, { duration: isMobile ? 1 : 2 });
 
   return landing;
 };
@@ -194,11 +202,14 @@ const createAnythingV2 = () => {
   const content = document.querySelector('.content') as HTMLElement;
   const goText = document.querySelector('.go-text') as HTMLElement;
   const scramble2 = document.querySelector('.anywhere-text') as HTMLElement;
-  const goAnywhereCopy = document.querySelector('.go-anywhere-copy') as HTMLElement;
+  const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
   const createText = document.querySelector('.scramble-3') as HTMLElement;
   const anythingText = document.querySelector('.scramble-4') as HTMLElement;
   const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
+
+  goAnywhereCopy.textContent = '';
+  createAnythingCopy.textContent = '';
 
   // Pre-set elements to hidden for performance
   gsap.set(
@@ -211,14 +222,11 @@ const createAnythingV2 = () => {
       anythingText,
       goText,
       scramble2,
-      createAnythingCopy,
     ],
     {
       autoAlpha: 0,
     }
   );
-
-  gsap.set(goAnywhereCopy, { opacity: 0 });
 
   gsap.set(centerImage, { zIndex: 5 });
 
@@ -237,6 +245,18 @@ const createAnythingV2 = () => {
 
   const firstTl = gsap.timeline({
     scrollTrigger: scrollSettings,
+  });
+
+  const goCopyTypingAnimation = createTypingAnimation({
+    element: goAnywhereCopy,
+    text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
+    staggerDelay: 0.05,
+  });
+
+  const createAnythingCopyTypingAnimation = createTypingAnimation({
+    element: createAnythingCopy,
+    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
+    staggerDelay: 0.05,
   });
 
   const mobileAdjustments = isMobile
@@ -290,15 +310,7 @@ const createAnythingV2 = () => {
       },
       '>'
     )
-    // .to(
-    //   goAnywhereCopy,
-    //   {
-    //     atuoAlpha: 1,
-    //     duration: adjustDuration(1.5),
-    //     ease: mobileAdjustments.easeIn,
-    //   },
-    //   '>'
-    // )
+    .add(goCopyTypingAnimation, '>-1')
     // Begin fading secondImage to low opacity with a slight overlap
     .to(
       secondImage,
@@ -383,15 +395,7 @@ const createAnythingV2 = () => {
       },
       '-=3.5' // adjusted to start earlier than before
     )
-    .to(
-      createAnythingCopy,
-      {
-        opacity: 1,
-        duration: adjustDuration(3.5),
-        ease: mobileAdjustments.easeIn,
-      },
-      '+=2'
-    )
+    .add(createAnythingCopyTypingAnimation, '>-1')
     .to(
       centerImage,
       {
@@ -460,43 +464,11 @@ export function meetAnybody() {
   };
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
-  // Use line-based splitting for text elements
-  // const meetContentSplit = new SplitText(elements.meetContent, {
-  //   type: 'chars',
-  //   wordsClass: 'split-word',
-  // });
+  elements.meetText.textContent = '';
 
-  // Set initial states for key elements
-  gsap.set(
-    [elements.meetHeading, elements.anyBodyHeading, elements.windowContainer, elements.meetText],
-    { autoAlpha: 0 }
-  );
-
-  // Create a timeline for the scramble text animation
-  // const scrambleTl = gsap.timeline();
-
-  // Modified scramble animation to use the plugin correctly
-  // scrambleTl.fromTo(
-  //   meetContentSplit.chars,
-  //   { opacity: 0 },
-  //   {
-  //     duration: 5,
-  //     scrambleText: {
-  //       text: '{original}',
-  //       chars: 'upperCase',
-  //       revealDelay: 0.3,
-  //       speed: 0.4,
-  //       tweenLength: false,
-  //     },
-  //     opacity: 1,
-  //     stagger: {
-  //       each: 0.05,
-  //       from: 'start',
-  //       grid: 'auto',
-  //     },
-  //     ease: 'power1.inOut',
-  //   }
-  // );
+  gsap.set([elements.meetHeading, elements.anyBodyHeading, elements.windowContainer], {
+    autoAlpha: 0,
+  });
 
   // Base settings
   const baseSettings = {
@@ -506,6 +478,12 @@ export function meetAnybody() {
     pin: true,
     scrub: true,
   };
+
+  const meetCopyTypingAnimation = createTypingAnimation({
+    element: elements.meetText,
+    text: 'Join a global community, explore new worlds, and connect through interactive in-game features.',
+    staggerDelay: 0.05,
+  });
 
   // Get responsive settings
   const scrollSettings = getScrollSettings(baseSettings, isMobile);
@@ -529,7 +507,7 @@ export function meetAnybody() {
       ease: 'power2.inOut',
     })
     // Fade in the meetText shortly after the window expansion begins
-    .to(elements.meetText, { autoAlpha: 1, duration: 1.5 }, '-=4')
+    .add(meetCopyTypingAnimation, '-=4')
     // Fade out all text elements (both headings and scrambled content)
     .to(
       [elements.meetHeading, elements.anyBodyHeading, elements.meetText],
