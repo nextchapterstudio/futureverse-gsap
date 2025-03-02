@@ -212,21 +212,9 @@ const createAnythingV2 = () => {
   createAnythingCopy.textContent = '';
 
   // Pre-set elements to hidden for performance
-  gsap.set(
-    [
-      secondImage,
-      centerImage,
-      clippedBox,
-      swappableWrapper,
-      createText,
-      anythingText,
-      goText,
-      scramble2,
-    ],
-    {
-      autoAlpha: 0,
-    }
-  );
+  gsap.set([secondImage, centerImage, clippedBox, swappableWrapper, createText, anythingText], {
+    autoAlpha: 0,
+  });
 
   gsap.set(centerImage, { zIndex: 5 });
 
@@ -274,26 +262,9 @@ const createAnythingV2 = () => {
   const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
 
   firstTl
-    .to(
-      goText,
-      {
-        autoAlpha: 1,
-        duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
-      },
-      '0'
-    )
+
     .to(
       clippedBox,
-      {
-        autoAlpha: 1,
-        duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
-      },
-      '>'
-    )
-    .to(
-      scramble2,
       {
         autoAlpha: 1,
         duration: adjustDuration(1.5),
