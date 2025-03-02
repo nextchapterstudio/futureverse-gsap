@@ -1,9 +1,12 @@
 import gsap from 'gsap';
+import CustomEase from 'gsap/CustomEase';
 import ScrollSmoother from 'gsap/ScrollSmoother';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import SplitText from 'gsap/SplitText';
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText, CustomEase);
+
+CustomEase.create('customEase', '0.42, 0.00, 0.08, 1.00');
 
 interface TypeAnimationOptions {
   element: HTMLElement | string; // Element or selector
@@ -155,6 +158,7 @@ export const landingTimeline = () => {
   // Create timeline
   const landing = gsap.timeline({
     scrollTrigger: scrollSettings,
+    defaults: { ease: 'customEase' },
   });
 
   landing
@@ -168,7 +172,6 @@ export const landingTimeline = () => {
       opacity: 0,
       y: -50,
       duration: 1.5,
-      ease: 'power2.out',
     })
     .to(blackOverlay, {
       opacity: 1,
@@ -233,6 +236,9 @@ const createAnythingV2 = () => {
 
   const firstTl = gsap.timeline({
     scrollTrigger: scrollSettings,
+    defaults: {
+      ease: 'customEase',
+    },
   });
 
   const goCopyTypingAnimation = createTypingAnimation({
@@ -249,13 +255,9 @@ const createAnythingV2 = () => {
 
   const mobileAdjustments = isMobile
     ? {
-        easeIn: 'power1.inOut',
-        easeOut: 'power2.inOut',
         durationMultiplier: 0.8,
       }
     : {
-        easeIn: 'power1.inOut',
-        easeOut: 'power1.inOut',
         durationMultiplier: 1,
       };
 
@@ -268,7 +270,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 1,
         duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
       },
       '>'
     )
@@ -277,7 +278,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 1,
         duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
       },
       '>'
     )
@@ -288,7 +288,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 0.15,
         duration: adjustDuration(3),
-        ease: mobileAdjustments.easeIn,
       },
       '-=1'
     )
@@ -304,7 +303,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 0.4,
         duration: adjustDuration(3),
-        ease: mobileAdjustments.easeIn,
       },
       '-=6'
     )
@@ -313,7 +311,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 0,
         duration: adjustDuration(3),
-        ease: mobileAdjustments.easeIn,
       },
       '-=4'
     )
@@ -322,7 +319,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 0,
         duration: adjustDuration(3),
-        ease: mobileAdjustments.easeIn,
       },
       '-=3'
     )
@@ -332,7 +328,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 0,
         duration: adjustDuration(3),
-        ease: mobileAdjustments.easeIn,
       },
       '>-1' // adjusted offset (was >-0.5) for earlier overlap
     )
@@ -342,7 +337,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 1,
         duration: adjustDuration(4),
-        ease: mobileAdjustments.easeIn,
       },
       '-=3' // adjusted offset (was -=2) to overlap more with the firstImage fade-out
     )
@@ -352,7 +346,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 1,
         duration: adjustDuration(3.5),
-        ease: mobileAdjustments.easeIn,
       },
       '-=4' // moved earlier compared to the previous timing
     )
@@ -362,7 +355,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 1,
         duration: adjustDuration(3.5),
-        ease: mobileAdjustments.easeIn,
       },
       '-=3.5' // adjusted to start earlier than before
     )
@@ -372,7 +364,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 1,
         duration: adjustDuration(8), // Longer fade‑in duration for center image
-        ease: mobileAdjustments.easeIn,
       },
       '-=4' // Adjusted offset so it starts earlier in relation to previous tween
     )
@@ -381,7 +372,6 @@ const createAnythingV2 = () => {
       {
         autoAlpha: 0,
         duration: adjustDuration(4), // Extended fade‑out duration for second image
-        ease: mobileAdjustments.easeIn,
       },
       '+=3' // Delay the fade‑out start by 1 second for a longer overlap
     )
@@ -391,7 +381,6 @@ const createAnythingV2 = () => {
       {
         opacity: 0,
         duration: adjustDuration(2.5),
-        ease: mobileAdjustments.easeIn,
       },
       '-=1.5'
     );
