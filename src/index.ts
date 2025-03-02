@@ -451,27 +451,29 @@ export function meetAnybody() {
   // Master timeline with scroll trigger for a seamless scroll-driven sequence
   const masterTimeline = gsap.timeline({
     scrollTrigger: scrollSettings,
+    defaults: {
+      ease: 'customEase',
+    },
   });
 
   masterTimeline
     // Fade in the headings
-    .to(elements.meetHeading, { autoAlpha: 1, duration: 2, ease: 'power2.out' })
-    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2, ease: 'power2.out' }, '>')
+    .to(elements.meetHeading, { autoAlpha: 1, duration: 2 })
+    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 }, '>')
     // Fade in the window container before expanding it
-    .to(elements.windowContainer, { autoAlpha: 1, duration: 1, ease: 'power2.out' }, '>')
+    .to(elements.windowContainer, { autoAlpha: 1, duration: 1 }, '>')
     // Expand the window container to fill the viewport
     .to(elements.windowContainer, {
       width: '100vw',
       height: '100vh',
       duration: isMobile ? 4 : 5, // Slightly faster on mobile
-      ease: 'power2.inOut',
     })
     // Fade in the meetText shortly after the window expansion begins
     .add(meetCopyTypingAnimation, '-=4')
     // Fade out all text elements (both headings and scrambled content)
     .to(
       [elements.meetHeading, elements.anyBodyHeading, elements.meetText],
-      { autoAlpha: 0, duration: 2, ease: 'power2.inOut' },
+      { autoAlpha: 0, duration: 2 },
       '-=1' // only start fading out toward the very end of the window expansion
     );
 
@@ -506,7 +508,7 @@ export function beAnyoneTl() {
   const loopTl = gsap.timeline({
     repeat: -1,
     defaults: {
-      ease: 'power2.out',
+      ease: 'customEase',
       duration: isMobile ? 0.4 : 0.3, // Slightly slower transitions on mobile
     },
   });
@@ -524,7 +526,6 @@ export function beAnyoneTl() {
         {
           scrollLeft: images[i + 1].offsetLeft,
           duration: isMobile ? 0.6 : 0.5,
-          ease: 'power2.out',
         },
         '<'
       )
@@ -562,6 +563,9 @@ function readyPlayerTl() {
 
   const tl = gsap.timeline({
     scrollTrigger: scrollSettings,
+    defaults: {
+      ease: 'customEase',
+    },
   });
 
   // Initial states
@@ -573,14 +577,12 @@ function readyPlayerTl() {
     .to(readyText, {
       autoAlpha: 1,
       duration: 2,
-      ease: 'power2.out',
     })
     .to(
       playerText,
       {
         autoAlpha: 1,
         duration: 2,
-        ease: 'power2.out',
       },
       '-=1' // Overlap slightly with previous animation
     )
@@ -590,7 +592,6 @@ function readyPlayerTl() {
         autoAlpha: 0,
         yPercent: -50,
         duration: 4,
-        ease: 'power2.out',
       },
       '-=1'
     );
