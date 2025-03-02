@@ -1,17 +1,9 @@
 import gsap from 'gsap';
-import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
 import ScrollSmoother from 'gsap/ScrollSmoother';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import SplitText from 'gsap/SplitText';
-import Typed from 'typed.js';
 
-gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, ScrollSmoother, SplitText);
-
-import { gsap } from 'gsap';
-import { SplitText } from 'gsap/SplitText';
-
-// Register the SplitText plugin
-gsap.registerPlugin(SplitText);
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText);
 
 interface TypeAnimationOptions {
   element: HTMLElement | string; // Element or selector
@@ -200,22 +192,33 @@ const createAnythingV2 = () => {
   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
   const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
   const content = document.querySelector('.content') as HTMLElement;
-  const scramble1 = document.querySelector('.scramble-1') as HTMLElement;
-  const scramble2 = document.querySelector('.scamble-2') as HTMLElement;
+  const goText = document.querySelector('.go-text') as HTMLElement;
+  const scramble2 = document.querySelector('.anywhere-text') as HTMLElement;
   const goAnywhereCopy = document.querySelector('.go-anywhere-copy') as HTMLElement;
   const createText = document.querySelector('.scramble-3') as HTMLElement;
   const anythingText = document.querySelector('.scramble-4') as HTMLElement;
   const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
-  // Use line-based splitting for both text elements
-
   // Pre-set elements to hidden for performance
-  gsap.set([secondImage, centerImage, clippedBox, swappableWrapper, createText, anythingText], {
-    autoAlpha: 0,
-  });
+  gsap.set(
+    [
+      secondImage,
+      centerImage,
+      clippedBox,
+      swappableWrapper,
+      createText,
+      anythingText,
+      goText,
+      scramble2,
+      createAnythingCopy,
+    ],
+    {
+      autoAlpha: 0,
+    }
+  );
 
-  gsap.set([createAnythingCopy, goAnywhereCopy], { opacity: 0 });
+  gsap.set(goAnywhereCopy, { opacity: 0 });
 
   gsap.set(centerImage, { zIndex: 5 });
 
@@ -223,26 +226,24 @@ const createAnythingV2 = () => {
   const baseSettings = {
     trigger: '.home-scroll-section',
     start: 'top top',
-    end: '+=650%',
+    end: '+=450%',
     pin: true,
     scrub: 2.5,
     markers: true,
     anticipatePin: 0.5,
   };
 
-  // Get responsive settings
   const scrollSettings = getScrollSettings(baseSettings, isMobile);
 
   const firstTl = gsap.timeline({
     scrollTrigger: scrollSettings,
   });
 
-  // If mobile, adjust timing and ease functions for smoother experience
   const mobileAdjustments = isMobile
     ? {
         easeIn: 'power1.inOut',
         easeOut: 'power2.inOut',
-        durationMultiplier: 0.8, // Slightly shorter durations for mobile
+        durationMultiplier: 0.8,
       }
     : {
         easeIn: 'power1.inOut',
@@ -254,7 +255,25 @@ const createAnythingV2 = () => {
 
   firstTl
     .to(
+      goText,
+      {
+        autoAlpha: 1,
+        duration: adjustDuration(1.5),
+        ease: mobileAdjustments.easeIn,
+      },
+      '0'
+    )
+    .to(
       clippedBox,
+      {
+        autoAlpha: 1,
+        duration: adjustDuration(1.5),
+        ease: mobileAdjustments.easeIn,
+      },
+      '>'
+    )
+    .to(
+      scramble2,
       {
         autoAlpha: 1,
         duration: adjustDuration(1.5),
@@ -271,36 +290,16 @@ const createAnythingV2 = () => {
       },
       '>'
     )
-
-    .to(
-      scramble1,
-      {
-        autoAlpha: 1,
-        yPercent: 0,
-        duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
-      },
-      '>'
-    )
-    .to(
-      scramble2,
-      {
-        autoAlpha: 1,
-        yPercent: 0,
-        duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
-      },
-      '>'
-    )
-    .to(
-      goAnywhereCopy,
-      {
-        opacity: 1,
-        duration: adjustDuration(1.5),
-        ease: mobileAdjustments.easeIn,
-      },
-      '>'
-    )
+    // .to(
+    //   goAnywhereCopy,
+    //   {
+    //     atuoAlpha: 1,
+    //     duration: adjustDuration(1.5),
+    //     ease: mobileAdjustments.easeIn,
+    //   },
+    //   '>'
+    // )
+    // Begin fading secondImage to low opacity with a slight overlap
     .to(
       secondImage,
       {
@@ -316,6 +315,7 @@ const createAnythingV2 = () => {
       duration: adjustDuration(7),
       ease: mobileAdjustments.easeOut,
     })
+    // Increase the overlap during the secondImage fade so the change is smoother
     .to(
       secondImage,
       {
@@ -343,6 +343,7 @@ const createAnythingV2 = () => {
       },
       '-=3'
     )
+    // Start fading out firstImage earlier for a more blended crossfade
     .to(
       firstImage,
       {
@@ -350,8 +351,9 @@ const createAnythingV2 = () => {
         duration: adjustDuration(3),
         ease: mobileAdjustments.easeIn,
       },
-      '>-0.5'
+      '>-1' // adjusted offset (was >-0.5) for earlier overlap
     )
+    // Fade secondImage back in with an earlier start for the crossfade effect
     .to(
       secondImage,
       {
@@ -359,8 +361,9 @@ const createAnythingV2 = () => {
         duration: adjustDuration(4),
         ease: mobileAdjustments.easeIn,
       },
-      '-=2'
+      '-=3' // adjusted offset (was -=2) to overlap more with the firstImage fade-out
     )
+    // Start "create" text sooner by overlapping it with the image crossfade
     .to(
       createText,
       {
@@ -368,8 +371,9 @@ const createAnythingV2 = () => {
         duration: adjustDuration(3.5),
         ease: mobileAdjustments.easeIn,
       },
-      '-=3.5'
+      '-=4' // moved earlier compared to the previous timing
     )
+    // Likewise, bring in the "anything" text sooner
     .to(
       anythingText,
       {
@@ -377,7 +381,7 @@ const createAnythingV2 = () => {
         duration: adjustDuration(3.5),
         ease: mobileAdjustments.easeIn,
       },
-      '-=2.5'
+      '-=3.5' // adjusted to start earlier than before
     )
     .to(
       createAnythingCopy,
@@ -386,26 +390,27 @@ const createAnythingV2 = () => {
         duration: adjustDuration(3.5),
         ease: mobileAdjustments.easeIn,
       },
-      '>-1'
+      '+=2'
     )
     .to(
       centerImage,
       {
         autoAlpha: 1,
-        duration: adjustDuration(4.5),
+        duration: adjustDuration(8), // Longer fade‑in duration for center image
         ease: mobileAdjustments.easeIn,
       },
-      '-=3.5'
+      '-=4' // Adjusted offset so it starts earlier in relation to previous tween
     )
     .to(
       secondImage,
       {
         autoAlpha: 0,
-        duration: adjustDuration(3),
+        duration: adjustDuration(4), // Extended fade‑out duration for second image
         ease: mobileAdjustments.easeIn,
       },
-      '<'
+      '+=3' // Delay the fade‑out start by 1 second for a longer overlap
     )
+
     .to(
       '.content-bottom',
       {
@@ -423,39 +428,27 @@ const createAnythingV2 = () => {
 
   const mm = gsap.matchMedia();
 
-  // Add the scale animation only on desktop/tablet
   mm.add('(min-width: 768px)', () => {
-    // Add scale animation as the very last step
     firstTl.add(
       gsap.to(centerImage, {
         scale: 0.7,
         ease: 'power1.inOut',
         duration: 4,
       }),
-      // Adding after the previous timeline is complete
       '>'
     );
-
-    return () => {
-      // Clean up if needed
-    };
+    return () => {};
   });
 
-  // Additional handling for mobile
   mm.add('(max-width: 767px)', () => {
-    // Ensure there's no scale applied
     gsap.set(centerImage, { scale: 1 });
-
-    // Add a small delay at the end to soften the transition out of the pinned section
     firstTl.add(gsap.to({}, { duration: 0.5 }), '>');
-
-    return () => {
-      // Clean up
-    };
+    return () => {};
   });
 
   return firstTl;
 };
+
 export function meetAnybody() {
   const elements = {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
