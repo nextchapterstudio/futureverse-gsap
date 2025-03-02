@@ -425,8 +425,9 @@ export function meetAnybody() {
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
   elements.meetText.textContent = '';
-
-  gsap.set([elements.meetHeading, elements.anyBodyHeading, elements.windowContainer], {
+  elements.meetHeading.textContent = '';
+  elements.anyBodyHeading.textContent = '';
+  elements.gsap.set([elements.meetHeading, elements.anyBodyHeading, elements.windowContainer], {
     autoAlpha: 0,
   });
 
@@ -438,6 +439,18 @@ export function meetAnybody() {
     pin: true,
     scrub: true,
   };
+
+  const meetHeadingTypingAnimation = createTypingAnimation({
+    element: elements.meetHeading,
+    text: 'MEET',
+    staggerDelay: 0.05,
+  });
+
+  const anyBodyHeadingTypingAnimation = createTypingAnimation({
+    element: elements.anyBodyHeading,
+    text: 'ANYBODY',
+    staggerDelay: 0.05,
+  });
 
   const meetCopyTypingAnimation = createTypingAnimation({
     element: elements.meetText,
@@ -458,8 +471,8 @@ export function meetAnybody() {
 
   masterTimeline
     // Fade in the headings
-    .to(elements.meetHeading, { autoAlpha: 1, duration: 2 })
-    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 }, '>')
+    .add(meetHeadingTypingAnimation)
+    .add(anyBodyHeadingTypingAnimation, '<')
     // Fade in the window container before expanding it
     .to(elements.windowContainer, { autoAlpha: 1, duration: 1 }, '>')
     // Expand the window container to fill the viewport
