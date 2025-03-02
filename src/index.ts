@@ -427,7 +427,8 @@ export function meetAnybody() {
   elements.meetText.textContent = '';
   elements.meetHeading.textContent = '';
   elements.anyBodyHeading.textContent = '';
-  elements.gsap.set([elements.meetHeading, elements.anyBodyHeading, elements.windowContainer], {
+
+  gsap.set(elements.windowContainer, {
     autoAlpha: 0,
   });
 
