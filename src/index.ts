@@ -426,7 +426,7 @@ export function meetAnybody() {
 
   elements.meetText.textContent = '';
 
-  gsap.set([elements.meetHeading, elements.anyBodyHeading, elements.windowContainer], {
+  gsap.set([elements.anyBodyHeading, elements.windowContainer], {
     autoAlpha: 0,
   });
 
@@ -458,8 +458,7 @@ export function meetAnybody() {
 
   masterTimeline
     // Fade in the headings
-    .to(elements.meetHeading, { autoAlpha: 1, duration: 2 })
-    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 }, '>')
+    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 })
     // Fade in the window container before expanding it
     .to(elements.windowContainer, { autoAlpha: 1, duration: 1 }, '>')
     // Expand the window container to fill the viewport
