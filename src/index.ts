@@ -187,7 +187,7 @@ export const landingTimeline = () => {
 
   // Add the typing animation to our main timeline
   landing
-    .add(typingAnimation, '-=3') // Slightly overlap the typing animation with the previous tween
+    .add(typingAnimation, '-=5') // Slightly overlap the typing animation with the previous tween
     // Add a small pause at the end for mobile to prevent abrupt endings
     .to({}, { duration: isMobile ? 1 : 2 });
 
