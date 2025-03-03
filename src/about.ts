@@ -6,98 +6,151 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
-  const foundersWrapper = document.querySelector('.founders-wrapper');
-  const foundersImages = gsap.utils.toArray('.founders-image');
-  const foundersSection = document.querySelector('.founders-section');
+  // Shared helper function to ensure the element is fully visible horizontally
+  function ensureVisible(
+    div: HTMLElement,
+    foundersSection: HTMLElement,
+    foundersWrapper: HTMLElement
+  ) {
+    const sectionRect = foundersSection.getBoundingClientRect();
+    const rect = div.getBoundingClientRect();
+    let shift = 0;
+    // If the image is too far left (hidden), shift right.
+    if (rect.left < sectionRect.left) {
+      shift = sectionRect.left - rect.left;
+    }
+    // If the image is too far right (hidden), shift left leaving 16px padding.
+    else if (rect.right > sectionRect.right - 16) {
+      shift = sectionRect.right - 16 - rect.right;
+    }
+    if (shift !== 0) {
+      gsap.to(foundersWrapper, { x: `+=${shift}`, duration: 0.3, ease: 'power1.out' });
+    }
+  }
 
-  const foundersTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: foundersSection,
-      start: 'top bottom',
-      end: 'bottom top',
-      pin: true,
+  // Use matchMedia to create separate ScrollTrigger configurations for desktop and mobile.
+  ScrollTrigger.matchMedia({
+    // Desktop: enable pinning and horizontal scroll with a fixed distance of 800
+    '(min-width: 768px)': () => {
+      const foundersWrapper = document.querySelector('.founders-wrapper') as HTMLElement;
+      const foundersImages = gsap.utils.toArray<HTMLDivElement>('.founders-image');
+      const foundersSection = document.querySelector('.founders-section') as HTMLElement;
+
+      // Force overflow visible so that any horizontal shifts reveal content
+      foundersSection.style.overflow = 'visible';
+      gsap.set(foundersImages, { opacity: 0.4 });
+
+      // Set scroll distance to 800 on desktop
+      const scrollDistance = 800;
+
+      const foundersTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: foundersSection,
+          start: 'top top',
+          end: `+=${scrollDistance}`,
+          pin: foundersSection,
+          pinSpacing: true,
+          scrub: true,
+          fastScrollEnd: false,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      foundersImages.forEach((div) => {
+        foundersTimeline
+          .to(div, { opacity: 1, duration: 1, ease: 'none' })
+          .call(() => ensureVisible(div, foundersSection, foundersWrapper))
+          .to(div, { opacity: 0.4, duration: 1, ease: 'none' });
+      });
+    },
+    // Mobile: enable pinning and horizontal scroll with a fixed distance of 400
+    '(max-width: 767px)': () => {
+      const foundersWrapper = document.querySelector('.founders-wrapper') as HTMLElement;
+      const foundersImages = gsap.utils.toArray<HTMLDivElement>('.founders-image');
+      const foundersSection = document.querySelector('.founders-section') as HTMLElement;
+
+      gsap.set(foundersImages, { opacity: 0.4 });
+
+      // Set scroll distance to 400 on mobile
+      const scrollDistance = 400;
+
+      const mobileTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: foundersSection,
+          start: 'top top',
+          end: `+=${scrollDistance}`,
+          scrub: true,
+          pin: foundersSection,
+          pinSpacing: true,
+        },
+      });
+
+      foundersImages.forEach((div) => {
+        mobileTimeline
+          .to(div, { opacity: 1, duration: 1, ease: 'none' })
+          .call(() => ensureVisible(div, foundersSection, foundersWrapper))
+          .to(div, { opacity: 0.4, duration: 1, ease: 'none' });
+      });
     },
   });
 
-  // Get all elements with the class .split-text
+  // ---------------------------
+  // Split Text Animations (unchanged)
+  // ---------------------------
   const splitTextArray = gsap.utils.toArray<HTMLParagraphElement>('.split-text');
 
-  // First, apply word wrapping to prevent splitting across lines
   splitTextArray.forEach((element) => {
-    // First split into words
     const splitWords = new SplitText(element, {
       type: 'words',
       wordsClass: 'split-word',
     });
-
-    // Add word-wrap: nowrap to each word to prevent breaking
     gsap.set(splitWords.words, {
       display: 'inline-block',
       whiteSpace: 'nowrap',
-      margin: '0 0.2em 0 0', // Add a small gap between words
+      margin: '0 0.2em 0 0',
     });
   });
 
-  // Create the master timeline for sequential animations
   const masterTimeline = gsap.timeline({
     scrollTrigger: {
-      trigger: splitTextArray[0], // Use the first paragraph as trigger
-      start: 'top bottom', // Start when the first paragraph enters viewport
-      end: 'bottom top+=60%', // End when the last paragraph is about to leave viewport (before reaching partners)
-
+      trigger: splitTextArray[0],
+      start: 'top bottom',
+      end: 'bottom top+=60%',
       toggleActions: 'play none none reset',
-      scrub: 0.5, // Smoother scrubbing
+      scrub: 0.5,
     },
   });
 
-  // Process each split-text element for character animations
-  splitTextArray.forEach((element, index) => {
-    // Create character splits within each element
+  splitTextArray.forEach((element) => {
     const splitChars = new SplitText(element, {
       type: 'chars',
       charsClass: 'chars',
     });
-
-    // Set initial states for characters
-    gsap.set(splitChars.chars, {
-      opacity: 0.3,
-    });
-
-    // Create timeline for this specific paragraph
+    gsap.set(splitChars.chars, { opacity: 0.3 });
     const paragraphTl = gsap.timeline();
-
-    // Add character animation for opacity
     paragraphTl.to(splitChars.chars, {
       opacity: 1,
       duration: 0.2,
       stagger: 0.01,
       ease: 'back.out(1.7)',
     });
-
-    // Add this paragraph's timeline to the master timeline
-    // Each paragraph starts after the previous one completes
     masterTimeline.add(paragraphTl);
   });
 
-  // Create a single color transition for all text elements
   const colorTimeline = gsap.timeline({
     scrollTrigger: {
-      trigger: splitTextArray[0], // Use the first paragraph as the trigger
-      start: 'top center', // Start color change when first paragraph is at center
-      end: '.partners-section top', // End when reaching the partners section
+      trigger: splitTextArray[0],
+      start: 'top center',
+      end: '.partners-section top',
       scrub: true,
-      // markers: true,
     },
   });
 
-  // Add all character elements to the color timeline
   splitTextArray.forEach((element) => {
     const colorSplit = new SplitText(element, {
       type: 'chars',
       charsClass: 'color-chars',
     });
-
-    // Add to the color timeline (all paragraphs change together)
     colorTimeline.to(
       colorSplit.chars,
       {
@@ -106,6 +159,6 @@ window.Webflow.push(() => {
         ease: 'none',
       },
       0
-    ); // The "0" makes all paragraphs start the color change at the same time
+    );
   });
 });
