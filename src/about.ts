@@ -6,53 +6,99 @@ window.Webflow ||= [];
 window.Webflow.push(() => {
   gsap.registerPlugin(ScrollTrigger, SplitText);
 
-  // ---------------------------
-  // Founders Images Animation
-  // ---------------------------
-  const foundersWrapper = document.querySelector('.founders-wrapper') as HTMLElement;
-  const foundersImages = gsap.utils.toArray<HTMLDivElement>('.founders-image');
-  const foundersSection = document.querySelector('.founders-section');
+  // Shared helper function to ensure the element is fully visible horizontally
+  function ensureVisible(
+    div: HTMLElement,
+    foundersSection: HTMLElement,
+    foundersWrapper: HTMLElement
+  ) {
+    const sectionRect = foundersSection.getBoundingClientRect();
+    const rect = div.getBoundingClientRect();
+    let shift = 0;
+    // If the image is too far left (hidden), shift right.
+    if (rect.left < sectionRect.left) {
+      shift = sectionRect.left - rect.left;
+    }
+    // If the image is too far right (hidden), shift left leaving 16px padding.
+    else if (rect.right > sectionRect.right - 16) {
+      shift = sectionRect.right - 16 - rect.right;
+    }
+    if (shift !== 0) {
+      gsap.to(foundersWrapper, { x: `+=${shift}`, duration: 0.3, ease: 'power1.out' });
+    }
+  }
 
-  // Set initial opacity for all founder image divs to 40%
-  gsap.set(foundersImages, { opacity: 0.4 });
+  // Use matchMedia to create separate ScrollTrigger configurations for desktop and mobile.
+  ScrollTrigger.matchMedia({
+    // Desktop: enable pinning and horizontal scroll with a fixed distance of 800
+    '(min-width: 768px)': () => {
+      const foundersWrapper = document.querySelector('.founders-wrapper') as HTMLElement;
+      const foundersImages = gsap.utils.toArray<HTMLDivElement>('.founders-image');
+      const foundersSection = document.querySelector('.founders-section') as HTMLElement;
 
-  // Calculate the total scroll distance required for cycling through the images.
-  // Adjust the multiplier (200) as needed for your desired scroll distance.
-  const scrollDistance = foundersImages.length * 200;
+      // Force overflow visible so that any horizontal shifts reveal content
+      foundersSection.style.overflow = 'visible';
+      gsap.set(foundersImages, { opacity: 0.4 });
 
-  // Create a timeline that pins the foundersSection until all highlights have run.
-  const foundersTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: foundersSection, // Use the entire section as the trigger
-      start: 'top top', // When the section hits the top of the viewport
-      end: `+=${scrollDistance}`, // Remain pinned for the calculated scroll distance
-      pin: foundersSection, // Pin the foundersSection
-      pinSpacing: true, // Maintain the layout spacing during pinning
-      scrub: true, // Sync the timeline with scroll progress
+      // Set scroll distance to 800 on desktop
+      const scrollDistance = 800;
+
+      const foundersTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: foundersSection,
+          start: 'top top',
+          end: `+=${scrollDistance}`,
+          pin: foundersSection,
+          pinSpacing: true,
+          scrub: true,
+          fastScrollEnd: false,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      foundersImages.forEach((div) => {
+        foundersTimeline
+          .to(div, { opacity: 1, duration: 1, ease: 'none' })
+          .call(() => ensureVisible(div, foundersSection, foundersWrapper))
+          .to(div, { opacity: 0.4, duration: 1, ease: 'none' });
+      });
+    },
+    // Mobile: enable pinning and horizontal scroll with a fixed distance of 400
+    '(max-width: 767px)': () => {
+      const foundersWrapper = document.querySelector('.founders-wrapper') as HTMLElement;
+      const foundersImages = gsap.utils.toArray<HTMLDivElement>('.founders-image');
+      const foundersSection = document.querySelector('.founders-section') as HTMLElement;
+
+      gsap.set(foundersImages, { opacity: 0.4 });
+
+      // Set scroll distance to 400 on mobile
+      const scrollDistance = 400;
+
+      const mobileTimeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: foundersSection,
+          start: 'top top',
+          end: `+=${scrollDistance}`,
+          scrub: true,
+          pin: foundersSection,
+          pinSpacing: true,
+        },
+      });
+
+      foundersImages.forEach((div) => {
+        mobileTimeline
+          .to(div, { opacity: 1, duration: 1, ease: 'none' })
+          .call(() => ensureVisible(div, foundersSection, foundersWrapper))
+          .to(div, { opacity: 0.4, duration: 1, ease: 'none' });
+      });
     },
   });
 
-  // Cycle through each founder image: highlight (opacity to 1) then revert back (opacity to 0.4)
-  foundersImages.forEach((div) => {
-    foundersTimeline
-      .to(div, {
-        opacity: 1,
-        duration: 0.5,
-        ease: 'none',
-      })
-      .to(div, {
-        opacity: 0.4,
-        duration: 0.5,
-        ease: 'none',
-      });
-  });
-
   // ---------------------------
-  // Split Text Animations
+  // Split Text Animations (unchanged)
   // ---------------------------
   const splitTextArray = gsap.utils.toArray<HTMLParagraphElement>('.split-text');
 
-  // Apply word splitting and wrapping to prevent breaking across lines
   splitTextArray.forEach((element) => {
     const splitWords = new SplitText(element, {
       type: 'words',
@@ -61,22 +107,20 @@ window.Webflow.push(() => {
     gsap.set(splitWords.words, {
       display: 'inline-block',
       whiteSpace: 'nowrap',
-      margin: '0 0.2em 0 0', // Add a small gap between words
+      margin: '0 0.2em 0 0',
     });
   });
 
-  // Create the master timeline for sequential paragraph animations
   const masterTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: splitTextArray[0],
       start: 'top bottom',
-      end: 'bottom top+=60%', // Adjust as needed
+      end: 'bottom top+=60%',
       toggleActions: 'play none none reset',
       scrub: 0.5,
     },
   });
 
-  // Animate each paragraph's characters sequentially
   splitTextArray.forEach((element) => {
     const splitChars = new SplitText(element, {
       type: 'chars',
@@ -93,7 +137,6 @@ window.Webflow.push(() => {
     masterTimeline.add(paragraphTl);
   });
 
-  // Create a color transition timeline for text elements
   const colorTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: splitTextArray[0],
@@ -115,7 +158,7 @@ window.Webflow.push(() => {
         duration: 0.5,
         ease: 'none',
       },
-      0 // All animations start simultaneously
+      0
     );
   });
 });
