@@ -539,9 +539,17 @@ export function beAnyoneTl() {
 function readyPlayerTl() {
   const readyPlayerSection = document.querySelector('.ready-player-section') as HTMLElement;
   const readyText = document.querySelector('.ready-text') as HTMLElement;
-  const playerText = document.querySelector('.player-text') as HTMLElement;
+  const playerTextCopy = document.querySelector('.ready-player-copy') as HTMLElement;
   const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
+
+  playerTextCopy.textContent = '';
+
+  const readyPlayerCopyTypingAnimation = createTypingAnimation({
+    text: 'Launch into the action and discover an ever-expanding catalog of games and experiences.',
+    element: playerTextCopy,
+    staggerDelay: 0.05,
+  });
 
   // Base settings - increase the end value to allow more time for animation
   const baseSettings = {
@@ -563,25 +571,15 @@ function readyPlayerTl() {
   });
 
   // Sequence the animations properly
-  tl
-    // First phase - fade in the heading
-    .from(
-      cartridgeWrapper,
-      {
-        autoAlpha: 0,
-        yPercent: -50,
-        duration: 4,
-      },
-      '-=1'
-    );
-  // Add a small pause to let the text be read fully
-  // .to({}, { duration: 1 })
-
-  // Second phase - bring in the cartridge after text is fully visible
-
-  // Third phase - hold the final state for a moment
-  // .to({}, { duration: 2 }); // Hold the final state longer
-
+  tl.add(readyPlayerCopyTypingAnimation).from(
+    cartridgeWrapper,
+    {
+      autoAlpha: 0,
+      yPercent: -50,
+      duration: 4,
+    },
+    '-=1'
+  );
   // For mobile, add an additional pause at the end to ensure smooth exit
   if (isMobile) {
     tl.to({}, { duration: 1.5 });
