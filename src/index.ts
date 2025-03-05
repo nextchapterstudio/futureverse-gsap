@@ -414,7 +414,7 @@ export function meetAnybody() {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
     meetHeading: document.querySelector('.meet-text') as HTMLElement,
     anyBodyHeading: document.querySelector('.anybody-text') as HTMLElement,
-    windowContainer: document.querySelector('.image-window') as HTMLElement,
+    windowContainer: document.querySelector('.clipped-path') as HTMLElement,
     meetContent: document.querySelector('.meet-anybody-text') as HTMLElement,
     meetText: document.querySelector('.meet-content') as HTMLElement,
   };
@@ -459,8 +459,10 @@ export function meetAnybody() {
     .to(elements.windowContainer, { autoAlpha: 1, duration: 1 }, '>')
     // Expand the window container to fill the viewport
     .to(elements.windowContainer, {
-      clipPath: 'inset(0% 0% 0% 0%)', // FIXED: Full screen polygon
-      duration: isMobile ? 4 : 5,
+      duration: 1, // duration is less relevant when scrubbed; it's the animation's total length
+      ease: 'customEase',
+      clipPath:
+        ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
     })
     // Fade in the meetText shortly after the window expansion begins
     .add(meetCopyTypingAnimation, '-=5');
