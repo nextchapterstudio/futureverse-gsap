@@ -422,7 +422,7 @@ export function meetAnybody() {
 
   elements.meetText.textContent = '';
 
-  gsap.set([elements.anyBodyHeading, elements.windowContainer], {
+  gsap.set([elements.anyBodyHeading], {
     autoAlpha: 0,
   });
 
@@ -456,10 +456,9 @@ export function meetAnybody() {
     // Fade in the headings
     .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 })
     // Fade in the window container before expanding it
-    .to(elements.windowContainer, { autoAlpha: 1, duration: 1 }, '>')
     // Expand the window container to fill the viewport
     .to(elements.windowContainer, {
-      duration: 1, // duration is less relevant when scrubbed; it's the animation's total length
+      duration: 3, // duration is less relevant when scrubbed; it's the animation's total length
       ease: 'customEase',
       clipPath:
         ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
