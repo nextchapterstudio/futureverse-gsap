@@ -215,7 +215,7 @@ const createAnythingV2 = () => {
   createAnythingCopy.textContent = '';
 
   // Pre-set elements to hidden for performance
-  gsap.set([secondImage, centerImage, clippedBox, swappableWrapper, createText, anythingText], {
+  gsap.set([secondImage, clippedBox, swappableWrapper, createText, anythingText], {
     autoAlpha: 0,
   });
 
@@ -295,7 +295,6 @@ const createAnythingV2 = () => {
       width: '100%',
       height: '100%',
       duration: adjustDuration(7),
-      ease: mobileAdjustments.easeOut,
     })
     // Increase the overlap during the secondImage fade so the change is smoother
     .to(
@@ -356,9 +355,9 @@ const createAnythingV2 = () => {
         autoAlpha: 1,
         duration: adjustDuration(3.5),
       },
-      '-=3.5' // adjusted to start earlier than before
+      '>' // adjusted to start earlier than before
     )
-    .add(createAnythingCopyTypingAnimation, '>-1')
+    .add(createAnythingCopyTypingAnimation, '-=1')
     .to(
       centerImage,
       {
@@ -373,7 +372,7 @@ const createAnythingV2 = () => {
         autoAlpha: 0,
         duration: adjustDuration(4), // Extended fade‑out duration for second image
       },
-      '+=3' // Delay the fade‑out start by 1 second for a longer overlap
+      '+=5' // Delay the fade‑out start by 1 second for a longer overlap
     )
 
     .to(
