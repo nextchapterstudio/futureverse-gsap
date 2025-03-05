@@ -298,22 +298,22 @@ const createAnythingV2 = () => {
       duration: adjustDuration(7),
     })
     // Increase the overlap during the secondImage fade so the change is smoother
-    // .to(
-    //   secondImage,
-    //   {
-    //     autoAlpha: 0.4,
-    //     duration: adjustDuration(3),
-    //   },
-    //   '-=6'
-    // )
-    // .to(
-    //   swappableWrapper,
-    //   {
-    //     autoAlpha: 0,
-    //     duration: adjustDuration(3),
-    //   },
-    //   '-=4'
-    // )
+    .to(
+      secondImage,
+      {
+        autoAlpha: 0.4,
+        duration: adjustDuration(3),
+      },
+      '-=6'
+    )
+    .to(
+      swappableWrapper,
+      {
+        autoAlpha: 0,
+        duration: adjustDuration(3),
+      },
+      '-=4'
+    )
     .to(
       content,
       {
@@ -370,6 +370,7 @@ const createAnythingV2 = () => {
       },
       '+=5' // Delay the fade‑out start by 1 second for a longer overlap
     )
+    .to(centerImage, { autoApply: 1, duration: adjustDuration(4) }, '>')
 
     .to(
       '.content-bottom',
