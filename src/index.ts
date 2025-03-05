@@ -414,7 +414,7 @@ export function meetAnybody() {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
     meetHeading: document.querySelector('.meet-text') as HTMLElement,
     anyBodyHeading: document.querySelector('.anybody-text') as HTMLElement,
-    windowContainer: document.querySelector('.reveal-image') as HTMLElement,
+    windowContainer: document.querySelector('.image-window') as HTMLElement,
     meetContent: document.querySelector('.meet-anybody-text') as HTMLElement,
     meetText: document.querySelector('.meet-content') as HTMLElement,
   };
