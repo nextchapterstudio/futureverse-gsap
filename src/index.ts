@@ -297,22 +297,22 @@ const createAnythingV2 = () => {
       duration: adjustDuration(7),
     })
     // Increase the overlap during the secondImage fade so the change is smoother
-    .to(
-      secondImage,
-      {
-        autoAlpha: 0.4,
-        duration: adjustDuration(3),
-      },
-      '-=6'
-    )
-    .to(
-      swappableWrapper,
-      {
-        autoAlpha: 0,
-        duration: adjustDuration(3),
-      },
-      '-=4'
-    )
+    // .to(
+    //   secondImage,
+    //   {
+    //     autoAlpha: 0.4,
+    //     duration: adjustDuration(3),
+    //   },
+    //   '-=6'
+    // )
+    // .to(
+    //   swappableWrapper,
+    //   {
+    //     autoAlpha: 0,
+    //     duration: adjustDuration(3),
+    //   },
+    //   '-=4'
+    // )
     .to(
       content,
       {
@@ -339,6 +339,7 @@ const createAnythingV2 = () => {
       },
       '-=3' // adjusted offset (was -=2) to overlap more with the firstImage fade-out
     )
+    .set(firstImage, { autoAlpha: 0 })
     // Start "create" text sooner by overlapping it with the image crossfade
     .to(
       createText,
@@ -358,14 +359,7 @@ const createAnythingV2 = () => {
       '>' // adjusted to start earlier than before
     )
     .add(createAnythingCopyTypingAnimation, '-=1')
-    .to(
-      centerImage,
-      {
-        autoAlpha: 1,
-        duration: adjustDuration(8), // Longer fade‑in duration for center image
-      },
-      '-=4' // Adjusted offset so it starts earlier in relation to previous tween
-    )
+
     .to(
       secondImage,
       {
