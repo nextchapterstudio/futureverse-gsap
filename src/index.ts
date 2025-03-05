@@ -171,6 +171,7 @@ export const landingTimeline = () => {
     .to('.readyverse-logo-home', {
       opacity: 0,
       y: -50,
+      scale: 1.2,
       duration: 1.5,
     })
     .to(blackOverlay, {
@@ -215,7 +216,7 @@ const createAnythingV2 = () => {
   createAnythingCopy.textContent = '';
 
   // Pre-set elements to hidden for performance
-  gsap.set([secondImage, clippedBox, swappableWrapper, createText, anythingText], {
+  gsap.set([secondImage, clippedBox, centerImage, swappableWrapper, createText, anythingText], {
     autoAlpha: 0,
   });
 
@@ -359,6 +360,7 @@ const createAnythingV2 = () => {
       '>' // adjusted to start earlier than before
     )
     .add(createAnythingCopyTypingAnimation, '-=1')
+    .to(centerImage, { autoAlpha: 0.7, duration: adjustDuration(4) }, '-=4')
 
     .to(
       secondImage,
