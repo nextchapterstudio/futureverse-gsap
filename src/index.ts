@@ -339,7 +339,7 @@ const createAnythingV2 = () => {
       },
       '-=3' // adjusted offset (was -=2) to overlap more with the firstImage fade-out
     )
-    .set(firstImage, { autoAlpha: 0 })
+    //
     // Start "create" text sooner by overlapping it with the image crossfade
     .to(
       createText,
