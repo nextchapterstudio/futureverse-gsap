@@ -459,8 +459,8 @@ export function meetAnybody() {
     .to(elements.windowContainer, { autoAlpha: 1, duration: 1 }, '>')
     // Expand the window container to fill the viewport
     .to(elements.windowContainer, {
-      clipPath: 'polygon(0% 0%, 0%, 0%)',
-      duration: isMobile ? 4 : 5, // Slightly faster on mobile
+      clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', // FIXED: Full screen polygon
+      duration: isMobile ? 4 : 5,
     })
     // Fade in the meetText shortly after the window expansion begins
     .add(meetCopyTypingAnimation, '-=5');
