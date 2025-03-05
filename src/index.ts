@@ -146,7 +146,7 @@ export const landingTimeline = () => {
   const baseSettings = {
     trigger: '.home-landing-section',
     start: 'top top',
-    end: '+=200%',
+    end: '+=180%',
     pin: true,
     scrub: 1.5,
     anticipatePin: 0.5,
@@ -226,7 +226,7 @@ const createAnythingV2 = () => {
   const baseSettings = {
     trigger: '.home-scroll-section',
     start: 'top top',
-    end: '+=450%',
+    end: '+=250%',
     pin: true,
     scrub: 2.5,
     markers: true,
@@ -430,7 +430,7 @@ export function meetAnybody() {
   const baseSettings = {
     trigger: elements.section,
     start: 'top top',
-    end: '+=350%',
+    end: '+=150%',
     pin: true,
     scrub: true,
   };
@@ -551,7 +551,7 @@ function readyPlayerTl() {
   const baseSettings = {
     trigger: readyPlayerSection,
     start: 'top top',
-    end: '+=300%', // Increased from 200% to 300% to provide more scroll space
+    end: '+=100%', // Increased from 200% to 300% to provide more scroll space
     pin: true,
     scrub: isMobile ? 3 : 2, // Smoother scrub for mobile
   };
