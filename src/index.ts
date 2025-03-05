@@ -414,7 +414,7 @@ export function meetAnybody() {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
     meetHeading: document.querySelector('.meet-text') as HTMLElement,
     anyBodyHeading: document.querySelector('.anybody-text') as HTMLElement,
-    windowContainer: document.querySelector('.image-box-home') as HTMLElement,
+    windowContainer: document.querySelector('.reveal-image') as HTMLElement,
     meetContent: document.querySelector('.meet-anybody-text') as HTMLElement,
     meetText: document.querySelector('.meet-content') as HTMLElement,
   };
@@ -459,8 +459,7 @@ export function meetAnybody() {
     .to(elements.windowContainer, { autoAlpha: 1, duration: 1 }, '>')
     // Expand the window container to fill the viewport
     .to(elements.windowContainer, {
-      width: '100vw',
-      height: '100vh',
+      clipPath: 'polygon(0% 0%, 0%, 0%)',
       duration: isMobile ? 4 : 5, // Slightly faster on mobile
     })
     // Fade in the meetText shortly after the window expansion begins
