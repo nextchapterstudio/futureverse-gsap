@@ -721,7 +721,7 @@ window.Webflow.push(() => {
     .add(landingTimeline())
 
     .add(beAnyoneTl())
-    .add(createAnythingV2())
+    // .add(createAnythingV2())
     .add(meetAnybody())
     .add(readyPlayerTl());
 
