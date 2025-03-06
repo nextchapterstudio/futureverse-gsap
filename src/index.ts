@@ -217,6 +217,31 @@ const createAnythingV2 = () => {
   const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
+  if (!goTrigger) {
+    console.log('goTrigger not found');
+    return;
+  }
+
+  if (!goAnywhereCopy) {
+    console.log('goAnywhereCopy not found');
+    return;
+  }
+
+  if (!createAnythingCopy) {
+    console.log('createAnythingCopy not found');
+    return;
+  }
+
+  if (!goHeading) {
+    console.log('goHeading not found');
+    return;
+  }
+
+  if (!anywhereText) {
+    console.log('anywhereText not found');
+    return;
+  }
+
   goAnywhereCopy.textContent = '';
   createAnythingCopy.textContent = '';
   goHeading.textContent = '';
