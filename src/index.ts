@@ -388,11 +388,12 @@ const createAnythingV2 = () => {
   goHeadingTypingAnimation
     .to(clippedBox, {
       autoAlpha: 1,
+      duration: 1.5,
     })
     .call(() => {
       goCopyTypingAnimation.play();
     })
-    .to(swappableWrapper, { autoAlpha: 1 });
+    .to(swappableWrapper, { autoAlpha: 1, duration: 1.5 });
   // Add all timelines to the parent timeline
   // This ensures we return a single timeline that contains all animations
   parentTL
