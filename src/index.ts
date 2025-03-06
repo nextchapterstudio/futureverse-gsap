@@ -69,6 +69,7 @@ export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.
       // Optional callback
       if (onComplete) onComplete();
     },
+    z,
   });
 
   // Add the typing animation to the timeline
@@ -296,13 +297,13 @@ const createAnythingV2 = () => {
   const goHeadingTypingAnimation = createTypingAnimation({
     element: goHeading,
     text: 'GO',
-    staggerDelay: 0.03,
+    staggerDelay: 1,
   });
 
   const anywhereTextTypingAnimation = createTypingAnimation({
     element: anywhereText,
     text: 'ANYWHERE',
-    staggerDelay: 0.03,
+    staggerDelay: 1,
   });
 
   const goTriggerScrollTl = gsap.timeline({
@@ -336,7 +337,7 @@ const createAnythingV2 = () => {
   //     };
 
   // const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
-  parentTL.add(goTriggerScrollTl).add(anywhereTriggerScrollTl);
+  parentTL.add(goTriggerScrollTl.play()).add(anywhereTriggerScrollTl.play());
 
   return parentTL;
 
