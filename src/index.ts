@@ -87,10 +87,13 @@ export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.
  * @param options TypeAnimationOptions plus ScrollTrigger settings
  * @returns The GSAP timeline
  */
-export const createScrollTriggeredTypingAnimation = (
-  animationOptions: TypeAnimationOptions,
-  scrollTriggerOptions: gsap.plugins.ScrollTriggerInstanceVars
-): gsap.core.Timeline => {
+export const createScrollTriggeredTypingAnimation = ({
+  animationOptions,
+  scrollTriggerOptions,
+}: {
+  animationOptions: TypeAnimationOptions;
+  scrollTriggerOptions: ScrollTrigger;
+}): gsap.core.Timeline => {
   // Create the base timeline with scroll trigger
   const timeline = gsap.timeline({
     scrollTrigger: scrollTriggerOptions,
