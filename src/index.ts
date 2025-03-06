@@ -1,10 +1,13 @@
 import gsap from 'gsap';
 import CustomEase from 'gsap/CustomEase';
+import { SteppedEase } from 'gsap/gsap-core';
 import ScrollSmoother from 'gsap/ScrollSmoother';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import SplitText from 'gsap/SplitText';
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText, CustomEase);
+//https://futureverse-gsap.vercel.app
+
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother, SplitText, CustomEase, SteppedEase);
 
 CustomEase.create('customEase', '0.42, 0.00, 0.08, 1.00');
 
@@ -22,42 +25,39 @@ interface TypeAnimationOptions {
  * @param options Configuration options for the typing animation
  * @returns The GSAP timeline that controls the animation
  */
-export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.Timeline => {
-  // Default values
-  const {
-    element,
-    text,
-    duration = 0.03,
-    staggerDelay = 0.03,
-    ease = 'none',
-    onComplete,
-  } = options;
 
-  // Get the element
+export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.Timeline => {
+  const { element, text, duration = 0.03, staggerDelay = 0.03, onComplete } = options;
+
+  // Get the target element
   const targetElement =
     typeof element === 'string' ? (document.querySelector(element) as HTMLElement) : element;
 
   if (!targetElement) {
     console.error('Target element not found for typing animation');
-    return gsap.timeline(); // Return empty timeline
+    return gsap.timeline(); // Return an empty timeline
   }
 
-  // Set text content if provided
-  if (text) {
-    targetElement.textContent = text;
-  }
+  // Determine text to animate:
+  // Use the provided text or fall back to the element's current text content
+  const animationText = text || targetElement.textContent || '';
+
+  // Clear the element's innerHTML before running the animation
+  targetElement.innerHTML = '';
+  // Re-insert the text for the animation
+  targetElement.textContent = animationText;
 
   // Ensure the container is visible
   gsap.set(targetElement, { opacity: 1 });
 
-  // Create SplitText instance
+  // Create a SplitText instance to split text into words and characters
   const splitText = new SplitText(targetElement, {
     type: 'words, chars',
     wordsClass: 'word',
     charsClass: 'char',
   });
 
-  // Get the characters array
+  // Get the array of character elements
   const { chars } = splitText;
 
   // Initially hide all characters
@@ -66,44 +66,47 @@ export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.
   // Create timeline for the typing animation
   const timeline = gsap.timeline({
     onComplete: () => {
-      // Optional callback
       if (onComplete) onComplete();
     },
   });
 
-  // Add the typing animation to the timeline
+  // Use a stepped ease with the number of steps equal to the number of characters.
+  const steps = chars.length;
   timeline.to(chars, {
     opacity: 1,
     duration,
     stagger: staggerDelay,
-    ease,
+    ease: SteppedEase.config(steps),
   });
 
   return timeline;
 };
 
-/**
- * Creates a typing animation within a ScrollTrigger context
- * @param options TypeAnimationOptions plus ScrollTrigger settings
- * @returns The GSAP timeline
- */
-export const createScrollTriggeredTypingAnimation = ({
-  animationOptions,
-  scrollTriggerOptions,
-}: {
-  animationOptions: TypeAnimationOptions;
-  scrollTriggerOptions: ScrollTrigger;
-}): gsap.core.Timeline => {
-  // Create the base timeline with scroll trigger
-  const timeline = gsap.timeline({
-    scrollTrigger: scrollTriggerOptions,
+interface TypingScrollOptions extends TypeAnimationOptions {
+  scrollTrigger: gsap.plugins.ScrollTriggerVars;
+}
+
+const setupTypingAnimation = (options: TypingScrollOptions): gsap.core.Timeline => {
+  // Create the typing animation timeline and pause it initially.
+  const animation = createTypingAnimation({
+    element: options.element,
+    text: options.text,
+    duration: options.duration,
+    staggerDelay: options.staggerDelay,
+    ease: options.ease,
+    onComplete: options.onComplete,
+  }).paused(true);
+
+  // Create a timeline with the scrollTrigger using GSAP's default type.
+  const scrollAndTimeline = gsap.timeline({
+    scrollTrigger: {
+      ...options.scrollTrigger,
+      onEnter: () => animation.play(),
+      // Optionally, you can handle onLeave, onEnterBack, onLeaveBack, etc.
+    },
   });
 
-  // Create the typing animation and add it to our timeline
-  const typingTimeline = createTypingAnimation(animationOptions);
-  timeline.add(typingTimeline);
-
-  return timeline;
+  return scrollAndTimeline;
 };
 
 // Set up responsive breakpoints
@@ -219,16 +222,15 @@ const createAnythingV2 = () => {
   const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
   const goCopyTrigger = document.querySelector('.go-copy-trigger') as HTMLElement;
 
-  const createText = document.querySelector('.scramble-3') as HTMLElement;
-  const anythingText = document.querySelector('.anything-heading') as HTMLElement;
-  const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
-  const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
-  const isMobile = window.innerWidth <= breakpoints.mobile;
+  const createHeading = document.querySelector('.create-heading') as HTMLElement;
+  const createHeadingTrigger = document.querySelector('.create-heading-trigger') as HTMLElement;
 
-  if (!goTrigger) {
-    console.log('goTrigger not found');
-    return;
-  }
+  const anythingHeading = document.querySelector('.anything-heading') as HTMLElement;
+  const anythingHeadingTrigger = document.querySelector('.anything-heading-trigger') as HTMLElement;
+
+  const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
+  // const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
+  const isMobile = window.innerWidth <= breakpoints.mobile;
 
   if (!goAnywhereCopy) {
     console.log('goAnywhereCopy not found');
@@ -250,11 +252,6 @@ const createAnythingV2 = () => {
     return;
   }
 
-  goAnywhereCopy.textContent = '';
-  createAnythingCopy.textContent = '';
-  goHeading.textContent = '';
-  anywhereText.textContent = '';
-
   // Pre-set elements to hidden for performance
   gsap.set([secondImage, clippedBox, centerImage, swappableWrapper], {
     autoAlpha: 0,
@@ -274,59 +271,140 @@ const createAnythingV2 = () => {
   // };
 
   // const scrollSettings = getScrollSettings(baseSettings, isMobile);
-
   const parentTL = gsap.timeline({
     defaults: {
       ease: 'customEase',
     },
   });
 
+  // Create typing animations - keeping them paused initially
   const goCopyTypingAnimation = createTypingAnimation({
     element: goAnywhereCopy,
     text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
     staggerDelay: 0.05,
-  }).paused();
+    ease: 'none',
+    duration: 0,
+  }).paused(true);
 
   const createAnythingCopyTypingAnimation = createTypingAnimation({
     element: createAnythingCopy,
     text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
     staggerDelay: 0.05,
-  }).paused();
+    ease: 'none',
+  }).paused(true);
 
   const goHeadingTypingAnimation = createTypingAnimation({
     element: goHeading,
-    text: 'GO',
+    // text: 'GO',
     staggerDelay: 0.05,
+    // ease: 'none',
+  }).paused(true);
+
+  const goHeadingTL = gsap.timeline({
+    scrollTrigger: {
+      trigger: goHeadingTrigger,
+      start: 'top 80%',
+      end: 'bottom bottom',
+      // markers: true,
+      onEnter: () => goHeadingTypingAnimation.play(),
+    },
   });
 
   const anywhereTextTypingAnimation = createTypingAnimation({
     element: anywhereText,
-    text: 'ANYWHERE',
+    // text: 'ANYWHERE',
+    // ease: 'none',
     staggerDelay: 0.05,
+    duration: 0,
+  }).paused(true);
+
+  // Create separate timelines for each trigger
+
+  const anywhereHeadingTL = gsap.timeline({
+    scrollTrigger: {
+      trigger: anywhereTextTrigger,
+      start: 'top 80%',
+      end: 'bottom center',
+      // markers: true,
+      onEnter: () => anywhereTextTypingAnimation.play(),
+      // onLeave: () => anywhereTextTypingAnimation.reverse(),
+      // onEnterBack: () => anywhereTextTypingAnimation.reverse(),
+      // onLeaveBack: () => anywhereTextTypingAnimation.reverse(),
+    },
   });
 
-  const goTriggerScrollTl = gsap.timeline({
+  const goCopyTL = gsap.timeline({
     scrollTrigger: {
-      trigger: goTrigger,
+      trigger: goCopyTrigger, // Assuming you have a separate trigger for this
       start: 'top center',
+      end: 'bottom center',
+      // markers: true,
+      onEnter: () => goCopyTypingAnimation.play(),
+      // onLeave: () => goCopyTypingAnimation.reverse(),
+      // onEnterBack: () => goCopyTypingAnimation.reverse(),
+      // onLeaveBack: () => goCopyTypingAnimation.reset(),
+    },
+  });
+
+  const createHeadgingScrollTrigger = setupTypingAnimation({
+    element: createHeading,
+    text: 'Create',
+    staggerDelay: 0.05,
+    duration: 0,
+    scrollTrigger: {
+      trigger: createHeadingTrigger,
+      start: 'top 80%',
+      end: 'bottom bottom',
+      // markers: true,
+    },
+  });
+
+  const anythingHeadingScrollTrigger = setupTypingAnimation({
+    element: anythingHeading,
+    text: 'Anything',
+    staggerDelay: 0.05,
+    duration: 0,
+    scrollTrigger: {
+      trigger: anythingHeadingTrigger,
+      start: 'bottom 70%',
       end: 'bottom center',
       markers: true,
     },
-    paused: true,
   });
 
-  const anywhereTriggerScrollTl = gsap.timeline({
+  const anywhereTextTL = gsap.timeline({
     scrollTrigger: {
       trigger: anywhereTextTrigger,
       start: 'top center',
       end: 'bottom center',
-      markers: true,
+      // markers: true,
+      onEnter: () => anywhereTextTypingAnimation.play(),
+      // onLeave: () => anywhereTextTypingAnimation.reverse(),
+      // onEnterBack: () => anywhereTextTypingAnimation.reverse(),
+      // onLeaveBack: () => anywhereTextTypingAnimation.reset(),
     },
-    paused: true,
   });
 
-  goTriggerScrollTl.add(goHeadingTypingAnimation);
-  anywhereTriggerScrollTl.add(anywhereTextTypingAnimation);
+  goHeadingTypingAnimation
+    .to(clippedBox, {
+      autoAlpha: 1,
+    })
+    .call(() => {
+      goCopyTypingAnimation.play();
+    })
+    .to(swappableWrapper, { autoAlpha: 1 });
+  // Add all timelines to the parent timeline
+  // This ensures we return a single timeline that contains all animations
+  parentTL
+    .add(goHeadingTL, 0)
+    .add(anywhereHeadingTL, 0)
+    .add(createHeadgingScrollTrigger, 0)
+    .add(anythingHeadingScrollTrigger, 0)
+    .add(goCopyTL, 0)
+    .add(anywhereTextTL, 0);
+
+  return parentTL;
+
   // const mobileAdjustments = isMobile
   //   ? {
   //       durationMultiplier: 0.8,
@@ -336,9 +414,6 @@ const createAnythingV2 = () => {
   //     };
 
   // const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
-  parentTL.add(goTriggerScrollTl.play()).add(anywhereTriggerScrollTl.play());
-
-  return parentTL;
 
   // firstTl
 
