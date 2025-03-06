@@ -207,12 +207,20 @@ const createAnythingV2 = () => {
   const centerImage = document.querySelector('.third-img') as HTMLElement;
   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
   const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
+
   const content = document.querySelector('.content') as HTMLElement;
+
   const goHeading = document.querySelector('.go-heading') as HTMLElement;
+  const goHeadingTrigger = document.querySelector('.go-heading-trigger') as HTMLElement;
+
   const anywhereText = document.querySelector('.anywhere-heading') as HTMLElement;
+  const anywhereTextTrigger = document.querySelector('.anywhere-trigger') as HTMLElement;
+
   const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
+  const goCopyTrigger = document.querySelector('.go-copy-trigger') as HTMLElement;
+
   const createText = document.querySelector('.scramble-3') as HTMLElement;
-  const anythingText = document.querySelector('.scramble-4') as HTMLElement;
+  const anythingText = document.querySelector('.anything-heading') as HTMLElement;
   const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
   const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
@@ -248,7 +256,7 @@ const createAnythingV2 = () => {
   anywhereText.textContent = '';
 
   // Pre-set elements to hidden for performance
-  gsap.set([secondImage, clippedBox, centerImage, swappableWrapper, createText, anythingText], {
+  gsap.set([secondImage, clippedBox, centerImage, swappableWrapper], {
     autoAlpha: 0,
   });
 
@@ -267,25 +275,58 @@ const createAnythingV2 = () => {
 
   // const scrollSettings = getScrollSettings(baseSettings, isMobile);
 
-  // const firstTl = gsap.timeline({
-  //   scrollTrigger: scrollSettings,
-  //   defaults: {
-  //     ease: 'customEase',
-  //   },
-  // });
+  const parentTL = gsap.timeline({
+    defaults: {
+      ease: 'customEase',
+    },
+  });
 
-  // const goCopyTypingAnimation = createTypingAnimation({
-  //   element: goAnywhereCopy,
-  //   text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
-  //   staggerDelay: 0.05,
-  // });
+  const goCopyTypingAnimation = createTypingAnimation({
+    element: goAnywhereCopy,
+    text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
+    staggerDelay: 0.05,
+  }).paused();
 
-  // const createAnythingCopyTypingAnimation = createTypingAnimation({
-  //   element: createAnythingCopy,
-  //   text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
-  //   staggerDelay: 0.05,
-  // });
+  const createAnythingCopyTypingAnimation = createTypingAnimation({
+    element: createAnythingCopy,
+    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
+    staggerDelay: 0.05,
+  }).paused();
 
+  const goHeadingTypingAnimation = createTypingAnimation({
+    element: goHeading,
+    text: 'GO',
+    staggerDelay: 0.03,
+  });
+
+  const anywhereTextTypingAnimation = createTypingAnimation({
+    element: anywhereText,
+    text: 'ANYWHERE',
+    staggerDelay: 0.03,
+  });
+
+  const goTriggerScrollTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: goTrigger,
+      start: 'top center',
+      end: 'bottom center',
+      markers: true,
+    },
+    paused: true,
+  });
+
+  const anywhereTriggerScrollTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: anywhereTextTrigger,
+      start: 'top center',
+      end: 'bottom center',
+      markers: true,
+    },
+    paused: true,
+  });
+
+  goTriggerScrollTl.add(goHeadingTypingAnimation);
+  anywhereTriggerScrollTl.add(anywhereTextTypingAnimation);
   // const mobileAdjustments = isMobile
   //   ? {
   //       durationMultiplier: 0.8,
@@ -295,28 +336,9 @@ const createAnythingV2 = () => {
   //     };
 
   // const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
+  parentTL.add(goTriggerScrollTl).add(anywhereTriggerScrollTl);
 
-  const goHeadingTyping = createTypingAnimation({
-    element: goHeading,
-    text: 'GO',
-    staggerDelay: 1,
-  });
-
-  const goTl = gsap.timeline();
-
-  goTl.from(goHeading, {
-    autoAlpha: 0,
-  });
-
-  const goSt = ScrollTrigger.create({
-    trigger: goTrigger,
-    start: 'top center',
-    end: 'bottom center',
-    markers: true,
-    animation: goTl,
-  });
-
-  return goSt;
+  return parentTL;
 
   // firstTl
 
