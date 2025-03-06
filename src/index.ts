@@ -587,33 +587,6 @@ function readyPlayerTl() {
   return tl;
 }
 
-// Add a function to handle window resize events
-function setupResizeHandler() {
-  let resizeTimeout;
-  let prevWidth = window.innerWidth;
-
-  window.addEventListener('resize', () => {
-    // Clear previous timeout to prevent multiple refreshes
-    clearTimeout(resizeTimeout);
-
-    // Set a timeout to avoid excessive refreshes during resize
-    resizeTimeout = setTimeout(() => {
-      const currentWidth = window.innerWidth;
-
-      // Check if we've crossed a breakpoint
-      const wasMobile = prevWidth <= breakpoints.mobile;
-      const isMobile = currentWidth <= breakpoints.mobile;
-
-      if ((wasMobile && !isMobile) || (!wasMobile && isMobile)) {
-        // Refresh ScrollTrigger to update all pinned sections
-        ScrollTrigger.refresh();
-      }
-
-      prevWidth = currentWidth;
-    }, 250); // 250ms debounce
-  });
-}
-
 // Main initialization
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -683,7 +656,6 @@ window.Webflow.push(() => {
       smoothTouch: 0.2, // Light smoothing for touch devices
       normalizeScroll: true, // Normalizes scroll behavior across devices
       ignoreMobileResize: true, // Prevents issues with mobile browser address bars
-      speed: 0.9, // Slightly slower scrolling (0.9x)
     });
 
     // Store the instance for potential use later
@@ -736,10 +708,9 @@ window.Webflow.push(() => {
   }
 
   // Initialize everything in the correct order
-  setupScrollSmoother();
-  const smoother = initScrollSmoother();
+  // setupScrollSmoother();
+  // const smoother = initScrollSmoother();
   setupResizeHandler();
-
   // Create the main timeline
   const pageTl = gsap.timeline({});
 
