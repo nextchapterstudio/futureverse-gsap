@@ -1,130 +1,67 @@
 import gsap from 'gsap';
+import CustomEase from 'gsap/CustomEase';
 import Draggable from 'gsap/Draggable';
 import InertiaPlugin from 'gsap/InertiaPlugin';
 import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import SplitText from 'gsap/SplitText';
 
-gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin, Draggable, InertiaPlugin, SplitText);
+import { createScrollTriggeredTypingAnimation, createTypingAnimation } from './index';
 
-function readyPlayerTl() {
-  const readyPlayerSection = document.querySelector('.ready-player-section') as HTMLElement;
-  const readyText = document.querySelector('.ready-text') as HTMLElement;
-  const playerText = document.querySelector('.player-text') as HTMLElement;
-  const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
-  const cartridgeVideo = document.querySelector('.cartridge-vid') as HTMLElement;
+CustomEase.create('customEase', '0.42, 0.00, 0.08, 1.00');
 
-  // Single timeline with scroll trigger but no pinning
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: readyPlayerSection,
-      start: 'top top',
-      end: '+=200%', // This now represents actual scroll distance
-      scrub: 1,
-      markers: true, // Helpful for debugging, remove in production
-      onUpdate: (self) => {
-        // Optional: could use this to trigger the video expansion
-        // when reaching a certain scroll progress
-        if (self.progress > 0.8) {
-          // Could trigger final state here
-        }
-      },
-    },
-  });
-
-  // Initial states
-  gsap.set(cartridgeVideo, {
-    scale: 0,
-    opacity: 0,
-  });
-  gsap.set(cartridgeWrapper, {
-    transformOrigin: '50% 50% -150',
-    perspective: 1200,
-    backfaceVisibility: 'visible',
-    transformStyle: 'preserve-3d',
-    yPercent: -700,
-  });
-  gsap.set([readyText, playerText], { yPercent: 200 });
-
-  tl
-    // Cartridge movement
-    .to(
-      cartridgeWrapper,
-      {
-        yPercent: 0,
-        duration: 10,
-        ease: 'none',
-      },
-      0
-    )
-    .to(
-      cartridgeWrapper,
-      {
-        rotateY: '+=30',
-        ease: 'power2.inOut',
-        duration: 3,
-        yoyo: true,
-        repeat: 1,
-      },
-      '<+=1'
-    )
-    .to(
-      readyText,
-      {
-        opacity: 1,
-        duration: 2,
-        ease: 'power2.out',
-      },
-      '>'
-    );
-  // .to(
-  //   playerText,
-  //   {
-  //     opacity: 1,
-  //     duration: 2,
-  //     ease: 'power2.out',
-  //   },
-  //   5
-  // )
-
-  // // Video growth can now scale beyond viewport
-  // .to(
-  //   cartridgeVideo,
-  //   {
-  //     scale: 0.3,
-  //     opacity: 1,
-  //     duration: 2,
-  //     ease: 'power2.in',
-  //   },
-  //   6
-  // )
-  // .to(
-  //   cartridgeVideo,
-  //   {
-  //     scale: 1.5, // Can go bigger than viewport
-  //     duration: 4,
-  //     ease: 'power2.inOut',
-  //   },
-  //   8
-  // )
-
-  // // Fade out other elements
-  // .to(
-  //   [readyText, playerText, cartridgeWrapper],
-  //   {
-  //     opacity: 0,
-  //     duration: 2,
-  //     ease: 'power2.in',
-  //   },
-  //   9
-  // );
-
-  return tl;
-}
+gsap.registerPlugin(ScrollTrigger);
 
 window.Webflow ||= [];
 window.Webflow.push(() => {
-  console.log('GSAP Scroll Animation Loaded!');
+  console.log('testing deppoyment');
 
-  readyPlayerTl();
+  const secondImage = document.querySelector('.second-img') as HTMLElement;
+  const firstImage = document.querySelector('.first-img') as HTMLElement;
+  const centerImage = document.querySelector('.third-img') as HTMLElement;
+  const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
+  const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
+  const content = document.querySelector('.content') as HTMLElement;
+  const goText = document.querySelector('.go-heading') as HTMLElement;
+  const anywhereText = document.querySelector('.anywhere-heading') as HTMLElement;
+  const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
+  const createText = document.querySelector('.scramble-3') as HTMLElement;
+  const anythingText = document.querySelector('.scramble-4') as HTMLElement;
+  const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
+  const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
+
+  goText.innerHTML = ' ';
+
+  gsap.set(
+    [
+      secondImage,
+
+      centerImage,
+      clippedBox,
+      swappableWrapper,
+      content,
+      goText,
+      anywhereText,
+      goAnywhereCopy,
+      createText,
+      anythingText,
+      createAnythingCopy,
+    ],
+    { autoAlpha: 0 }
+  );
+
+  // const goTypingAnimation = createTypingAnimation({
+  //   element: goText,
+  //   text: 'GO',
+  //   staggerDelay: 0.03,
+  // }).pause();
+
+  // ScrollTrigger.create({
+  //   trigger: goTrigger,
+  //   start: 'top 80%',
+  //   markers: true,
+  //   onEnter: () => {
+  //     goTypingAnimation.play();
+  //   },
+  // });
 });
