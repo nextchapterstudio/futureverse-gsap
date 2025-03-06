@@ -152,6 +152,7 @@ export const landingTimeline = () => {
     end: '+=180%',
     pin: true,
     scrub: 1.5,
+    markers: true,
     anticipatePin: 0.5,
   };
 
