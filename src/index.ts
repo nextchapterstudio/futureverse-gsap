@@ -299,15 +299,21 @@ const createAnythingV2 = () => {
   const goHeadingTyping = createTypingAnimation({
     element: goHeading,
     text: 'GO',
-    staggerDelay: 0.03,
+    staggerDelay: 1,
   });
+
+  const goTl = gsap.timeline();
+
+  goTl
+    .add(goHeadingTyping)
+    .fromTo(goHeading, { scale: 1.5 }, { scale: 1, duration: adjustDuration(1) });
 
   const goSt = ScrollTrigger.create({
     trigger: goTrigger,
     start: 'top center',
     end: 'bottom center',
     markers: true,
-    animation: goHeadingTyping,
+    animation: goTl,
   });
 
   return goSt;
