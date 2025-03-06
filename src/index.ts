@@ -296,13 +296,13 @@ const createAnythingV2 = () => {
   const goHeadingTypingAnimation = createTypingAnimation({
     element: goHeading,
     text: 'GO',
-    staggerDelay: 1,
+    staggerDelay: 0.05,
   });
 
   const anywhereTextTypingAnimation = createTypingAnimation({
     element: anywhereText,
     text: 'ANYWHERE',
-    staggerDelay: 1,
+    staggerDelay: 0.05,
   });
 
   const goTriggerScrollTl = gsap.timeline({
