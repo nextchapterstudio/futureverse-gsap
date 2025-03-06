@@ -30,12 +30,11 @@ window.Webflow.push(() => {
   const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
   const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
 
-  goText.innerHTML = ' ';
+  // goText.innerHTML = ' ';
 
   gsap.set(
     [
       secondImage,
-
       centerImage,
       clippedBox,
       swappableWrapper,
