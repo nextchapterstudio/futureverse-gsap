@@ -589,6 +589,32 @@ function readyPlayerTl() {
   return tl;
 }
 
+// Add a function to handle window resize events
+function setupResizeHandler() {
+  let resizeTimeout;
+  let prevWidth = window.innerWidth;
+
+  window.addEventListener('resize', () => {
+    // Clear previous timeout to prevent multiple refreshes
+    clearTimeout(resizeTimeout);
+
+    // Set a timeout to avoid excessive refreshes during resize
+    resizeTimeout = setTimeout(() => {
+      const currentWidth = window.innerWidth;
+
+      // Check if we've crossed a breakpoint
+      const wasMobile = prevWidth <= breakpoints.mobile;
+      const isMobile = currentWidth <= breakpoints.mobile;
+
+      if ((wasMobile && !isMobile) || (!wasMobile && isMobile)) {
+        // Refresh ScrollTrigger to update all pinned sections
+        ScrollTrigger.refresh();
+      }
+
+      prevWidth = currentWidth;
+    }, 250); // 250ms debounce
+  });
+}
 // Main initialization
 window.Webflow ||= [];
 window.Webflow.push(() => {
@@ -667,42 +693,7 @@ window.Webflow.push(() => {
   };
 
   // Set up resize handler
-  const setupResizeHandler = () => {
-    let resizeTimeout;
-    let prevWidth = window.innerWidth;
-
-    window.addEventListener('resize', () => {
-      // Clear previous timeout to prevent multiple refreshes
-      clearTimeout(resizeTimeout);
-
-      // Set a timeout to avoid excessive refreshes during resize
-      resizeTimeout = setTimeout(() => {
-        const currentWidth = window.innerWidth;
-
-        // Check if we've crossed a breakpoint
-        const wasMobile = prevWidth <= breakpoints.mobile;
-        const isMobile = currentWidth <= breakpoints.mobile;
-
-        if ((wasMobile && !isMobile) || (!wasMobile && isMobile)) {
-          // Update classes
-          if (isMobile) {
-            document.body.classList.add('is-mobile');
-          } else {
-            document.body.classList.remove('is-mobile');
-          }
-
-          // Refresh ScrollTrigger and ScrollSmoother
-          ScrollTrigger.refresh();
-          if (window.smoother) {
-            window.smoother.kill();
-            window.smoother = initScrollSmoother();
-          }
-        }
-
-        prevWidth = currentWidth;
-      }, 250); // 250ms debounce
-    });
-  };
+  setupResizeHandler();
 
   // Set up mobile-specific class
   if (window.innerWidth <= breakpoints.mobile) {
