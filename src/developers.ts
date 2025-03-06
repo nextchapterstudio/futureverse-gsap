@@ -29,16 +29,16 @@ window.Webflow.push(() => {
       scrollTrigger: {
         trigger: '.hero',
         start: 'top top',
-        end: '+=300%',
+        end: '+=150%',
         scrub: 1.5, // Increase scrub for smoother movement
         pin: true,
       },
     })
-    .to('.image-box', {
-      width: '100vw',
-      height: '100vh',
-      duration: 4,
-      ease: 'power2.out', // Smooth easing
+    .to('.clipped-path', {
+      duration: 3, // duration is less relevant when scrubbed; it's the animation's total length
+      ease: 'customEase',
+      clipPath:
+        ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
     })
     .to(
       '.text-container',
