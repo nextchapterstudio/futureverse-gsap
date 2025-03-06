@@ -69,7 +69,6 @@ export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.
       // Optional callback
       if (onComplete) onComplete();
     },
-    z,
   });
 
   // Add the typing animation to the timeline
