@@ -222,7 +222,7 @@ const createAnythingV2 = () => {
   const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
   const goCopyTrigger = document.querySelector('.go-copy-trigger') as HTMLElement;
 
-  const spacer = document.querySelector('.spacer') as HTMLElement;
+  const spacer = document.querySelector('.go-anywhere-spacer') as HTMLElement;
 
   const createHeading = document.querySelector('.create-heading') as HTMLElement;
   const createHeadingTrigger = document.querySelector('.create-heading-trigger') as HTMLElement;
@@ -231,6 +231,10 @@ const createAnythingV2 = () => {
   const anythingHeadingTrigger = document.querySelector('.anything-heading-trigger') as HTMLElement;
 
   const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
+  const createAnythingTrigger = document.querySelector('.content-bottom') as HTMLElement;
+
+  const thirdImageTrigger = document.querySelector('.third-image-trigger') as HTMLElement;
+
   // const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
@@ -286,13 +290,6 @@ const createAnythingV2 = () => {
     staggerDelay: 0.05,
     ease: 'none',
     duration: 0,
-  }).paused(true);
-
-  const createAnythingCopyTypingAnimation = createTypingAnimation({
-    element: createAnythingCopy,
-    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
-    staggerDelay: 0.05,
-    ease: 'none',
   }).paused(true);
 
   const goHeadingTypingAnimation = createTypingAnimation({
@@ -370,36 +367,38 @@ const createAnythingV2 = () => {
       trigger: anythingHeadingTrigger,
       start: 'bottom 70%',
       end: 'bottom center',
-      markers: true,
+      // markers: true,
     },
   });
 
   const spacerScrollTrigger = gsap.timeline({
     scrollTrigger: {
       trigger: spacer,
-      start: 'top center',
+      start: 'bottom 70%',
       end: 'bottom center',
-      markers: true,
+      markers: { endColor: 'red', startColor: 'blue' },
+      scrub: 1.5,
     },
   });
 
   spacerScrollTrigger
-    .to(swappableWrapper, { autoAlpha: 0, duration: 1.5 })
-    .to(secondImage, { autoAlpha: 0.7, duration: 1.5 })
-    .to(firstImage, { autoAlpha: 0.7, duration: 1.5 })
+    .to(swappableWrapper, { opacity: 0, duration: 2 })
+    .to(secondImage, { autoAlpha: 0.7, duration: 2 }, '-=2')
+    .to(firstImage, { autoAlpha: 0, duration: 1.5 })
     .to(secondImage, { autoAlpha: 1 });
 
-  const anywhereTextTL = gsap.timeline({
+  const createAnythingCopyTypingAnimation = setupTypingAnimation({
+    element: createAnythingCopy,
+    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
+    staggerDelay: 0.03,
+    duration: 0,
     scrollTrigger: {
-      trigger: anywhereTextTrigger,
-      start: 'top center',
+      trigger: createAnythingTrigger,
+      start: 'bottom 80%',
       end: 'bottom center',
-      // markers: true,
-      onEnter: () => anywhereTextTypingAnimation.play(),
-      // onLeave: () => anywhereTextTypingAnimation.reverse(),
-      // onEnterBack: () => anywhereTextTypingAnimation.reverse(),
-      // onLeaveBack: () => anywhereTextTypingAnimation.reset(),
+      markers: { endColor: 'orange', startColor: 'green' },
     },
+    // markers:
   });
 
   goHeadingTypingAnimation
@@ -413,14 +412,31 @@ const createAnythingV2 = () => {
     .to(swappableWrapper, { autoAlpha: 1, duration: 1.5 });
   // Add all timelines to the parent timeline
   // This ensures we return a single timeline that contains all animations
+
+  const thirdImageTL = gsap.timeline({
+    scrollTrigger: {
+      trigger: thirdImageTrigger,
+      start: 'bottom bottom',
+      end: 'bottom center',
+      scrub: 1.5,
+      // markers: true,
+    },
+  });
+
+  thirdImageTL
+    .to(centerImage, { autoAlpha: 0.7, duration: 2 })
+    .to(secondImage, { autoAlpha: 0.7, duration: 2 })
+    .to(centerImage, { autoAlpha: 1 })
+    .to(secondImage, { autoAlpha: 0 });
+
   parentTL
     .add(goHeadingTL, 0)
     .add(anywhereHeadingTL, 0)
     .add(spacerScrollTrigger, 0)
     .add(createHeadgingScrollTrigger, 0)
     .add(anythingHeadingScrollTrigger, 0)
-    .add(goCopyTL, 0)
-    .add(anywhereTextTL, 0);
+    .add(createAnythingCopyTypingAnimation, 0)
+    .add(thirdImageTL, 0);
 
   return parentTL;
 
