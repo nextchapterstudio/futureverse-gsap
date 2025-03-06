@@ -222,6 +222,8 @@ const createAnythingV2 = () => {
   const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
   const goCopyTrigger = document.querySelector('.go-copy-trigger') as HTMLElement;
 
+  const spacer = document.querySelector('.spacer') as HTMLElement;
+
   const createHeading = document.querySelector('.create-heading') as HTMLElement;
   const createHeadingTrigger = document.querySelector('.create-heading-trigger') as HTMLElement;
 
@@ -372,6 +374,21 @@ const createAnythingV2 = () => {
     },
   });
 
+  const spacerScrollTrigger = gsap.timeline({
+    scrollTrigger: {
+      trigger: spacer,
+      start: 'top center',
+      end: 'bottom center',
+      markers: true,
+    },
+  });
+
+  spacerScrollTrigger
+    .to(swappableWrapper, { autoAlpha: 0, duration: 1.5 })
+    .to(secondImage, { autoAlpha: 0.7, duration: 1.5 })
+    .to(firstImage, { autoAlpha: 0.7, duration: 1.5 })
+    .to(secondImage, { autoAlpha: 1 });
+
   const anywhereTextTL = gsap.timeline({
     scrollTrigger: {
       trigger: anywhereTextTrigger,
@@ -399,6 +416,7 @@ const createAnythingV2 = () => {
   parentTL
     .add(goHeadingTL, 0)
     .add(anywhereHeadingTL, 0)
+    .add(spacerScrollTrigger, 0)
     .add(createHeadgingScrollTrigger, 0)
     .add(anythingHeadingScrollTrigger, 0)
     .add(goCopyTL, 0)
