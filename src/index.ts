@@ -254,47 +254,47 @@ const createAnythingV2 = () => {
 
   gsap.set(centerImage, { zIndex: 5 });
 
-  // Base scroll settings
-  const baseSettings = {
-    trigger: '.home-scroll-section',
-    start: 'top top',
-    end: '+=250%',
-    pin: true,
-    scrub: 2.5,
-    markers: true,
-    anticipatePin: 0.5,
-  };
+  // // Base scroll settings
+  // const baseSettings = {
+  //   trigger: '.home-scroll-section',
+  //   start: 'top top',
+  //   end: '+=250%',
+  //   pin: true,
+  //   scrub: 2.5,
+  //   markers: true,
+  //   anticipatePin: 0.5,
+  // };
 
-  const scrollSettings = getScrollSettings(baseSettings, isMobile);
+  // const scrollSettings = getScrollSettings(baseSettings, isMobile);
 
-  const firstTl = gsap.timeline({
-    scrollTrigger: scrollSettings,
-    defaults: {
-      ease: 'customEase',
-    },
-  });
+  // const firstTl = gsap.timeline({
+  //   scrollTrigger: scrollSettings,
+  //   defaults: {
+  //     ease: 'customEase',
+  //   },
+  // });
 
-  const goCopyTypingAnimation = createTypingAnimation({
-    element: goAnywhereCopy,
-    text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
-    staggerDelay: 0.05,
-  });
+  // const goCopyTypingAnimation = createTypingAnimation({
+  //   element: goAnywhereCopy,
+  //   text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
+  //   staggerDelay: 0.05,
+  // });
 
-  const createAnythingCopyTypingAnimation = createTypingAnimation({
-    element: createAnythingCopy,
-    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
-    staggerDelay: 0.05,
-  });
+  // const createAnythingCopyTypingAnimation = createTypingAnimation({
+  //   element: createAnythingCopy,
+  //   text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
+  //   staggerDelay: 0.05,
+  // });
 
-  const mobileAdjustments = isMobile
-    ? {
-        durationMultiplier: 0.8,
-      }
-    : {
-        durationMultiplier: 1,
-      };
+  // const mobileAdjustments = isMobile
+  //   ? {
+  //       durationMultiplier: 0.8,
+  //     }
+  //   : {
+  //       durationMultiplier: 1,
+  //     };
 
-  const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
+  // const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
 
   const goHeadingTyping = createTypingAnimation({
     element: goHeading,
