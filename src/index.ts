@@ -747,10 +747,10 @@ window.Webflow.push(() => {
   pageTl
     .add(landingTimeline())
 
-    .add(beAnyoneTl())
-    .add(createAnythingV2())
-    .add(meetAnybody())
-    .add(readyPlayerTl());
+    .add(beAnyoneTl());
+  // .add(createAnythingV2())
+  // .add(meetAnybody())
+  // .add(readyPlayerTl());
 
   // Add a small delay before refreshing everything
   setTimeout(() => {
