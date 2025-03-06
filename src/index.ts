@@ -201,217 +201,236 @@ export const landingTimeline = () => {
 
 // Example of using the standalone typing animation elsewhere
 
-// const createAnythingV2 = () => {
-//   const secondImage = document.querySelector('.second-img') as HTMLElement;
-//   const firstImage = document.querySelector('.first-img') as HTMLElement;
-//   const centerImage = document.querySelector('.third-img') as HTMLElement;
-//   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
-//   const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
-//   const content = document.querySelector('.content') as HTMLElement;
-//   const goText = document.querySelector('.go-text') as HTMLElement;
-//   const scramble2 = document.querySelector('.anywhere-text') as HTMLElement;
-//   const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
-//   const createText = document.querySelector('.scramble-3') as HTMLElement;
-//   const anythingText = document.querySelector('.scramble-4') as HTMLElement;
-//   const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
-//   const isMobile = window.innerWidth <= breakpoints.mobile;
+const createAnythingV2 = () => {
+  const secondImage = document.querySelector('.second-img') as HTMLElement;
+  const firstImage = document.querySelector('.first-img') as HTMLElement;
+  const centerImage = document.querySelector('.third-img') as HTMLElement;
+  const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
+  const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
+  const content = document.querySelector('.content') as HTMLElement;
+  const goHeading = document.querySelector('.go-heading') as HTMLElement;
+  const anywhereText = document.querySelector('.anywhere-heading') as HTMLElement;
+  const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
+  const createText = document.querySelector('.scramble-3') as HTMLElement;
+  const anythingText = document.querySelector('.scramble-4') as HTMLElement;
+  const createAnythingCopy = document.querySelector('.create-anything-max-width') as HTMLElement;
+  const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
+  const isMobile = window.innerWidth <= breakpoints.mobile;
 
-//   goAnywhereCopy.textContent = '';
-//   createAnythingCopy.textContent = '';
+  goAnywhereCopy.textContent = '';
+  createAnythingCopy.textContent = '';
+  goHeading.textContent = '';
+  anywhereText.textContent = '';
 
-//   // Pre-set elements to hidden for performance
-//   gsap.set([secondImage, clippedBox, centerImage, swappableWrapper, createText, anythingText], {
-//     autoAlpha: 0,
-//   });
+  // Pre-set elements to hidden for performance
+  gsap.set([secondImage, clippedBox, centerImage, swappableWrapper, createText, anythingText], {
+    autoAlpha: 0,
+  });
 
-//   gsap.set(centerImage, { zIndex: 5 });
+  gsap.set(centerImage, { zIndex: 5 });
 
-//   // Base scroll settings
-//   const baseSettings = {
-//     trigger: '.home-scroll-section',
-//     start: 'top top',
-//     end: '+=250%',
-//     pin: true,
-//     scrub: 2.5,
-//     markers: true,
-//     anticipatePin: 0.5,
-//   };
+  // Base scroll settings
+  const baseSettings = {
+    trigger: '.home-scroll-section',
+    start: 'top top',
+    end: '+=250%',
+    pin: true,
+    scrub: 2.5,
+    markers: true,
+    anticipatePin: 0.5,
+  };
 
-//   const scrollSettings = getScrollSettings(baseSettings, isMobile);
+  const scrollSettings = getScrollSettings(baseSettings, isMobile);
 
-//   const firstTl = gsap.timeline({
-//     scrollTrigger: scrollSettings,
-//     defaults: {
-//       ease: 'customEase',
-//     },
-//   });
+  const firstTl = gsap.timeline({
+    scrollTrigger: scrollSettings,
+    defaults: {
+      ease: 'customEase',
+    },
+  });
 
-//   const goCopyTypingAnimation = createTypingAnimation({
-//     element: goAnywhereCopy,
-//     text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
-//     staggerDelay: 0.05,
-//   });
+  const goCopyTypingAnimation = createTypingAnimation({
+    element: goAnywhereCopy,
+    text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
+    staggerDelay: 0.05,
+  });
 
-//   const createAnythingCopyTypingAnimation = createTypingAnimation({
-//     element: createAnythingCopy,
-//     text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
-//     staggerDelay: 0.05,
-//   });
+  const createAnythingCopyTypingAnimation = createTypingAnimation({
+    element: createAnythingCopy,
+    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
+    staggerDelay: 0.05,
+  });
 
-//   const mobileAdjustments = isMobile
-//     ? {
-//         durationMultiplier: 0.8,
-//       }
-//     : {
-//         durationMultiplier: 1,
-//       };
+  const mobileAdjustments = isMobile
+    ? {
+        durationMultiplier: 0.8,
+      }
+    : {
+        durationMultiplier: 1,
+      };
 
-//   const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
+  const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
 
-//   firstTl
+  const goHeadingTyping = createTypingAnimation({
+    element: goHeading,
+    text: 'GO',
+    staggerDelay: 0.03,
+  });
 
-//     .to(
-//       clippedBox,
-//       {
-//         autoAlpha: 1,
-//         duration: adjustDuration(1.5),
-//       },
-//       '>'
-//     )
-//     .to(
-//       swappableWrapper,
-//       {
-//         autoAlpha: 1,
-//         duration: adjustDuration(1.5),
-//       },
-//       '>'
-//     )
-//     .add(goCopyTypingAnimation, '>-1')
-//     // Begin fading secondImage to low opacity with a slight overlap
-//     .to(
-//       secondImage,
-//       {
-//         autoAlpha: 0.15,
-//         duration: adjustDuration(3),
-//       },
-//       '-=1'
-//     )
-//     .to(clippedBox, {
-//       width: '100%',
-//       height: '100%',
-//       duration: adjustDuration(7),
-//     })
-//     // Increase the overlap during the secondImage fade so the change is smoother
-//     .to(
-//       secondImage,
-//       {
-//         autoAlpha: 0.4,
-//         duration: adjustDuration(3),
-//       },
-//       '-=6'
-//     )
-//     .to(
-//       swappableWrapper,
-//       {
-//         autoAlpha: 0,
-//         duration: adjustDuration(3),
-//       },
-//       '-=4'
-//     )
-//     .to(
-//       content,
-//       {
-//         autoAlpha: 0,
-//         duration: adjustDuration(3),
-//       },
-//       '-=3'
-//     )
-//     // Start fading out firstImage earlier for a more blended crossfade
-//     .to(
-//       firstImage,
-//       {
-//         autoAlpha: 0,
-//         duration: adjustDuration(3),
-//       },
-//       '>-1' // adjusted offset (was >-0.5) for earlier overlap
-//     )
-//     // Fade secondImage back in with an earlier start for the crossfade effect
-//     .to(
-//       secondImage,
-//       {
-//         autoAlpha: 1,
-//         duration: adjustDuration(4),
-//       },
-//       '-=3' // adjusted offset (was -=2) to overlap more with the firstImage fade-out
-//     )
-//     //
-//     // Start "create" text sooner by overlapping it with the image crossfade
-//     .to(
-//       createText,
-//       {
-//         autoAlpha: 1,
-//         duration: adjustDuration(3.5),
-//       },
-//       '-=4' // moved earlier compared to the previous timing
-//     )
-//     // Likewise, bring in the "anything" text sooner
-//     .to(
-//       anythingText,
-//       {
-//         autoAlpha: 1,
-//         duration: adjustDuration(3.5),
-//       },
-//       '>' // adjusted to start earlier than before
-//     )
-//     .add(createAnythingCopyTypingAnimation, '-=1')
-//     .to(centerImage, { autoAlpha: 0.7, duration: adjustDuration(4) }, '-=4')
+  const goSt = ScrollTrigger.create({
+    trigger: goTrigger,
+    start: 'top center',
+    end: 'bottom center',
+    markers: true,
+    animation: goHeadingTyping,
+  });
 
-//     .to(
-//       secondImage,
-//       {
-//         autoAlpha: 0,
-//         duration: adjustDuration(4), // Extended fade‑out duration for second image
-//       },
-//       '+=5' // Delay the fade‑out start by 1 second for a longer overlap
-//     )
-//     .to(centerImage, { autoApply: 1, duration: adjustDuration(4) }, '>')
+  return goSt;
 
-//     .to(
-//       '.content-bottom',
-//       {
-//         opacity: 0,
-//         duration: adjustDuration(2.5),
-//       },
-//       '-=1.5'
-//     );
+  // firstTl
 
-//   // Add a small pause at the end for mobile to prevent abrupt endings
-//   if (isMobile) {
-//     firstTl.to({}, { duration: 1 });
-//   }
+  //   .to(
+  //     clippedBox,
+  //     {
+  //       autoAlpha: 1,
+  //       duration: adjustDuration(1.5),
+  //     },
+  //     '>'
+  //   )
+  //   .to(
+  //     swappableWrapper,
+  //     {
+  //       autoAlpha: 1,
+  //       duration: adjustDuration(1.5),
+  //     },
+  //     '>'
+  //   )
+  //   .add(goCopyTypingAnimation, '>-1')
+  //   // Begin fading secondImage to low opacity with a slight overlap
+  //   .to(
+  //     secondImage,
+  //     {
+  //       autoAlpha: 0.15,
+  //       duration: adjustDuration(3),
+  //     },
+  //     '-=1'
+  //   )
+  //   .to(clippedBox, {
+  //     width: '100%',
+  //     height: '100%',
+  //     duration: adjustDuration(7),
+  //   })
+  //   // Increase the overlap during the secondImage fade so the change is smoother
+  //   .to(
+  //     secondImage,
+  //     {
+  //       autoAlpha: 0.4,
+  //       duration: adjustDuration(3),
+  //     },
+  //     '-=6'
+  //   )
+  //   .to(
+  //     swappableWrapper,
+  //     {
+  //       autoAlpha: 0,
+  //       duration: adjustDuration(3),
+  //     },
+  //     '-=4'
+  //   )
+  //   .to(
+  //     content,
+  //     {
+  //       autoAlpha: 0,
+  //       duration: adjustDuration(3),
+  //     },
+  //     '-=3'
+  //   )
+  //   // Start fading out firstImage earlier for a more blended crossfade
+  //   .to(
+  //     firstImage,
+  //     {
+  //       autoAlpha: 0,
+  //       duration: adjustDuration(3),
+  //     },
+  //     '>-1' // adjusted offset (was >-0.5) for earlier overlap
+  //   )
+  //   // Fade secondImage back in with an earlier start for the crossfade effect
+  //   .to(
+  //     secondImage,
+  //     {
+  //       autoAlpha: 1,
+  //       duration: adjustDuration(4),
+  //     },
+  //     '-=3' // adjusted offset (was -=2) to overlap more with the firstImage fade-out
+  //   )
+  //   //
+  //   // Start "create" text sooner by overlapping it with the image crossfade
+  //   .to(
+  //     createText,
+  //     {
+  //       autoAlpha: 1,
+  //       duration: adjustDuration(3.5),
+  //     },
+  //     '-=4' // moved earlier compared to the previous timing
+  //   )
+  //   // Likewise, bring in the "anything" text sooner
+  //   .to(
+  //     anythingText,
+  //     {
+  //       autoAlpha: 1,
+  //       duration: adjustDuration(3.5),
+  //     },
+  //     '>' // adjusted to start earlier than before
+  //   )
+  //   .add(createAnythingCopyTypingAnimation, '-=1')
+  //   .to(centerImage, { autoAlpha: 0.7, duration: adjustDuration(4) }, '-=4')
 
-//   const mm = gsap.matchMedia();
+  //   .to(
+  //     secondImage,
+  //     {
+  //       autoAlpha: 0,
+  //       duration: adjustDuration(4), // Extended fade‑out duration for second image
+  //     },
+  //     '+=5' // Delay the fade‑out start by 1 second for a longer overlap
+  //   )
+  //   .to(centerImage, { autoApply: 1, duration: adjustDuration(4) }, '>')
 
-//   mm.add('(min-width: 768px)', () => {
-//     firstTl.add(
-//       gsap.to(centerImage, {
-//         scale: 0.7,
-//         ease: 'power1.inOut',
-//         duration: 4,
-//       }),
-//       '>'
-//     );
-//     return () => {};
-//   });
+  //   .to(
+  //     '.content-bottom',
+  //     {
+  //       opacity: 0,
+  //       duration: adjustDuration(2.5),
+  //     },
+  //     '-=1.5'
+  //   );
 
-//   mm.add('(max-width: 767px)', () => {
-//     gsap.set(centerImage, { scale: 1 });
-//     firstTl.add(gsap.to({}, { duration: 0.5 }), '>');
-//     return () => {};
-//   });
+  // // Add a small pause at the end for mobile to prevent abrupt endings
+  // if (isMobile) {
+  //   firstTl.to({}, { duration: 1 });
+  // }
 
-//   return firstTl;
-// };
+  // const mm = gsap.matchMedia();
+
+  // mm.add('(min-width: 768px)', () => {
+  //   firstTl.add(
+  //     gsap.to(centerImage, {
+  //       scale: 0.7,
+  //       ease: 'power1.inOut',
+  //       duration: 4,
+  //     }),
+  //     '>'
+  //   );
+  //   return () => {};
+  // });
+
+  // mm.add('(max-width: 767px)', () => {
+  //   gsap.set(centerImage, { scale: 1 });
+  //   firstTl.add(gsap.to({}, { duration: 0.5 }), '>');
+  //   return () => {};
+  // });
+
+  // return firstTl;
+};
 
 export function meetAnybody() {
   const elements = {
@@ -712,7 +731,7 @@ window.Webflow.push(() => {
     .add(landingTimeline())
 
     .add(beAnyoneTl())
-    // .add(createAnythingV2())
+    .add(createAnythingV2())
     .add(meetAnybody())
     .add(readyPlayerTl());
 
