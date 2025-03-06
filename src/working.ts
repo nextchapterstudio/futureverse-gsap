@@ -48,18 +48,19 @@ window.Webflow.push(() => {
 
   tl.from(goText, {});
 
-  // const goTypingAnimation = createTypingAnimation({
-  //   element: goText,
-  //   text: 'GO',
-  //   staggerDelay: 0.03,
-  // }).pause();
+  const goTypingAnimation = createTypingAnimation({
+    element: goText,
+    text: 'GO',
+    staggerDelay: 0.03,
+  }).pause();
 
-  // ScrollTrigger.create({
-  //   trigger: goTrigger,
-  //   start: 'top 80%',
-  //   markers: true,
-  //   onEnter: () => {
-  //     goTypingAnimation.play();
-  //   },
-  // });
+  ScrollTrigger.create({
+    trigger: goTrigger,
+    start: 'top center',
+    end: 'bottom center',
+    markers: true,
+    onEnter: () => {
+      goTypingAnimation.play();
+    },
+  });
 });
