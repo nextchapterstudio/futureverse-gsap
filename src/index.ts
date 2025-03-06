@@ -437,6 +437,7 @@ export function meetAnybody() {
     end: '+=150%',
     pin: true,
     scrub: true,
+    markers: true,
   };
 
   const meetCopyTypingAnimation = createTypingAnimation({

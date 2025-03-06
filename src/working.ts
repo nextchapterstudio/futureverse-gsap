@@ -1,17 +1,12 @@
 import gsap from 'gsap';
 import CustomEase from 'gsap/CustomEase';
-import Draggable from 'gsap/Draggable';
-import InertiaPlugin from 'gsap/InertiaPlugin';
-import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
 import ScrollTrigger from 'gsap/ScrollTrigger';
-import SplitText from 'gsap/SplitText';
-
-import { createScrollTriggeredTypingAnimation, createTypingAnimation } from './index';
+import { createTypingAnimation } from 'src';
 
 CustomEase.create('customEase', '0.42, 0.00, 0.08, 1.00');
 
 gsap.registerPlugin(ScrollTrigger);
-
+// //
 window.Webflow ||= [];
 window.Webflow.push(() => {
   console.log('testing deppoyment');
@@ -48,6 +43,10 @@ window.Webflow.push(() => {
     ],
     { autoAlpha: 0 }
   );
+
+  const tl = gsap.timeline();
+
+  tl.from(goText, {});
 
   // const goTypingAnimation = createTypingAnimation({
   //   element: goText,
