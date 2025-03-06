@@ -304,9 +304,9 @@ const createAnythingV2 = () => {
 
   const goTl = gsap.timeline();
 
-  goTl
-    .add(goHeadingTyping)
-    .fromTo(goHeading, { scale: 1.5 }, { scale: 1, duration: adjustDuration(1) });
+  goTl.from(goHeading, {
+    autoAlpha: 0,
+  });
 
   const goSt = ScrollTrigger.create({
     trigger: goTrigger,
