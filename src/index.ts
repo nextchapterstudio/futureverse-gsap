@@ -155,7 +155,7 @@ export const landingTimeline = () => {
     end: '+=180%',
     pin: true,
     scrub: 1.5,
-    markers: true,
+    // markers: true,
     anticipatePin: 0.5,
   };
 
@@ -209,7 +209,7 @@ const createAnythingV2 = () => {
   const firstImage = document.querySelector('.first-img') as HTMLElement;
   const centerImage = document.querySelector('.third-img') as HTMLElement;
   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
-  const swappableWrapper = document.querySelector('.swappable-wrapper') as HTMLElement;
+  const swappableWrapper = document.querySelector('.swappable-embed') as HTMLElement;
 
   const content = document.querySelector('.content') as HTMLElement;
 
@@ -374,18 +374,12 @@ const createAnythingV2 = () => {
   const spacerScrollTrigger = gsap.timeline({
     scrollTrigger: {
       trigger: spacer,
-      start: 'bottom 70%',
-      end: 'bottom center',
-      markers: { endColor: 'red', startColor: 'blue' },
+      start: 'bottom bottom',
+      end: 'bottom bottom',
+      markers: { endColor: 'red', startColor: 'purple' },
       scrub: 1.5,
     },
   });
-
-  spacerScrollTrigger
-    .to(swappableWrapper, { opacity: 0, duration: 2 })
-    .to(secondImage, { autoAlpha: 0.7, duration: 2 }, '-=2')
-    .to(firstImage, { autoAlpha: 0, duration: 1.5 })
-    .to(secondImage, { autoAlpha: 1 });
 
   const createAnythingCopyTypingAnimation = setupTypingAnimation({
     element: createAnythingCopy,
@@ -396,9 +390,24 @@ const createAnythingV2 = () => {
       trigger: createAnythingTrigger,
       start: 'bottom 80%',
       end: 'bottom center',
-      markers: { endColor: 'orange', startColor: 'green' },
     },
     // markers:
+  });
+
+  const createAnythingCopyTypingAnimation2 = createTypingAnimation({
+    element: createAnythingCopy,
+    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
+    staggerDelay: 0.03,
+  });
+
+  const thirdImageTL = gsap.timeline({
+    scrollTrigger: {
+      trigger: thirdImageTrigger,
+      start: 'bottom bottom',
+      end: '+200%',
+      scrub: 1.5,
+      // markers: { startColor: 'blue', endColor: 'orange' },
+    },
   });
 
   goHeadingTypingAnimation
@@ -409,34 +418,38 @@ const createAnythingV2 = () => {
     .call(() => {
       goCopyTypingAnimation.play();
     })
-    .to(swappableWrapper, { autoAlpha: 1, duration: 1.5 });
+    .to(swappableWrapper, { autoAlpha: 1 }, '-=1.5');
   // Add all timelines to the parent timeline
   // This ensures we return a single timeline that contains all animations
 
-  const thirdImageTL = gsap.timeline({
-    scrollTrigger: {
-      trigger: thirdImageTrigger,
-      start: 'bottom bottom',
-      end: 'bottom center',
-      scrub: 1.5,
-      // markers: true,
-    },
-  });
+  spacerScrollTrigger
+    .to(swappableWrapper, { opacity: 0 })
+    .to(secondImage, { autoAlpha: 0.7, duration: 2 }, '-=2')
+    .to(firstImage, { autoAlpha: 0 });
 
   thirdImageTL
-    .to(centerImage, { autoAlpha: 0.7, duration: 2 })
-    .to(secondImage, { autoAlpha: 0.7, duration: 2 })
-    .to(centerImage, { autoAlpha: 1 })
-    .to(secondImage, { autoAlpha: 0 });
+    .to(centerImage, { autoAlpha: 1, duration: 5 })
+    .to(secondImage, { autoAlpha: 0 })
+    .add(createAnythingCopyTypingAnimation2, '-=1')
+    .to(createAnythingCopy, { autoAlpha: 0, duration: 1.5 }, '+=5')
+    .to(centerImage, { autoAlpha: 0, duration: 3 }, '=+2');
+
+  // .call(() => {
+  //   console.log('call');
+  //   gsap.set(secondImage, { autoAlpha: 0 });
+  // });
+  // // .to(centerImage, { autoAlpha: 1, duration: 5 })
+  // .call(() => {})
+  // .to(centerImage, { autoAlpha: 0, duration: 3 }, '-=2');
 
   parentTL
     .add(goHeadingTL, 0)
     .add(anywhereHeadingTL, 0)
     .add(spacerScrollTrigger, 0)
     .add(createHeadgingScrollTrigger, 0)
-    .add(anythingHeadingScrollTrigger, 0)
-    .add(createAnythingCopyTypingAnimation, 0)
-    .add(thirdImageTL, 0);
+    .add(anythingHeadingScrollTrigger, 0);
+
+  // .add(thirdImageTL, 0);
 
   return parentTL;
 
@@ -619,7 +632,7 @@ export function meetAnybody() {
     end: '+=150%',
     pin: true,
     scrub: true,
-    markers: true,
+    // markers: true,
   };
 
   const meetCopyTypingAnimation = createTypingAnimation({
