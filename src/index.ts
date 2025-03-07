@@ -27,7 +27,7 @@ interface TypeAnimationOptions {
  */
 
 export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.Timeline => {
-  const { element, text, duration = 0.03, staggerDelay = 0.03, onComplete } = options;
+  const { element, text, duration = 0.03, staggerDelay = 0.01, onComplete } = options;
 
   // Get the target element
   const targetElement =
@@ -71,12 +71,12 @@ export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.
   });
 
   // Use a stepped ease with the number of steps equal to the number of characters.
-  const steps = chars.length;
+
   timeline.to(chars, {
     opacity: 1,
     duration,
     stagger: staggerDelay,
-    ease: SteppedEase.config(steps),
+    ease: 'none',
   });
 
   return timeline;
@@ -101,7 +101,20 @@ const setupTypingAnimation = (options: TypingScrollOptions): gsap.core.Timeline 
   const scrollAndTimeline = gsap.timeline({
     scrollTrigger: {
       ...options.scrollTrigger,
-      onEnter: () => animation.play(),
+      onEnter: () => {
+        console.log(`entering ${options.text}`);
+        return animation.play();
+      },
+      // onLeave: () => {
+      //   console.log(`leaving ${options.text}`);
+      // },
+      // onEnterBack: () => {
+      //   console.log(`entering back ${options.text}`);
+      //   return animation.restart();
+      // },
+      // onLeaveBack: () => {
+      //   console.log(`leaving back ${options.text}`);
+      // },
       // Optionally, you can handle onLeave, onEnterBack, onLeaveBack, etc.
     },
   });
@@ -147,6 +160,8 @@ export const landingTimeline = () => {
   const intoText = document.querySelector('.home-landing-text') as HTMLElement;
   const isMobile = window.innerWidth <= breakpoints.mobile;
   const blackOverlay = document.querySelector('.black-overlay-landing') as HTMLElement;
+
+  console.log('landing section running');
 
   // Base scroll settings
   const baseSettings = {
@@ -235,48 +250,13 @@ const createAnythingV2 = () => {
 
   const thirdImageTrigger = document.querySelector('.third-image-trigger') as HTMLElement;
 
-  // const goTrigger = document.querySelector('.go-anywhere-text') as HTMLElement;
-  const isMobile = window.innerWidth <= breakpoints.mobile;
-
-  if (!goAnywhereCopy) {
-    console.log('goAnywhereCopy not found');
-    return;
-  }
-
-  if (!createAnythingCopy) {
-    console.log('createAnythingCopy not found');
-    return;
-  }
-
-  if (!goHeading) {
-    console.log('goHeading not found');
-    return;
-  }
-
-  if (!anywhereText) {
-    console.log('anywhereText not found');
-    return;
-  }
-
   // Pre-set elements to hidden for performance
-  gsap.set([secondImage, clippedBox, centerImage, swappableWrapper], {
+  gsap.set([secondImage, centerImage, swappableWrapper], {
     autoAlpha: 0,
   });
 
   gsap.set(centerImage, { zIndex: 5 });
 
-  // // Base scroll settings
-  // const baseSettings = {
-  //   trigger: '.home-scroll-section',
-  //   start: 'top top',
-  //   end: '+=250%',
-  //   pin: true,
-  //   scrub: 2.5,
-  //   markers: true,
-  //   anticipatePin: 0.5,
-  // };
-
-  // const scrollSettings = getScrollSettings(baseSettings, isMobile);
   const parentTL = gsap.timeline({
     defaults: {
       ease: 'customEase',
@@ -286,62 +266,48 @@ const createAnythingV2 = () => {
   // Create typing animations - keeping them paused initially
   const goCopyTypingAnimation = createTypingAnimation({
     element: goAnywhereCopy,
-    text: 'Unlock the true value of virtual assets and carry the items you own wherever your journey leads you.',
     staggerDelay: 0.05,
-    ease: 'none',
-    duration: 0,
-  }).paused(true);
+  });
 
-  const goHeadingTypingAnimation = createTypingAnimation({
+  const copyScrubbedScrollTrigger = gsap.timeline({
+    scrollTrigger: {
+      trigger: goCopyTrigger,
+      start: '20% bottom',
+      end: 'bottom top',
+      scrub: 1.5,
+      // markers: { startColor: 'pink', endColor: 'purple' },
+    },
+  });
+
+  copyScrubbedScrollTrigger
+    .add(goCopyTypingAnimation)
+    .to(swappableWrapper, { autoAlpha: 1, duration: 2 }, '<+=15%')
+    .to(swappableWrapper, { autoAlpha: 0, duration: 2 }, '+=6');
+
+  const goHeadingTL = setupTypingAnimation({
     element: goHeading,
-    // text: 'GO',
+    text: 'GO',
     staggerDelay: 0.05,
-    // ease: 'none',
-  }).paused(true);
-
-  const goHeadingTL = gsap.timeline({
     scrollTrigger: {
       trigger: goHeadingTrigger,
       start: 'top 80%',
-      end: 'bottom bottom',
-      // markers: true,
-      onEnter: () => goHeadingTypingAnimation.play(),
+      end: 'bottom 40%',
+      // markers: { startColor: 'blue', endColor: 'orange' },
     },
   });
-
-  const anywhereTextTypingAnimation = createTypingAnimation({
-    element: anywhereText,
-    // text: 'ANYWHERE',
-    // ease: 'none',
-    staggerDelay: 0.05,
-    duration: 0,
-  }).paused(true);
 
   // Create separate timelines for each trigger
 
-  const anywhereHeadingTL = gsap.timeline({
+  const anywhereHeadingTL = setupTypingAnimation({
+    element: anywhereText,
+    text: 'ANYWHERE',
+    staggerDelay: 0.05,
+
     scrollTrigger: {
       trigger: anywhereTextTrigger,
       start: 'top 80%',
-      end: 'bottom center',
+      end: 'bottom bottom',
       // markers: true,
-      onEnter: () => anywhereTextTypingAnimation.play(),
-      // onLeave: () => anywhereTextTypingAnimation.reverse(),
-      // onEnterBack: () => anywhereTextTypingAnimation.reverse(),
-      // onLeaveBack: () => anywhereTextTypingAnimation.reverse(),
-    },
-  });
-
-  const goCopyTL = gsap.timeline({
-    scrollTrigger: {
-      trigger: goCopyTrigger, // Assuming you have a separate trigger for this
-      start: 'top center',
-      end: 'bottom center',
-      // markers: true,
-      onEnter: () => goCopyTypingAnimation.play(),
-      // onLeave: () => goCopyTypingAnimation.reverse(),
-      // onEnterBack: () => goCopyTypingAnimation.reverse(),
-      // onLeaveBack: () => goCopyTypingAnimation.reset(),
     },
   });
 
@@ -356,7 +322,7 @@ const createAnythingV2 = () => {
       end: 'bottom bottom',
       // markers: true,
     },
-  });
+  }).paused(true);
 
   const anythingHeadingScrollTrigger = setupTypingAnimation({
     element: anythingHeading,
@@ -369,243 +335,52 @@ const createAnythingV2 = () => {
       end: 'bottom center',
       // markers: true,
     },
-  });
+  }).paused(true);
 
   const spacerScrollTrigger = gsap.timeline({
     scrollTrigger: {
       trigger: spacer,
       start: 'bottom bottom',
-      end: 'bottom bottom',
-      markers: { endColor: 'red', startColor: 'purple' },
+      end: 'bottom center',
+      // markers: true,
       scrub: 1.5,
     },
   });
 
-  const createAnythingCopyTypingAnimation = setupTypingAnimation({
-    element: createAnythingCopy,
-    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
-    staggerDelay: 0.03,
-    duration: 0,
-    scrollTrigger: {
-      trigger: createAnythingTrigger,
-      start: 'bottom 80%',
-      end: 'bottom center',
-    },
-    // markers:
-  });
-
   const createAnythingCopyTypingAnimation2 = createTypingAnimation({
     element: createAnythingCopy,
-    text: 'Build, customize, and enhance your Surreal Estate - your home base in The Readyverse – with equipment, vehicles, art, loot and more.',
-    staggerDelay: 0.03,
   });
 
   const thirdImageTL = gsap.timeline({
     scrollTrigger: {
       trigger: thirdImageTrigger,
       start: 'bottom bottom',
-      end: '+200%',
+      end: 'bottom 30%',
       scrub: 1.5,
       // markers: { startColor: 'blue', endColor: 'orange' },
     },
   });
 
-  goHeadingTypingAnimation
-    .to(clippedBox, {
-      autoAlpha: 1,
-      duration: 1.5,
-    })
-    .call(() => {
-      goCopyTypingAnimation.play();
-    })
-    .to(swappableWrapper, { autoAlpha: 1 }, '-=1.5');
-  // Add all timelines to the parent timeline
-  // This ensures we return a single timeline that contains all animations
-
   spacerScrollTrigger
-    .to(swappableWrapper, { opacity: 0 })
     .to(secondImage, { autoAlpha: 0.7, duration: 2 }, '-=2')
     .to(firstImage, { autoAlpha: 0 });
 
   thirdImageTL
     .to(centerImage, { autoAlpha: 1, duration: 5 })
     .to(secondImage, { autoAlpha: 0 })
-    .add(createAnythingCopyTypingAnimation2, '-=1')
-    .to(createAnythingCopy, { autoAlpha: 0, duration: 1.5 }, '+=5')
-    .to(centerImage, { autoAlpha: 0, duration: 3 }, '=+2');
-
-  // .call(() => {
-  //   console.log('call');
-  //   gsap.set(secondImage, { autoAlpha: 0 });
-  // });
-  // // .to(centerImage, { autoAlpha: 1, duration: 5 })
-  // .call(() => {})
-  // .to(centerImage, { autoAlpha: 0, duration: 3 }, '-=2');
+    .add(createAnythingCopyTypingAnimation2, '+=2')
+    .to(createAnythingCopy, { autoAlpha: 0, duration: 2 }, '+=5')
+    .to(centerImage, { autoAlpha: 0, duration: 2 }, '=+2');
 
   parentTL
     .add(goHeadingTL, 0)
     .add(anywhereHeadingTL, 0)
     .add(spacerScrollTrigger, 0)
     .add(createHeadgingScrollTrigger, 0)
-    .add(anythingHeadingScrollTrigger, 0);
-
-  // .add(thirdImageTL, 0);
+    .add(anythingHeadingScrollTrigger, 0)
+    .add(thirdImageTL, 0);
 
   return parentTL;
-
-  // const mobileAdjustments = isMobile
-  //   ? {
-  //       durationMultiplier: 0.8,
-  //     }
-  //   : {
-  //       durationMultiplier: 1,
-  //     };
-
-  // const adjustDuration = (base) => base * mobileAdjustments.durationMultiplier;
-
-  // firstTl
-
-  //   .to(
-  //     clippedBox,
-  //     {
-  //       autoAlpha: 1,
-  //       duration: adjustDuration(1.5),
-  //     },
-  //     '>'
-  //   )
-  //   .to(
-  //     swappableWrapper,
-  //     {
-  //       autoAlpha: 1,
-  //       duration: adjustDuration(1.5),
-  //     },
-  //     '>'
-  //   )
-  //   .add(goCopyTypingAnimation, '>-1')
-  //   // Begin fading secondImage to low opacity with a slight overlap
-  //   .to(
-  //     secondImage,
-  //     {
-  //       autoAlpha: 0.15,
-  //       duration: adjustDuration(3),
-  //     },
-  //     '-=1'
-  //   )
-  //   .to(clippedBox, {
-  //     width: '100%',
-  //     height: '100%',
-  //     duration: adjustDuration(7),
-  //   })
-  //   // Increase the overlap during the secondImage fade so the change is smoother
-  //   .to(
-  //     secondImage,
-  //     {
-  //       autoAlpha: 0.4,
-  //       duration: adjustDuration(3),
-  //     },
-  //     '-=6'
-  //   )
-  //   .to(
-  //     swappableWrapper,
-  //     {
-  //       autoAlpha: 0,
-  //       duration: adjustDuration(3),
-  //     },
-  //     '-=4'
-  //   )
-  //   .to(
-  //     content,
-  //     {
-  //       autoAlpha: 0,
-  //       duration: adjustDuration(3),
-  //     },
-  //     '-=3'
-  //   )
-  //   // Start fading out firstImage earlier for a more blended crossfade
-  //   .to(
-  //     firstImage,
-  //     {
-  //       autoAlpha: 0,
-  //       duration: adjustDuration(3),
-  //     },
-  //     '>-1' // adjusted offset (was >-0.5) for earlier overlap
-  //   )
-  //   // Fade secondImage back in with an earlier start for the crossfade effect
-  //   .to(
-  //     secondImage,
-  //     {
-  //       autoAlpha: 1,
-  //       duration: adjustDuration(4),
-  //     },
-  //     '-=3' // adjusted offset (was -=2) to overlap more with the firstImage fade-out
-  //   )
-  //   //
-  //   // Start "create" text sooner by overlapping it with the image crossfade
-  //   .to(
-  //     createText,
-  //     {
-  //       autoAlpha: 1,
-  //       duration: adjustDuration(3.5),
-  //     },
-  //     '-=4' // moved earlier compared to the previous timing
-  //   )
-  //   // Likewise, bring in the "anything" text sooner
-  //   .to(
-  //     anythingText,
-  //     {
-  //       autoAlpha: 1,
-  //       duration: adjustDuration(3.5),
-  //     },
-  //     '>' // adjusted to start earlier than before
-  //   )
-  //   .add(createAnythingCopyTypingAnimation, '-=1')
-  //   .to(centerImage, { autoAlpha: 0.7, duration: adjustDuration(4) }, '-=4')
-
-  //   .to(
-  //     secondImage,
-  //     {
-  //       autoAlpha: 0,
-  //       duration: adjustDuration(4), // Extended fade‑out duration for second image
-  //     },
-  //     '+=5' // Delay the fade‑out start by 1 second for a longer overlap
-  //   )
-  //   .to(centerImage, { autoApply: 1, duration: adjustDuration(4) }, '>')
-
-  //   .to(
-  //     '.content-bottom',
-  //     {
-  //       opacity: 0,
-  //       duration: adjustDuration(2.5),
-  //     },
-  //     '-=1.5'
-  //   );
-
-  // // Add a small pause at the end for mobile to prevent abrupt endings
-  // if (isMobile) {
-  //   firstTl.to({}, { duration: 1 });
-  // }
-
-  // const mm = gsap.matchMedia();
-
-  // mm.add('(min-width: 768px)', () => {
-  //   firstTl.add(
-  //     gsap.to(centerImage, {
-  //       scale: 0.7,
-  //       ease: 'power1.inOut',
-  //       duration: 4,
-  //     }),
-  //     '>'
-  //   );
-  //   return () => {};
-  // });
-
-  // mm.add('(max-width: 767px)', () => {
-  //   gsap.set(centerImage, { scale: 1 });
-  //   firstTl.add(gsap.to({}, { duration: 0.5 }), '>');
-  //   return () => {};
-  // });
-
-  // return firstTl;
 };
 
 export function meetAnybody() {
@@ -616,61 +391,68 @@ export function meetAnybody() {
     windowContainer: document.querySelector('.clipped-path') as HTMLElement,
     meetContent: document.querySelector('.meet-anybody-text') as HTMLElement,
     meetText: document.querySelector('.meet-content') as HTMLElement,
-  };
-  const isMobile = window.innerWidth <= breakpoints.mobile;
-
-  elements.meetText.textContent = '';
-
-  gsap.set([elements.anyBodyHeading], {
-    autoAlpha: 0,
-  });
-
-  // Base settings
-  const baseSettings = {
-    trigger: elements.section,
-    start: 'top top',
-    end: '+=150%',
-    pin: true,
-    scrub: true,
-    // markers: true,
+    meetHeadingTrigger: document.querySelector('.meet-heading-trigger') as HTMLElement,
+    anybodyHeadingTrigger: document.querySelector('.anybody-heading-trigger') as HTMLElement,
+    backgroundExpandTrigger: document.querySelector('.background-expand-trigger') as HTMLElement,
   };
 
   const meetCopyTypingAnimation = createTypingAnimation({
     element: elements.meetText,
     text: 'Join a global community, explore new worlds, and connect through interactive in-game features.',
     staggerDelay: 0.05,
-  });
+  }).paused(true);
 
-  // Get responsive settings
-  const scrollSettings = getScrollSettings(baseSettings, isMobile);
-
-  // Master timeline with scroll trigger for a seamless scroll-driven sequence
-  const masterTimeline = gsap.timeline({
-    scrollTrigger: scrollSettings,
-    defaults: {
-      ease: 'customEase',
+  const meetHeadingScrollTrigger = setupTypingAnimation({
+    element: elements.meetHeading,
+    text: 'MEET',
+    staggerDelay: 0.05,
+    duration: 0,
+    scrollTrigger: {
+      trigger: elements.meetHeadingTrigger,
+      start: 'top 80%',
+      end: 'bottom bottom',
+      // markers: { startColor: 'blue', endColor: 'orange' },
     },
   });
 
-  masterTimeline
-    // Fade in the headings
-    .to(elements.anyBodyHeading, { autoAlpha: 1, duration: 2 })
-    // Fade in the window container before expanding it
-    // Expand the window container to fill the viewport
+  const anybodyHeadingScrollTrigger = setupTypingAnimation({
+    element: elements.anyBodyHeading,
+    text: 'ANYBODY',
+    staggerDelay: 0.05,
+    duration: 0,
+    scrollTrigger: {
+      trigger: elements.anybodyHeadingTrigger,
+      start: 'top 80%',
+      end: 'bottom bottom',
+      markers: { startColor: 'pink', endColor: 'red' },
+    },
+  });
+
+  const backgroundExpandTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: elements.backgroundExpandTrigger,
+      start: 'bottom 80%',
+      end: 'bottom 10%',
+      scrub: 1.5,
+    },
+  });
+
+  backgroundExpandTl
     .to(elements.windowContainer, {
       duration: 3, // duration is less relevant when scrubbed; it's the animation's total length
       ease: 'customEase',
       clipPath:
         ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
     })
-    // Fade in the meetText shortly after the window expansion begins
-    .add(meetCopyTypingAnimation, '-=5');
-  // Fade out all text elements (both headings and scrambled content)
+    .add(meetCopyTypingAnimation.play(), '<');
 
-  // Add a small pause at the end for mobile to prevent abrupt endings
-  if (isMobile) {
-    masterTimeline.to({}, { duration: 0.5 });
-  }
+  // Master timeline with scroll trigger for a seamless scroll-driven sequence
+  const masterTimeline = gsap.timeline({});
+
+  masterTimeline
+    .add(meetHeadingScrollTrigger, 0)
+    .add(anybodyHeadingScrollTrigger, 0)
+    .add(backgroundExpandTl, 0);
 
   return masterTimeline;
 }
@@ -752,7 +534,7 @@ function readyPlayerTl() {
     trigger: readyPlayerSection,
     start: 'top top',
     end: '+=100%', // Increased from 200% to 300% to provide more scroll space
-    pin: true,
+    // pin: true,
     scrub: isMobile ? 3 : 2, // Smoother scrub for mobile
   };
 
@@ -767,15 +549,7 @@ function readyPlayerTl() {
   });
 
   // Sequence the animations properly
-  tl.add(readyPlayerCopyTypingAnimation).from(
-    cartridgeWrapper,
-    {
-      autoAlpha: 0,
-      yPercent: -50,
-      duration: 4,
-    },
-    '-=1'
-  );
+  tl.add(readyPlayerCopyTypingAnimation);
   // For mobile, add an additional pause at the end to ensure smooth exit
   if (isMobile) {
     tl.to({}, { duration: 1.5 });
@@ -905,9 +679,8 @@ window.Webflow.push(() => {
   // Add all the animations to the timeline
   pageTl
     .add(landingTimeline())
-
     .add(beAnyoneTl())
-    .add(createAnythingV2())
+    .add(createAnythingV2()!)
     .add(meetAnybody())
     .add(readyPlayerTl());
 
