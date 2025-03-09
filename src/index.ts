@@ -167,7 +167,7 @@ export const landingTimeline = () => {
   const baseSettings = {
     trigger: '.home-landing-section',
     start: 'top top',
-    end: '+=180%',
+    end: '+=50%',
     pin: true,
     scrub: 1.5,
     // markers: true,
@@ -543,16 +543,6 @@ function readyPlayerTl() {
     // scrub: isMobile ? 3 : 2, // Smoother scrub for mobile
   };
 
-  // Get responsive settings
-  const scrollSettings = getScrollSettings(baseSettings, isMobile);
-
-  const tl = gsap.timeline({
-    scrollTrigger: scrollSettings,
-    defaults: {
-      ease: 'customEase',
-    },
-  });
-
   const readyTypingAnimation = createTypingAnimation({
     element: readyText,
     staggerDelay: 0.05,
@@ -566,7 +556,7 @@ function readyPlayerTl() {
   const playerTypeTl = gsap.timeline({
     scrollTrigger: {
       trigger: playerText,
-      start: 'top bottom',
+      start: 'top center',
       end: 'bottom center',
       markers: true,
     },
@@ -575,16 +565,12 @@ function readyPlayerTl() {
     },
   });
 
-  playerTypeTl.add(readyTypingAnimation).add(playerTypingAnimation);
+  playerTypeTl
+    .add(readyTypingAnimation)
+    .add(playerTypingAnimation)
+    .add(readyPlayerCopyTypingAnimation);
 
-  // Sequence the animations properly
-  tl.add(readyPlayerCopyTypingAnimation);
-  // For mobile, add an additional pause at the end to ensure smooth exit
-  if (isMobile) {
-    tl.to({}, { duration: 1.5 });
-  }
-
-  return tl;
+  return playerTypeTl;
 }
 
 // Add a function to handle window resize events
