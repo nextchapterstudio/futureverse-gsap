@@ -333,7 +333,7 @@ const createAnythingV2 = () => {
     duration: 0,
     scrollTrigger: {
       trigger: anythingHeadingTrigger,
-      start: 'bottom 70%',
+      start: 'bottom bottom',
       end: 'bottom center',
       // markers: true,
     },
@@ -359,7 +359,7 @@ const createAnythingV2 = () => {
       start: 'bottom 75%',
       end: 'bottom 10%',
       scrub: 1.5,
-      markers: { startColor: 'blue', endColor: 'orange' },
+      // markers: { startColor: 'blue', endColor: 'orange' },
     },
   });
 
