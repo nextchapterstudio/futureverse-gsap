@@ -222,7 +222,7 @@ export const landingTimeline = () => {
 const createAnythingV2 = () => {
   const secondImage = document.querySelector('.second-img') as HTMLElement;
   const firstImage = document.querySelector('.first-img') as HTMLElement;
-  const centerImage = document.querySelector('.third-img') as HTMLElement;
+  const thirdImage = document.querySelector('.third-img') as HTMLElement;
   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
   const swappableWrapper = document.querySelector('.swappable-embed') as HTMLElement;
 
@@ -250,12 +250,14 @@ const createAnythingV2 = () => {
 
   const thirdImageTrigger = document.querySelector('.third-image-trigger') as HTMLElement;
 
+  const gallerySection = document.querySelector('.gallery-section') as HTMLElement;
+
   // Pre-set elements to hidden for performance
-  gsap.set([secondImage, centerImage, swappableWrapper], {
+  gsap.set([secondImage, thirdImage, swappableWrapper, gallerySection], {
     autoAlpha: 0,
   });
 
-  gsap.set(centerImage, { zIndex: 5 });
+  gsap.set(thirdImage, { zIndex: 5 });
 
   const parentTL = gsap.timeline({
     defaults: {
@@ -354,10 +356,10 @@ const createAnythingV2 = () => {
   const thirdImageTL = gsap.timeline({
     scrollTrigger: {
       trigger: thirdImageTrigger,
-      start: 'bottom bottom',
-      end: 'bottom 30%',
+      start: 'bottom 75%',
+      end: 'bottom 10%',
       scrub: 1.5,
-      // markers: { startColor: 'blue', endColor: 'orange' },
+      markers: { startColor: 'blue', endColor: 'orange' },
     },
   });
 
@@ -366,11 +368,13 @@ const createAnythingV2 = () => {
     .to(firstImage, { autoAlpha: 0 });
 
   thirdImageTL
-    .to(centerImage, { autoAlpha: 1, duration: 5 })
-    .to(secondImage, { autoAlpha: 0 })
+    .to(thirdImage, { autoAlpha: 0.7, duration: 5 })
+    .to(thirdImage, { autoAlpha: 1, duration: 2 })
     .add(createAnythingCopyTypingAnimation2, '+=2')
+    .to(secondImage, { autoAlpha: 0 }, '<')
     .to(createAnythingCopy, { autoAlpha: 0, duration: 2 }, '+=5')
-    .to(centerImage, { autoAlpha: 0, duration: 2 }, '=+2');
+    .to(thirdImage, { autoAlpha: 0, duration: 5 })
+    .to(gallerySection, { autoAlpha: 1, duration: 10 }, '-=2');
 
   parentTL
     .add(goHeadingTL, 0)
@@ -424,7 +428,7 @@ export function meetAnybody() {
       trigger: elements.anybodyHeadingTrigger,
       start: 'top 80%',
       end: 'bottom bottom',
-      markers: { startColor: 'pink', endColor: 'red' },
+      // markers: { startColor: 'pink', endColor: 'red' },
     },
   });
 
