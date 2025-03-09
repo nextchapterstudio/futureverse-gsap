@@ -403,7 +403,7 @@ export function meetAnybody() {
   const meetCopyTypingAnimation = createTypingAnimation({
     element: elements.meetText,
     text: 'Join a global community, explore new worlds, and connect through interactive in-game features.',
-    staggerDelay: 0.05,
+    staggerDelay: 0.01,
   }).paused(true);
 
   const meetHeadingScrollTrigger = setupTypingAnimation({
@@ -441,14 +441,12 @@ export function meetAnybody() {
     },
   });
 
-  backgroundExpandTl
-    .to(elements.windowContainer, {
-      duration: 3, // duration is less relevant when scrubbed; it's the animation's total length
-      ease: 'customEase',
-      clipPath:
-        ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
-    })
-    .add(meetCopyTypingAnimation.play(), '<');
+  backgroundExpandTl.to(elements.windowContainer, {
+    duration: 3, // duration is less relevant when scrubbed; it's the animation's total length
+    ease: 'customEase',
+    clipPath:
+      ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
+  });
 
   // Master timeline with scroll trigger for a seamless scroll-driven sequence
   const masterTimeline = gsap.timeline({});
@@ -456,6 +454,7 @@ export function meetAnybody() {
   masterTimeline
     .add(meetHeadingScrollTrigger, 0)
     .add(anybodyHeadingScrollTrigger, 0)
+    .add(meetCopyTypingAnimation.play(), 0)
     .add(backgroundExpandTl, 0);
 
   return masterTimeline;
