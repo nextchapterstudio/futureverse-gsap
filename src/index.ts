@@ -569,7 +569,7 @@ function readyPlayerTl() {
     .add(playerTypingAnimation)
     .add(readyPlayerCopyTypingAnimation);
 
-  return playerTypeTl;
+  return null;
 }
 
 // Add a function to handle window resize events
@@ -696,7 +696,7 @@ window.Webflow.push(() => {
     .add(beAnyoneTl())
     .add(createAnythingV2()!)
     .add(meetAnybody())
-    .add(readyPlayerTl());
+    .add(readyPlayerTl()!);
 
   // Add a small delay before refreshing everything
   setTimeout(() => {
