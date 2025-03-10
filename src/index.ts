@@ -278,35 +278,58 @@ const createAnythingV2 = () => {
     staggerDelay: 0.05,
   });
 
-  const copyScrubbedScrollTrigger = gsap.timeline({
-    scrollTrigger: {
-      trigger: goCopyTrigger,
-      start: '20% bottom',
-      end: 'bottom top',
-      scrub: 1.5,
-      // markers: { startColor: 'pink', endColor: 'purple' },
-    },
-  });
+  if (isSmall) {
+    const goAnywhereMobileTL = gsap.timeline({
+      scrollTrigger: {
+        trigger: goAnywhereMobileTrigger,
+        start: 'top 80%',
+        end: 'bottom top',
+        markers: true,
+        scrub: 1.5,
+      },
+    });
 
-  copyScrubbedScrollTrigger
-    .add(goCopyTypingAnimation)
-    .to(swappableWrapper, { autoAlpha: 1, duration: 2 }, '<+=15%')
-    .to(swappableWrapper, { autoAlpha: 0, duration: 2 }, '+=6');
+    goAnywhereMobileTL
+      .to(swappableWrapper, { autoAlpha: 1, duration: 1 })
+      .to(
+        clippedBox,
+        {
+          height: swappableWrapper.clientHeight * 0.7,
+          width: swappableWrapper.clientWidth * 0.7,
+          duration: 5,
+        },
+        '<'
+      )
+      .add(goCopyTypingAnimation)
+      .to([swappableWrapper, goAnywhereCopy, clippedBox], {
+        autoAlpha: 0,
+        duration: 2,
+      });
+  } else {
+    const copyScrubbedScrollTrigger = gsap.timeline({
+      scrollTrigger: {
+        trigger: goCopyTrigger,
+        start: '20% bottom',
+        end: 'bottom top',
+        scrub: 1.5,
+        // markers: { startColor: 'pink', endColor: 'purple' },
+      },
+    });
 
-  const goAnywhereMobileTL = gsap.timeline({
-    scrollTrigger: {
-      trigger: goAnywhereMobileTrigger,
-      start: 'top 80%',
-      end: 'bottom top',
-      markers: true,
-      scrub: 1.5,
-    },
-  });
-
-  goAnywhereMobileTL
-    .to(swappableWrapper, { autoAlpha: 1, duration: 1 })
-    .add(goCopyTypingAnimation)
-    .to([swappableWrapper, goAnywhereCopy], { autoAlpha: 0, duration: 2 });
+    copyScrubbedScrollTrigger
+      .add(goCopyTypingAnimation)
+      .to(swappableWrapper, { autoAlpha: 1, duration: 2 }, '<+=15%')
+      .to(
+        clippedBox,
+        {
+          height: swappableWrapper.clientHeight,
+          width: swappableWrapper.clientWidth,
+          duration: 5,
+        },
+        '<'
+      )
+      .to([swappableWrapper, clippedBox], { autoAlpha: 0, duration: 2 });
+  }
 
   const goHeadingTL = setupTypingAnimation({
     element: goHeading,
