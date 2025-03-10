@@ -251,7 +251,13 @@ const createAnythingV2 = () => {
 
   const thirdImageTrigger = document.querySelector('.third-image-trigger') as HTMLElement;
 
+  const goAnywhereMobileTrigger = document.querySelector(
+    '.go-anywhere-mobile-trigger'
+  ) as HTMLElement;
+
   const gallerySection = document.querySelector('.gallery-section') as HTMLElement;
+
+  const isSmall = window.innerWidth <= breakpoints.smallDesktop;
 
   // Pre-set elements to hidden for performance
   gsap.set([secondImage, thirdImage, swappableWrapper, gallerySection], {
@@ -286,6 +292,21 @@ const createAnythingV2 = () => {
     .add(goCopyTypingAnimation)
     .to(swappableWrapper, { autoAlpha: 1, duration: 2 }, '<+=15%')
     .to(swappableWrapper, { autoAlpha: 0, duration: 2 }, '+=6');
+
+  const goAnywhereMobileTL = gsap.timeline({
+    scrollTrigger: {
+      trigger: goAnywhereMobileTrigger,
+      start: 'top 80%',
+      end: 'bottom top',
+      markers: true,
+      scrub: 1.5,
+    },
+  });
+
+  goAnywhereMobileTL
+    .to(swappableWrapper, { autoAlpha: 1, duration: 1 })
+    .add(goCopyTypingAnimation)
+    .to([swappableWrapper, goAnywhereCopy], { autoAlpha: 0, duration: 2 });
 
   const goHeadingTL = setupTypingAnimation({
     element: goHeading,
@@ -528,6 +549,7 @@ function readyPlayerTl() {
   const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
   const playerText = document.querySelector('.player-text') as HTMLElement;
   const playerHeading = document.querySelector('.player-heading') as HTMLElement;
+
   const isSmall = window.innerWidth <= breakpoints.smallDesktop;
 
   playerTextCopy.textContent = '';
