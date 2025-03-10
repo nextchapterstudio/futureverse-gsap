@@ -126,6 +126,7 @@ const setupTypingAnimation = (options: TypingScrollOptions): gsap.core.Timeline 
 const breakpoints = {
   mobile: 767,
   tablet: 992,
+  smallDesktop: 1024,
   desktop: 1200,
 };
 
@@ -167,7 +168,7 @@ export const landingTimeline = () => {
   const baseSettings = {
     trigger: '.home-landing-section',
     start: 'top top',
-    end: '+=50%',
+    end: '+=20%',
     pin: true,
     scrub: 1.5,
     // markers: true,
@@ -388,6 +389,8 @@ const createAnythingV2 = () => {
 };
 
 export function meetAnybody() {
+  const isSmall = window.innerWidth <= breakpoints.smallDesktop;
+
   const elements = {
     section: document.querySelector('.meet-anybody-section') as HTMLElement,
     meetHeading: document.querySelector('.meet-text') as HTMLElement,
@@ -435,9 +438,10 @@ export function meetAnybody() {
   const backgroundExpandTl = gsap.timeline({
     scrollTrigger: {
       trigger: elements.backgroundExpandTrigger,
-      start: 'bottom 80%',
+      start: isSmall ? 'bottom bottom' : 'bottom 80%',
       end: 'bottom 10%',
       scrub: 1.5,
+      // markers: true,
     },
   });
 
@@ -524,23 +528,9 @@ function readyPlayerTl() {
   const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
   const playerText = document.querySelector('.player-text') as HTMLElement;
   const playerHeading = document.querySelector('.player-heading') as HTMLElement;
-  const isMobile = window.innerWidth <= breakpoints.mobile;
+  const isSmall = window.innerWidth <= breakpoints.smallDesktop;
 
   playerTextCopy.textContent = '';
-
-  const readyPlayerCopyTypingAnimation = createTypingAnimation({
-    text: 'Launch into the action and discover an ever-expanding catalog of games and experiences.',
-    element: playerTextCopy,
-  });
-
-  // Base settings - increase the end value to allow more time for animation
-  const baseSettings = {
-    trigger: readyPlayerSection,
-    start: 'top top',
-    end: '+=100%', // Increased from 200% to 300% to provide more scroll space
-    // pin: true,
-    // scrub: isMobile ? 3 : 2, // Smoother scrub for mobile
-  };
 
   const readyTypingAnimation = createTypingAnimation({
     element: readyText,
@@ -552,12 +542,17 @@ function readyPlayerTl() {
     staggerDelay: 0.05,
   });
 
+  const readyPlayerCopyTypingAnimation = createTypingAnimation({
+    text: 'Launch into the action and discover an ever-expanding catalog of games and experiences.',
+    element: playerTextCopy,
+  });
+
   const playerTypeTl = gsap.timeline({
     scrollTrigger: {
       trigger: playerText,
-      start: 'top center',
+      start: isSmall ? 'top 90%' : 'top bottom',
       end: 'bottom center',
-      markers: true,
+      // markers: true,
     },
     defaults: {
       ease: 'customEase',
