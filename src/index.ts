@@ -422,7 +422,20 @@ export function meetAnybody() {
     meetHeadingTrigger: document.querySelector('.meet-heading-trigger') as HTMLElement,
     anybodyHeadingTrigger: document.querySelector('.anybody-heading-trigger') as HTMLElement,
     backgroundExpandTrigger: document.querySelector('.background-expand-trigger') as HTMLElement,
+    leftCorner: document.querySelector('.top-left-meet') as HTMLElement,
+    rightCorner: document.querySelector('.right-corner-meet') as HTMLElement,
+    bottomLeftCorner: document.querySelector('.bottom-left-meet') as HTMLElement,
+    bottomRightCorner: document.querySelector('.bottom-right-meet') as HTMLElement,
+    meetAnybodyCorners: document.querySelectorAll(
+      '.meet-anybody-corners'
+    ) as NodeListOf<HTMLElement>,
   };
+
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  const halfViewportWidth = viewportWidth / 2;
+  const halfViewportHeight = viewportHeight / 2;
 
   const meetCopyTypingAnimation = createTypingAnimation({
     element: elements.meetText,
@@ -466,12 +479,14 @@ export function meetAnybody() {
     },
   });
 
-  backgroundExpandTl.to(elements.windowContainer, {
-    duration: 3, // duration is less relevant when scrubbed; it's the animation's total length
-    ease: 'customEase',
-    clipPath:
-      ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
-  });
+  backgroundExpandTl
+    .to(elements.windowContainer, {
+      duration: 3, // duration is less relevant when scrubbed; it's the animation's total length
+      ease: 'customEase',
+      clipPath:
+        ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
+    })
+    .to(elements.meetAnybodyCorners, { height: '100%', width: '100%', duration: 3 }, '<');
 
   // Master timeline with scroll trigger for a seamless scroll-driven sequence
   const masterTimeline = gsap.timeline({});
