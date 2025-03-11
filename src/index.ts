@@ -294,8 +294,8 @@ const createAnythingV2 = () => {
       .to(
         clippedBox,
         {
-          height: swappableWrapper.clientHeight * 0.7,
-          width: swappableWrapper.clientWidth * 0.7,
+          height: '100%',
+          width: '100%',
           duration: 5,
         },
         '<'
@@ -322,8 +322,8 @@ const createAnythingV2 = () => {
       .to(
         clippedBox,
         {
-          height: swappableWrapper.clientHeight,
-          width: swappableWrapper.clientWidth,
+          height: '100%',
+          width: '100%',
           duration: 5,
         },
         '<'
