@@ -42,8 +42,8 @@ export const createTypingAnimation = (options: TypeAnimationOptions): gsap.core.
   // Use the provided text or fall back to the element's current text content
   const animationText = text || targetElement.textContent || '';
 
-  // Clear the element's innerHTML before running the animation
-  targetElement.innerHTML = '';
+  targetElement.innerHTML = ''; // Clear the element's content
+
   // Re-insert the text for the animation
   targetElement.textContent = animationText;
 
@@ -103,6 +103,7 @@ const setupTypingAnimation = (options: TypingScrollOptions): gsap.core.Timeline 
       ...options.scrollTrigger,
       onEnter: () => {
         console.log(`entering ${options.text}`);
+
         return animation.play();
       },
       // onLeave: () => {
@@ -236,6 +237,8 @@ const createAnythingV2 = () => {
   const anywhereTextTrigger = document.querySelector('.anywhere-trigger') as HTMLElement;
 
   const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
+  const goCopyDesktopText = document.querySelector('.go-copy-desktop-text') as HTMLElement;
+
   const goCopyTrigger = document.querySelector('.go-copy-trigger') as HTMLElement;
 
   const spacer = document.querySelector('.go-anywhere-spacer') as HTMLElement;
@@ -255,6 +258,9 @@ const createAnythingV2 = () => {
     '.go-anywhere-mobile-trigger'
   ) as HTMLElement;
 
+  const goCopyMobileTrigger = document.querySelector('.go-copy-mobile-trigger') as HTMLElement;
+  const goCopyDesktopTrigger = document.querySelector('.go-copy-desktop') as HTMLElement;
+
   const gallerySection = document.querySelector('.gallery-section') as HTMLElement;
 
   const isSmall = window.innerWidth <= breakpoints.smallDesktop;
@@ -272,19 +278,25 @@ const createAnythingV2 = () => {
     },
   });
 
-  // Create typing animations - keeping them paused initially
-  const goCopyTypingAnimation = createTypingAnimation({
-    element: goAnywhereCopy,
-    staggerDelay: 0.05,
-  });
-
   if (isSmall) {
+    setupTypingAnimation({
+      element: goAnywhereCopy,
+      staggerDelay: 0.05,
+      duration: 0,
+      scrollTrigger: {
+        trigger: goCopyMobileTrigger,
+        start: 'top bottom',
+        end: 'bottom bottom',
+        markers: true,
+      },
+    });
+
     const goAnywhereMobileTL = gsap.timeline({
       scrollTrigger: {
         trigger: goAnywhereMobileTrigger,
         start: 'top 80%',
         end: 'bottom top',
-        markers: true,
+        // markers: true,
         scrub: 1.5,
       },
     });
@@ -300,12 +312,23 @@ const createAnythingV2 = () => {
         },
         '<'
       )
-      .add(goCopyTypingAnimation)
       .to([swappableWrapper, goAnywhereCopy, clippedBox], {
         autoAlpha: 0,
         duration: 2,
       });
   } else {
+    setupTypingAnimation({
+      element: goCopyDesktopText,
+      staggerDelay: 0.05,
+      duration: 0,
+      scrollTrigger: {
+        trigger: goCopyDesktopTrigger,
+        start: 'top center',
+        end: 'bottom bottom',
+        markers: true,
+      },
+    });
+
     const copyScrubbedScrollTrigger = gsap.timeline({
       scrollTrigger: {
         trigger: goCopyTrigger,
@@ -317,7 +340,6 @@ const createAnythingV2 = () => {
     });
 
     copyScrubbedScrollTrigger
-      .add(goCopyTypingAnimation)
       .to(swappableWrapper, { autoAlpha: 1, duration: 2 }, '<+=15%')
       .to(
         clippedBox,
@@ -328,7 +350,7 @@ const createAnythingV2 = () => {
         },
         '<'
       )
-      .to([swappableWrapper, clippedBox], { autoAlpha: 0, duration: 2 });
+      .to([swappableWrapper, clippedBox, goCopyDesktopText], { autoAlpha: 0, duration: 2 });
   }
 
   const goHeadingTL = setupTypingAnimation({
@@ -417,7 +439,6 @@ const createAnythingV2 = () => {
     .to(thirdImage, { autoAlpha: 1, duration: 2 })
     .add(createAnythingCopyTypingAnimation2, '+=2')
     .to(secondImage, { autoAlpha: 0 }, '<')
-    .to(createAnythingCopy, { autoAlpha: 0, duration: 2 }, '+=5')
     .to(thirdImage, { autoAlpha: 0, duration: 5 })
     .to(gallerySection, { autoAlpha: 1, duration: 10 }, '-=2');
 
