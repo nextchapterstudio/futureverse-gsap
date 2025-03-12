@@ -558,7 +558,6 @@ export function meetAnybody() {
   masterTimeline
     .add(meetHeadingScrollTrigger, 0)
     .add(anybodyHeadingScrollTrigger, 0)
-    .add(meetCopyTypingAnimation.play(), 0)
     .add(backgroundExpandTl, 0);
 
   return masterTimeline;
