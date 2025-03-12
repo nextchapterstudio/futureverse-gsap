@@ -528,19 +528,19 @@ export function meetAnybody() {
       start: isSmall ? 'bottom bottom' : 'bottom 80%',
       end: 'bottom 10%',
       scrub: 1.5,
-      // markers: true,
+      markers: true,
     },
     defaults: { ease: 'customEase' },
   });
 
   backgroundExpandTl
     .to(elements.windowContainer, {
-      duration: 3, // duration is less relevant when scrubbed; it's the animation's total length
+      duration: 2, // duration is less relevant when scrubbed; it's the animation's total length
       ease: 'customEase',
       clipPath:
         ' polygon(0% 0%, 0% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 100%, 100% 100%, 100% 0%) ',
     })
-    .to(elements.meetAnybodyCorners, { height: '100%', width: '100%', duration: 3 }, '<');
+    .to(elements.meetAnybodyCorners, { height: '100%', width: '100%', duration: 2 }, '<');
 
   // Master timeline with scroll trigger for a seamless scroll-driven sequence
   const masterTimeline = gsap.timeline({});
