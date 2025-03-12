@@ -310,7 +310,7 @@ const createAnythingV2 = () => {
         },
         '<'
       )
-      .to([swappableWrapper, goAnywhereCopy, clippedBox], {
+      .to([swappableWrapper, clippedBox], {
         autoAlpha: 0,
         duration: 2,
       });
@@ -348,7 +348,7 @@ const createAnythingV2 = () => {
         },
         '<'
       )
-      .to([swappableWrapper, clippedBox, goCopyDesktopText], { autoAlpha: 0, duration: 2 });
+      .to([swappableWrapper, clippedBox], { autoAlpha: 0, duration: 2 });
   }
 
   const goHeadingTL = setupTypingAnimation({
