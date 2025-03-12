@@ -327,7 +327,7 @@ const createAnythingV2 = () => {
         start: '20% bottom',
         end: 'bottom -90%',
         scrub: 1.5,
-        markers: { startColor: 'pink', endColor: 'purple' },
+        // markers: { startColor: 'pink', endColor: 'purple' },
       },
       defaults: { ease: 'customEase' },
     });
@@ -528,7 +528,7 @@ export function meetAnybody() {
       start: isSmall ? 'bottom bottom' : 'bottom 80%',
       end: isSmall ? 'bottom 30%' : 'bottom center',
       scrub: 1.5,
-      markers: true,
+      // markers: true,
     },
     defaults: { ease: 'customEase' },
   });
