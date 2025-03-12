@@ -289,7 +289,7 @@ const createAnythingV2 = () => {
         trigger: goCopyTrigger,
         start: 'top 80%',
         end: 'bottom -50%',
-        markers: true,
+        // markers: true,
         scrub: 1.5,
       },
       defaults: { ease: 'customEase' },
