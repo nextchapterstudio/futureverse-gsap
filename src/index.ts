@@ -113,9 +113,10 @@ const setupTypingAnimation = (options: TypingScrollOptions): gsap.core.Timeline 
       //   console.log(`entering back ${options.text}`);
       //   return animation.restart();
       // },
-      // onLeaveBack: () => {
-      //   console.log(`leaving back ${options.text}`);
-      // },
+      onLeaveBack: () => {
+        console.log(`leaving back ${options.text}`);
+        animation.pause(0);
+      },
       // Optionally, you can handle onLeave, onEnterBack, onLeaveBack, etc.
     },
   });
@@ -237,7 +238,7 @@ const createAnythingV2 = () => {
   const goAnywhereCopy = document.querySelector('.go-copy') as HTMLElement;
   const goCopyDesktopText = document.querySelector('.go-copy-desktop-text') as HTMLElement;
 
-  const goCopyTrigger = document.querySelector('.go-copy-trigger') as HTMLElement;
+  const goCopyTrigger = document.querySelector('.go-anywhere-trigger') as HTMLElement;
 
   const spacer = document.querySelector('.go-anywhere-spacer') as HTMLElement;
 
@@ -251,10 +252,6 @@ const createAnythingV2 = () => {
   const createAnythingTrigger = document.querySelector('.content-bottom') as HTMLElement;
 
   const thirdImageTrigger = document.querySelector('.third-image-trigger') as HTMLElement;
-
-  const goAnywhereMobileTrigger = document.querySelector(
-    '.go-anywhere-mobile-trigger'
-  ) as HTMLElement;
 
   const goCopyMobileTrigger = document.querySelector('.go-copy-mobile-trigger') as HTMLElement;
   const goCopyDesktopTrigger = document.querySelector('.go-copy-desktop') as HTMLElement;
@@ -280,7 +277,6 @@ const createAnythingV2 = () => {
     setupTypingAnimation({
       element: goAnywhereCopy,
       staggerDelay: 0.05,
-      duration: 0,
       scrollTrigger: {
         trigger: goCopyMobileTrigger,
         start: 'top bottom',
@@ -291,7 +287,7 @@ const createAnythingV2 = () => {
 
     const goAnywhereMobileTL = gsap.timeline({
       scrollTrigger: {
-        trigger: goAnywhereMobileTrigger,
+        trigger: goCopyTrigger,
         start: 'top 80%',
         end: 'bottom top',
         // markers: true,
@@ -318,7 +314,6 @@ const createAnythingV2 = () => {
     setupTypingAnimation({
       element: goCopyDesktopText,
       staggerDelay: 0.05,
-      duration: 0,
       scrollTrigger: {
         trigger: goCopyDesktopTrigger,
         start: 'top center',
@@ -338,7 +333,7 @@ const createAnythingV2 = () => {
     });
 
     copyScrubbedScrollTrigger
-      .to(swappableWrapper, { autoAlpha: 1, duration: 2 }, '<+=15%')
+      .to(swappableWrapper, { autoAlpha: 1, duration: 2 })
       .to(
         clippedBox,
         {
@@ -369,7 +364,6 @@ const createAnythingV2 = () => {
     element: anywhereText,
     text: 'ANYWHERE',
     staggerDelay: 0.05,
-
     scrollTrigger: {
       trigger: anywhereTextTrigger,
       start: 'top 80%',
@@ -382,7 +376,6 @@ const createAnythingV2 = () => {
     element: createHeading,
     text: 'Create',
     staggerDelay: 0.05,
-    duration: 0,
     scrollTrigger: {
       trigger: createHeadingTrigger,
       start: 'top 80%',
@@ -395,7 +388,6 @@ const createAnythingV2 = () => {
     element: anythingHeading,
     text: 'Anything',
     staggerDelay: 0.05,
-    duration: 0,
     scrollTrigger: {
       trigger: anythingHeadingTrigger,
       start: 'bottom bottom',
@@ -407,7 +399,6 @@ const createAnythingV2 = () => {
   const createAnythingCopyScrollTrigger = setupTypingAnimation({
     element: createAnythingCopy,
     staggerDelay: 0.05,
-    duration: 0,
     scrollTrigger: {
       trigger: createAnythingTrigger,
       start: 'top 80%',
@@ -511,7 +502,6 @@ export function meetAnybody() {
     element: elements.meetHeading,
     text: 'MEET',
     staggerDelay: 0.05,
-    duration: 0,
     scrollTrigger: {
       trigger: elements.meetHeadingTrigger,
       start: 'top 80%',
@@ -524,7 +514,6 @@ export function meetAnybody() {
     element: elements.anyBodyHeading,
     text: 'ANYBODY',
     staggerDelay: 0.05,
-    duration: 0,
     scrollTrigger: {
       trigger: elements.anybodyHeadingTrigger,
       start: 'top 80%',
@@ -564,10 +553,8 @@ export function meetAnybody() {
 }
 
 function readyPlayerTl() {
-  const readyPlayerSection = document.querySelector('.ready-player-section') as HTMLElement;
   const readyText = document.querySelector('.ready-text') as HTMLElement;
   const playerTextCopy = document.querySelector('.ready-player-copy') as HTMLElement;
-  const cartridgeWrapper = document.querySelector('.cartridge-wrapper') as HTMLElement;
   const playerText = document.querySelector('.player-text') as HTMLElement;
   const playerHeading = document.querySelector('.player-heading') as HTMLElement;
 
@@ -575,37 +562,36 @@ function readyPlayerTl() {
 
   playerTextCopy.textContent = '';
 
-  const readyTypingAnimation = createTypingAnimation({
+  const readyTypingAnimation = setupTypingAnimation({
     element: readyText,
     staggerDelay: 0.05,
-  });
-
-  const playerTypingAnimation = createTypingAnimation({
-    element: playerHeading,
-    staggerDelay: 0.05,
-  });
-
-  const readyPlayerCopyTypingAnimation = createTypingAnimation({
-    text: 'Launch into the action and discover an ever-expanding catalog of games and experiences.',
-    element: playerTextCopy,
-  });
-
-  const playerTypeTl = gsap.timeline({
     scrollTrigger: {
       trigger: playerText,
       start: isSmall ? 'top 90%' : 'top bottom',
       end: 'bottom center',
-      // markers: true,
-    },
-    defaults: {
-      ease: 'customEase',
     },
   });
 
-  playerTypeTl
-    .add(readyTypingAnimation)
-    .add(playerTypingAnimation)
-    .add(readyPlayerCopyTypingAnimation);
+  const playerTypingAnimation = setupTypingAnimation({
+    element: playerHeading,
+    staggerDelay: 0.05,
+    scrollTrigger: {
+      trigger: playerText,
+      start: isSmall ? 'top 80%' : 'top 60%',
+      end: 'bottom center',
+      markers: true,
+    },
+  });
+
+  const readyPlayerCopyTypingAnimation = setupTypingAnimation({
+    text: 'Launch into the action and discover an ever-expanding catalog of games and experiences.',
+    element: playerTextCopy,
+    scrollTrigger: {
+      trigger: playerText,
+      start: isSmall ? 'top 70%' : 'top center',
+      end: 'bottom center',
+    },
+  });
 
   return null;
 }
