@@ -526,7 +526,7 @@ export function meetAnybody() {
     scrollTrigger: {
       trigger: elements.backgroundExpandTrigger,
       start: isSmall ? 'bottom bottom' : 'bottom 80%',
-      end: 'bottom 10%',
+      end: 'bottom center',
       scrub: 1.5,
       markers: true,
     },
