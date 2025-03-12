@@ -288,8 +288,8 @@ const createAnythingV2 = () => {
       scrollTrigger: {
         trigger: goCopyTrigger,
         start: 'top 80%',
-        end: 'bottom top',
-        // markers: true,
+        end: 'bottom -50%',
+        markers: true,
         scrub: 1.5,
       },
       defaults: { ease: 'customEase' },
@@ -325,9 +325,9 @@ const createAnythingV2 = () => {
       scrollTrigger: {
         trigger: goCopyTrigger,
         start: '20% bottom',
-        end: 'bottom top',
+        end: 'bottom -90%',
         scrub: 1.5,
-        // markers: { startColor: 'pink', endColor: 'purple' },
+        markers: { startColor: 'pink', endColor: 'purple' },
       },
       defaults: { ease: 'customEase' },
     });
