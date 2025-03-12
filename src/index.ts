@@ -569,14 +569,13 @@ export function beAnyoneTl() {
   const images = gsap.utils.toArray<HTMLElement>('.video-embed');
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
-  /// Duplicate the first image and append it to the end for a seamless loop
+  // Duplicate the first image and append it to the end for a seamless loop
   // const firstClone = images[0].cloneNode(true) as HTMLElement;
   // wrapper.appendChild(firstClone);
   // images.push(firstClone);
 
   // Set initial states: first image fully visible, others partially faded
   images.forEach((img, i) => {
-    img.querySelector('video')?.pause();
     gsap.set(img, {
       opacity: i === 0 ? 1 : 0.5,
       scale: i === 0 ? 1 : 0.95,
@@ -593,40 +592,23 @@ export function beAnyoneTl() {
   });
 
   // Animate from each image to the next (including the clone at the end)
-  for (let i = 0; i < images.length; i++) {
-    // const img = images[i];
-    // img.querySelector('video')?.pause();
-    const isLast = i === images.length - 1;
+  for (let i = 0; i < images.length - 1; i++) {
     loopTl
       // Step 1: Scale down the card
       .to(vidCard, { scale: 0.98 })
       // Step 2: Animate current image out
-      .to(
-        images[i],
-        {
-          opacity: 0.5,
-          scale: 0.95,
-          onComplete: () => {
-            console.log(images[i]);
-            images[i].querySelector('video')?.pause();
-          },
-        },
-        '<'
-      )
+      .to(images[i], { opacity: 0.5, scale: 0.95 }, '<')
       // Step 3: Scroll the wrapper to the next image position
       .to(
         wrapper,
         {
-          scrollLeft: isLast ? 0 : images[i + 1].offsetLeft,
+          scrollLeft: images[i + 1].offsetLeft,
           duration: isMobile ? 0.6 : 0.5,
-          onComplete: () => {
-            images[isLast ? 0 : i + 1].querySelector('video')?.play();
-          },
         },
         '<'
       )
       // Step 4: Animate next image in
-      .to(images[isLast ? 0 : i + 1], { opacity: 1, scale: 1 }, '<')
+      .to(images[i + 1], { opacity: 1, scale: 1 }, '<')
       // Step 5: Scale card back up
       .to(vidCard, { scale: 1 }, 0.15)
       // Step 6: Pause before the next cycle
@@ -634,7 +616,7 @@ export function beAnyoneTl() {
   }
 
   // When reaching the clone (which is identical to the first image), reset scrollLeft instantly
-  // loopTl.set(wrapper, { scrollLeft: 0 });
+  loopTl.set(wrapper, { scrollLeft: 0 });
 
   return loopTl;
 }
