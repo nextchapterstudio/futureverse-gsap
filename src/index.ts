@@ -557,9 +557,9 @@ export function beAnyoneTl() {
   const isMobile = window.innerWidth <= breakpoints.mobile;
 
   // Duplicate the first image and append it to the end for a seamless loop
-  const firstClone = images[0].cloneNode(true) as HTMLElement;
-  wrapper.appendChild(firstClone);
-  images.push(firstClone);
+  // const firstClone = images[0].cloneNode(true) as HTMLElement;
+  // wrapper.appendChild(firstClone);
+  // images.push(firstClone);
 
   // Set initial states: first image fully visible, others partially faded
   images.forEach((img, i) => {
