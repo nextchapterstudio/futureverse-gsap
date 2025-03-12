@@ -563,63 +563,6 @@ export function meetAnybody() {
   return masterTimeline;
 }
 
-export function beAnyoneTl() {
-  const wrapper = document.querySelector('.video-wrapper') as HTMLElement;
-  const vidCard = document.querySelector('.vid-card') as HTMLElement;
-  const images = gsap.utils.toArray<HTMLElement>('.video-embed');
-  const isMobile = window.innerWidth <= breakpoints.mobile;
-
-  // Duplicate the first image and append it to the end for a seamless loop
-  // const firstClone = images[0].cloneNode(true) as HTMLElement;
-  // wrapper.appendChild(firstClone);
-  // images.push(firstClone);
-
-  // Set initial states: first image fully visible, others partially faded
-  images.forEach((img, i) => {
-    gsap.set(img, {
-      opacity: i === 0 ? 1 : 0.5,
-      scale: i === 0 ? 1 : 0.95,
-    });
-  });
-
-  // Build an infinite looping timeline
-  const loopTl = gsap.timeline({
-    repeat: -1,
-    defaults: {
-      ease: 'customEase',
-      duration: isMobile ? 0.4 : 0.3, // Slightly slower transitions on mobile
-    },
-  });
-
-  // Animate from each image to the next (including the clone at the end)
-  for (let i = 0; i < images.length - 1; i++) {
-    loopTl
-      // Step 1: Scale down the card
-      .to(vidCard, { scale: 0.98 })
-      // Step 2: Animate current image out
-      .to(images[i], { opacity: 0.5, scale: 0.95 }, '<')
-      // Step 3: Scroll the wrapper to the next image position
-      .to(
-        wrapper,
-        {
-          scrollLeft: images[i + 1].offsetLeft,
-          duration: isMobile ? 0.6 : 0.5,
-        },
-        '<'
-      )
-      // Step 4: Animate next image in
-      .to(images[i + 1], { opacity: 1, scale: 1 }, '<')
-      // Step 5: Scale card back up
-      .to(vidCard, { scale: 1 }, 0.15)
-      // Step 6: Pause before the next cycle
-      .to({}, { duration: isMobile ? 1.5 : 1 });
-  }
-
-  // When reaching the clone (which is identical to the first image), reset scrollLeft instantly
-  loopTl.set(wrapper, { scrollLeft: 0 });
-
-  return loopTl;
-}
 function readyPlayerTl() {
   const readyPlayerSection = document.querySelector('.ready-player-section') as HTMLElement;
   const readyText = document.querySelector('.ready-text') as HTMLElement;
@@ -786,12 +729,7 @@ window.Webflow.push(() => {
   const pageTl = gsap.timeline({});
 
   // Add all the animations to the timeline
-  pageTl
-    .add(landingTimeline())
-    .add(beAnyoneTl())
-    .add(createAnythingV2()!)
-    .add(meetAnybody())
-    .add(readyPlayerTl()!);
+  pageTl.add(landingTimeline()).add(createAnythingV2()!).add(meetAnybody()).add(readyPlayerTl()!);
 
   // Add a small delay before refreshing everything
   setTimeout(() => {
