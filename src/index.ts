@@ -228,8 +228,6 @@ const createAnythingV2 = () => {
   const clippedBox = document.querySelector('.clipped-box') as HTMLElement;
   const swappableWrapper = document.querySelector('.swappable-embed') as HTMLElement;
 
-  const content = document.querySelector('.content') as HTMLElement;
-
   const goHeading = document.querySelector('.go-heading') as HTMLElement;
   const goHeadingTrigger = document.querySelector('.go-heading-trigger') as HTMLElement;
 
@@ -391,7 +389,7 @@ const createAnythingV2 = () => {
       end: 'bottom bottom',
       // markers: true,
     },
-  }).paused(true);
+  });
 
   const anythingHeadingScrollTrigger = setupTypingAnimation({
     element: anythingHeading,
@@ -404,7 +402,19 @@ const createAnythingV2 = () => {
       end: 'bottom center',
       // markers: true,
     },
-  }).paused(true);
+  });
+
+  const createAnythingCopyScrollTrigger = setupTypingAnimation({
+    element: createAnythingCopy,
+    staggerDelay: 0.05,
+    duration: 0,
+    scrollTrigger: {
+      trigger: createAnythingTrigger,
+      start: 'top 80%',
+      end: 'bottom bottom',
+      markers: { startColor: 'blue', endColor: 'orange' },
+    },
+  });
 
   const spacerScrollTrigger = gsap.timeline({
     scrollTrigger: {
@@ -414,10 +424,6 @@ const createAnythingV2 = () => {
       // markers: true,
       scrub: 1.5,
     },
-  });
-
-  const createAnythingCopyTypingAnimation2 = createTypingAnimation({
-    element: createAnythingCopy,
   });
 
   const thirdImageTL = gsap.timeline({
@@ -437,7 +443,6 @@ const createAnythingV2 = () => {
   thirdImageTL
     .to(thirdImage, { autoAlpha: 0.7, duration: 5 })
     .to(thirdImage, { autoAlpha: 1, duration: 2 })
-    .add(createAnythingCopyTypingAnimation2, '+=2')
     .to(secondImage, { autoAlpha: 0 }, '<')
     .to(thirdImage, { autoAlpha: 0, duration: 5 })
     .to(gallerySection, { autoAlpha: 1, duration: 10 }, '-=2');
@@ -448,6 +453,7 @@ const createAnythingV2 = () => {
     .add(spacerScrollTrigger, 0)
     .add(createHeadgingScrollTrigger, 0)
     .add(anythingHeadingScrollTrigger, 0)
+    .add(createAnythingCopyScrollTrigger, 0)
     .add(thirdImageTL, 0);
 
   return parentTL;
