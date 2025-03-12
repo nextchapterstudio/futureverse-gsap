@@ -579,7 +579,7 @@ function readyPlayerTl() {
       trigger: playerText,
       start: isSmall ? 'top 80%' : 'top 60%',
       end: 'bottom center',
-      markers: true,
+      // markers: true,
     },
   });
 
