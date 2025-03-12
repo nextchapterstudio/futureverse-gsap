@@ -285,7 +285,7 @@ const createAnythingV2 = () => {
         trigger: goCopyMobileTrigger,
         start: 'top bottom',
         end: 'bottom bottom',
-        markers: true,
+        // markers: true,
       },
     });
 
@@ -323,7 +323,7 @@ const createAnythingV2 = () => {
         trigger: goCopyDesktopTrigger,
         start: 'top center',
         end: 'bottom bottom',
-        markers: true,
+        // markers: true,
       },
     });
 
@@ -412,7 +412,7 @@ const createAnythingV2 = () => {
       trigger: createAnythingTrigger,
       start: 'top 80%',
       end: 'bottom bottom',
-      markers: { startColor: 'blue', endColor: 'orange' },
+      // markers: { startColor: 'blue', endColor: 'orange' },
     },
   });
 
@@ -469,6 +469,7 @@ export function meetAnybody() {
     windowContainer: document.querySelector('.clipped-path') as HTMLElement,
     meetContent: document.querySelector('.meet-anybody-text') as HTMLElement,
     meetText: document.querySelector('.meet-content') as HTMLElement,
+    meetTextMobile: document.querySelector('.meet-content-mobile-copy') as HTMLElement,
     meetHeadingTrigger: document.querySelector('.meet-heading-trigger') as HTMLElement,
     anybodyHeadingTrigger: document.querySelector('.anybody-heading-trigger') as HTMLElement,
     backgroundExpandTrigger: document.querySelector('.background-expand-trigger') as HTMLElement,
@@ -479,19 +480,32 @@ export function meetAnybody() {
     meetAnybodyCorners: document.querySelectorAll(
       '.meet-anybody-corners'
     ) as NodeListOf<HTMLElement>,
+
+    meetCopyDesktopTrigger: document.querySelector('.meet-anybody-text') as HTMLElement,
+    meetCopyMobileTrigger: document.querySelector('.meet-mobile-copy') as HTMLElement,
   };
 
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-
-  const halfViewportWidth = viewportWidth / 2;
-  const halfViewportHeight = viewportHeight / 2;
-
-  const meetCopyTypingAnimation = createTypingAnimation({
-    element: elements.meetText,
-    text: 'Join a global community, explore new worlds, and connect through interactive in-game features.',
-    staggerDelay: 0.01,
-  }).paused(true);
+  if (isSmall) {
+    setupTypingAnimation({
+      element: elements.meetTextMobile,
+      scrollTrigger: {
+        trigger: elements.meetCopyMobileTrigger,
+        start: 'top 80%',
+        end: 'bottom bottom',
+        // markers: true,
+      },
+    });
+  } else {
+    setupTypingAnimation({
+      element: elements.meetText,
+      scrollTrigger: {
+        trigger: elements.meetCopyDesktopTrigger,
+        start: 'top 60%',
+        end: 'bottom bottom',
+        // markers: { startColor: 'blue', endColor: 'orange' },
+      },
+    });
+  }
 
   const meetHeadingScrollTrigger = setupTypingAnimation({
     element: elements.meetHeading,
