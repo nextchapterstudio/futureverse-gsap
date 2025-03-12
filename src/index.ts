@@ -119,6 +119,7 @@ const setupTypingAnimation = (options: TypingScrollOptions): gsap.core.Timeline 
       },
       // Optionally, you can handle onLeave, onEnterBack, onLeaveBack, etc.
     },
+    defaults: { ease: 'customEase' },
   });
 
   return scrollAndTimeline;
@@ -208,7 +209,6 @@ export const landingTimeline = () => {
   const typingAnimation = createTypingAnimation({
     element: intoText,
     text: 'THE IMMERSIVE GAMING PLATFORM POWERING A UNIVERSE OF CONNECTED PLAY.',
-    staggerDelay: 0.03,
   });
 
   // Add the typing animation to our main timeline
@@ -276,7 +276,6 @@ const createAnythingV2 = () => {
   if (isSmall) {
     setupTypingAnimation({
       element: goAnywhereCopy,
-      staggerDelay: 0.05,
       scrollTrigger: {
         trigger: goCopyMobileTrigger,
         start: 'top bottom',
@@ -293,6 +292,7 @@ const createAnythingV2 = () => {
         // markers: true,
         scrub: 1.5,
       },
+      defaults: { ease: 'customEase' },
     });
 
     goAnywhereMobileTL
@@ -313,7 +313,6 @@ const createAnythingV2 = () => {
   } else {
     setupTypingAnimation({
       element: goCopyDesktopText,
-      staggerDelay: 0.05,
       scrollTrigger: {
         trigger: goCopyDesktopTrigger,
         start: 'top center',
@@ -330,6 +329,7 @@ const createAnythingV2 = () => {
         scrub: 1.5,
         // markers: { startColor: 'pink', endColor: 'purple' },
       },
+      defaults: { ease: 'customEase' },
     });
 
     copyScrubbedScrollTrigger
@@ -398,7 +398,6 @@ const createAnythingV2 = () => {
 
   const createAnythingCopyScrollTrigger = setupTypingAnimation({
     element: createAnythingCopy,
-    staggerDelay: 0.05,
     scrollTrigger: {
       trigger: createAnythingTrigger,
       start: 'top 80%',
@@ -415,6 +414,7 @@ const createAnythingV2 = () => {
       // markers: true,
       scrub: 1.5,
     },
+    defaults: { ease: 'customEase' },
   });
 
   const thirdImageTL = gsap.timeline({
@@ -530,6 +530,7 @@ export function meetAnybody() {
       scrub: 1.5,
       // markers: true,
     },
+    defaults: { ease: 'customEase' },
   });
 
   backgroundExpandTl
